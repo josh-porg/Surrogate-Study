@@ -4,3 +4,5 @@ E0_timing: 1680 tasks in shard 1/1, 12 done, 1668 to run on 10 workers
   150/1668  elapsed 28.2 min  eta 285.9 min
   200/1668  elapsed 32.4 min  eta 238.0 min
   250/1668  elapsed 34.5 min  eta 195.6 min
+  300/1668  elapsed 38.2 min  eta 174.3 min
+  350/1668  elapsed 40.6 min  eta 153.0 min
