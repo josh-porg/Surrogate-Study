@@ -1,0 +1,42 @@
+\section{Multi-fidelity modelling}
+\label{sec:mf}
+
+Most engineering analyses come with cheaper approximations: coarser meshes, lower-order physics, closed-form sizing
+rules. Peherstorfer, Willcox and Gunzburger classify methods that exploit them as \emph{adaptation}, \emph{fusion} and
+\emph{filtering}, and stress keeping the high-fidelity model in the loop for guarantees
+\cite{peherstorfer2018survey,peherstorfer2016optimal}; other reviews organise the surrogate side
+\cite{fernandezgodino2016review,brevault2020overview}.
+
+\paragraph{Correction (bridge) functions.} The oldest approach scales or shifts the low-fidelity model:
+$f_H\approx\beta(x)f_L+\delta(x)$, with $\beta$ from sensitivities \cite{chang1993sensitivity}, kriging
+\cite{gano2005hybrid} or trust-region model management that enforces first-order consistency
+\cite{alexandrov1998trust,alexandrov2001approximation}. The regression target of \cite[Sec.~14.3, App.~G]{poznanski2026towards}---the ratio of finite-element to
+closed-form thickness---is exactly a multiplicative bridge, an unnamed multi-fidelity model.
+
+\paragraph{Autoregressive co-kriging.} Kennedy and O'Hagan model each level as a scaled previous level plus an independent
+GP discrepancy \cite{kennedy2000predicting}; Forrester, S\'obester and Keane brought it to optimization
+\cite{forrester2007multi}; Le Gratiet and Garnier showed a recursive formulation gives the same predictor with
+independent, cheaper fits \cite{legratiet2014recursive}; Han and G\"ortz's hierarchical kriging uses the low-fidelity
+predictor as the trend \cite{han2012hierarchical}.
+
+\paragraph{Nonlinear fusion.} When fidelities are related nonlinearly, NARGP feeds the low-fidelity prediction into the
+high-fidelity kernel \cite{perdikaris2017nonlinear}, deep GPs generalise it \cite{cutajar2019deep}, and composite neural
+networks learn linear and nonlinear correlations in parallel \cite{meng2020composite}. Space mapping aligns inputs instead
+of outputs \cite{bandler1994space,koziel2008space}. For tree ensembles and generic learners, the simplest fusion---adding
+the low-fidelity prediction as an input feature---is natural but, to our knowledge, rarely benchmarked against
+co-kriging.
+
+\paragraph{When it helps.} Toal's guidance for multi-fidelity kriging is that fidelities must be strongly correlated
+(squared correlation around 0.9) and that roughly 10--80\% of the budget should go to low fidelity
+\cite{toal2015some}. Van Rijn and Schmitt show that correlation alone is a poor guide and propose ``error grids'' over the
+numbers of high- and low-fidelity samples, estimated by subsampling a single design \cite{vanrijn2021finding}, using the
+benchmark collection of \cite{vanrijn2020mf2}. The NATO AVT-354 group proposes analytical benchmarks spanning localised,
+multimodal, discontinuous and noisy behaviour together with global-accuracy and goal-oriented metrics
+\cite{mainini2022analytical,mainini2025framework}; cost-aware multi-fidelity acquisition extends Bayesian optimization
+\cite{kandasamy2016gaussian}. In hypersonic vehicle design, multi-fidelity GP surrogates with trajectory-informed and
+adjoint-guided sampling make coupled aero-thermal-trajectory optimization tractable
+\cite{needels2024trajectory,needels2024efficient}.
+
+What is missing is a comparison of multi-fidelity methods \emph{across learner families}, under matched cost, as a
+function of fidelity correlation, relationship type, cost ratio and budget split---and on a real problem where the
+low-fidelity model is available everywhere, as the closed-form sizing rule is in our finite-element data.

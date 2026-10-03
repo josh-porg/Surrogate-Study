@@ -1,0 +1,48 @@
+\section{Changing the domain: latent, sparse-basis and low-rank surrogates}
+\label{sec:latent}
+
+Data-driven reduced-order modelling succeeds by finding a basis in which dynamics are simple: proper orthogonal
+decomposition and dynamic mode decomposition find low-rank linear structure, SINDy finds a sparse dictionary
+representation \cite{brunton2016discovering}, and the SINDy autoencoder learns the coordinates and the sparse model
+jointly \cite{champion2019data}. Compressed and randomised DMD do not remove any stage; they compute the same
+decomposition from a sketch of the data, with cost set by the intrinsic rank rather than the ambient size
+\cite{erichson2019compressed,erichson2019randomized,halko2011finding}. The same ideas apply to static response surfaces,
+where they are scattered across communities that rarely cite each other.
+
+\paragraph{Linear input reduction.} Projection pursuit regression sums smooth functions of learned projections
+\cite{friedman1981projection}; active subspaces take the dominant eigenvectors of the expected gradient outer product
+\cite{constantine2015active}; polynomial ridge approximation fits the subspace and the polynomial jointly without
+gradients \cite{hokanson2018data}; GPs with built-in dimension reduction learn the projection inside the kernel
+\cite{tripathy2016gaussian}; random embeddings exploit low intrinsic dimension for optimization \cite{wang2016bayesian}.
+
+\paragraph{Co-learned nonlinear maps.} Deep kernel learning places a GP on the output of a neural feature map and trains
+both by marginal likelihood \cite{wilson2016deep}---the most direct form of ``learning the domain and the fit
+together''. Its weakness is decisive at engineering sample sizes: with many hyperparameters the marginal likelihood
+prefers to correlate all points, and the method can over-fit worse than a plain network unless treated fully
+Bayesianly \cite{ober2021promises}. Kernel flows learn kernels by a cross-validation-like criterion instead
+\cite{owhadi2019kernel}; input warping restricts the map to per-axis monotone transforms \cite{snoek2014input};
+Fourier features and spectral-mixture kernels learn spectral content
+\cite{tancik2020fourier,wilson2013gaussian}. Latent-space optimization with variational autoencoders works for
+structured inputs \cite{gomezbombarelli2018automatic}, but an autoencoder trained only on uniformly sampled inputs learns
+the sampling density, not the response; for static surrogates the map must be supervised.
+
+\paragraph{Sparse bases and compressed sensing.} If the response is sparse in a known basis, $\ell_1$ recovery needs
+samples in proportion to the sparsity rather than the basis size \cite{candes2006robust,donoho2006compressed}; for
+orthogonal polynomial bases this yields compressive-sampling polynomial chaos
+\cite{rauhut2012sparse,doostan2011non,hampton2015compressive}, and wavelets do the same for localised features
+\cite{donoho1994ideal}. The guarantees need random samples from the right measure, which couples the basis to the
+sampling design.
+
+\paragraph{Low rank: the singular value decomposition of a surface.} A bivariate function admits a Schmidt (functional
+SVD) expansion, the basis of two-dimensional Chebyshev technology \cite{townsend2013extension}; in higher dimension the
+tensor-train format stores a function with cost linear in dimension and learns it by cross approximation from adaptively
+chosen samples \cite{oseledets2011tensor,oseledets2010tt}, with continuous analogues for surrogates
+\cite{gorodetsky2019continuous}. Randomised Tucker and tensor-train decompositions compress structured grids
+\cite{minster2020randomized}; Nystr\"om and random-feature approximations compress kernel matrices
+\cite{williams2001using,rahimi2007random}; sketching compresses least squares \cite{woodruff2014sketching}. These are the
+static counterparts of compressed DMD: they accelerate an intermediate stage---for us, densification of the
+intermediate model onto a grid, and repeated refits of the scout---without changing what is computed.
+
+\paragraph{Automatic co-search.} Choosing a transform, a basis and a learner together is an instance of the combined
+algorithm selection and hyperparameter optimization problem of automated machine learning
+\cite{thornton2013auto,feurer2015efficient}; its selection bias must be controlled by nested validation.

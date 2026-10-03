@@ -1,0 +1,51 @@
+\section{Uncertainty estimates and the sampling they drive}
+\label{sec:uq}
+
+\subsection{Uncertainty estimators by family}
+Adaptive sampling needs a surrogate that knows where it is wrong. GPs provide a posterior variance in closed form
+\cite{rasmussen2006gaussian}; note, however, that for fixed hyperparameters this variance depends only on the input
+locations, not on the observed outputs, so a greedy maximum-variance rule is a space-filling design in disguise
+until hyperparameters are re-estimated. Other families need constructed estimates: bootstrap committees and query by
+committee \cite{seung1992query}; the jackknife and infinitesimal jackknife for random forests
+\cite{wager2014confidence}; quantile regression forests \cite{meinshausen2006quantile}; distributional boosting
+\cite{duan2020ngboost} and virtual ensembles for boosting \cite{malinin2021uncertainty}; Bayesian sums of trees
+\cite{chipman2010bart}; deep ensembles \cite{lakshminarayanan2017simple}, Monte Carlo dropout \cite{gal2016dropout},
+Laplace approximations \cite{daxberger2021laplace} and evidential heads \cite{amini2020deep,ulmer2023prior} for
+networks \cite{abdar2021review}; and model-agnostic conformal intervals \cite{angelopoulos2023gentle}. Tabular
+foundation models return predictive distributions directly \cite{hollmann2025tabpfn}. These estimators differ in
+calibration and, importantly for sampling, in \emph{shape}: a tree committee's spread is piecewise constant, so its
+maximiser is degenerate over whole cells.
+
+\subsection{Initial designs}
+Space-filling designs---Latin hypercubes \cite{mckay1979comparison}, maximin designs \cite{morris1995exploratory},
+low-discrepancy sequences \cite{sobol1967distribution,niederreiter1992random} and centroidal Voronoi tessellations
+\cite{du1999centroidal}---bound integration error through discrepancy and approximation error through fill distance
+\cite{wendland2004scattered}. Several large studies found the choice among them second-order: Williams and Cremaschi saw
+no significant difference between Halton, Sobol' and LHS \cite{williams2021novel}, and in high dimension no advanced
+scheme beat LHS for sparse PCE \cite{luthen2021sparse}. The more consequential comparison is space-filling versus
+\emph{independent random} sampling, which is the control most adaptive-sampling studies report, including \cite[App.~G]{poznanski2026towards}.
+
+\subsection{Adaptive sampling for global accuracy}
+Reviews of adaptive sampling for global metamodelling \cite{liu2018survey,garud2017design,settles2009active} and a
+replicable comparison for kriging \cite{fuhg2021state} catalogue the main criteria: maximum variance and active
+learning \cite{mackay1992information}; integrated variance reduction \cite{cohn1996active}; mutual information
+\cite{krause2008near}; expected improvement for global fit \cite{lam2008sequential}; expected prediction error
+\cite{liu2017efficient}; local-nonlinearity-weighted Voronoi exploration \cite{crombecq2011novel}; Taylor-expansion
+error indicators \cite{mo2017taylor}; and cross-validation-based criteria \cite{legratiet2014recursive}. Fuhg et al.\
+conclude that success depends on the problem and the goal of the analysis \cite{fuhg2021state}. Moustapha et al.\ make the
+same point for reliability, where 39 combinations of surrogate, reliability estimator, learning function and stopping
+rule were run on 20 problems: no strategy dominated, but feature-dependent recommendations emerged
+\cite{moustapha2022active}. Their modular decomposition is the template for our stage-swap ablation.
+
+\subsection{Sampling for a goal}
+When the goal is an optimum rather than a global fit, acquisition functions trade exploration for exploitation:
+probability of improvement \cite{kushner1964new}, expected improvement and EGO \cite{jones1998efficient}, confidence
+bounds with regret guarantees \cite{srinivas2010gaussian}, knowledge gradient \cite{frazier2009knowledge}, entropy
+search variants \cite{hennig2012entropy,wang2017max}, constrained variants \cite{gardner2014bayesian}, trust-region
+schemes for high dimension \cite{eriksson2019scalable}, random-forest and density-ratio surrogates
+\cite{hutter2011sequential,bergstra2011algorithms}, and stochastic RBF methods
+\cite{regis2007stochastic,regis2013combining}. When the goal is a boundary, as for reliability or for the feasible/
+infeasible and floor-bound regions of the duct-sizing problem of \cite[Sec.~14.3]{poznanski2026towards}, contour-targeting criteria apply
+\cite{bichon2008efficient,echard2011akmcs}. A pipeline that samples for global accuracy and then optimizes---the pipeline of \cite[Sec.~14.3]{poznanski2026towards}---
+therefore spends part of its budget where the optimizer will never go; whether that matters is an empirical
+question we test.

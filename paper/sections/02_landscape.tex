@@ -1,0 +1,94 @@
+\section{The landscape of surrogate models}
+\label{sec:landscape}
+
+\subsection{Lineages}
+Surrogate families descend from five traditions, and each inherited its home field's assumptions.
+
+\paragraph{Geostatistics $\rightarrow$ kriging $\rightarrow$ Gaussian processes.}
+Krige's regression corrections for gold-grade estimation on the Witwatersrand \cite{krige1951statistical} were
+formalised by Matheron as optimal linear prediction of a random function \cite{matheron1963principles}; Cressie traces
+the distinction between the two \cite{cressie1990origins}. Sacks, Welch, Mitchell and Wynn transplanted the method to
+deterministic computer codes, treating the code output as a realisation of a stochastic process
+\cite{sacks1989design}, which founded the design and analysis of computer experiments
+\cite{santner2003design,kleijnen2015design,gramacy2020surrogates}. The same predictor is the GP regression of machine
+learning \cite{rasmussen2006gaussian}. Extensions address trends (universal and blind kriging \cite{joseph2008blind}),
+gradients \cite{morris1993bayesian}, high dimension through partial least squares \cite{bouhlel2016improving},
+input-dependent and stochastic noise \cite{goldberg1998regression,ankenman2010stochastic}, scale
+\cite{titsias2009variational,gramacy2015local}, and non-stationarity by warping, partitioning or depth
+\cite{snoek2014input,gramacy2008bayesian,damianou2013deep}. The treed GP was itself motivated by a rocket-booster CFD
+experiment \cite{gramacy2008bayesian}.
+
+\paragraph{Approximation theory $\rightarrow$ splines, radial basis functions, sparse grids, rational functions.}
+Hardy's multiquadric for topographic surfaces \cite{hardy1971multiquadric} and Duchon's thin-plate splines
+\cite{duchon1977splines} began scattered-data approximation, now a mature theory with native-space error bounds
+\cite{wendland2004scattered,schaback1995error,fasshauer2007meshfree}; compactly supported kernels make it sparse
+\cite{wendland1995piecewise}. Tensor-product B-splines \cite{deboor2001practical} give smooth, cheap, differentiable
+representations on structured grids, at a cost exponential in dimension; Smolyak's construction
+\cite{smolyak1963quadrature,bungartz2004sparse} breaks that cost for functions of mixed smoothness. Chebyshev
+technology \cite{trefethen2013approximation} and rational approximation, revived by the AAA algorithm
+\cite{nakatsukasa2018aaa}, offer spectral accuracy for analytic functions and natural representation of pole-like
+features such as the $1/R$ collapse knee of our application.
+
+\paragraph{Statistics $\rightarrow$ regression, splines and additive models.}
+Response-surface methodology \cite{box1951experimental} fits low-order polynomials; sparse regression
+\cite{tibshirani1996regression} selects terms from large dictionaries, as in ALAMO \cite{cozad2014alamo} and, for
+dynamics, SINDy \cite{brunton2016discovering}. Smoothing splines are the GP posterior mean for a particular prior
+\cite{kimeldorf1970correspondence,wahba1990spline}; penalised B-splines (P-splines) fit splines directly to scattered,
+noisy data \cite{eilers1996flexible}; additive models and thin-plate regression splines scale them up
+\cite{hastie1990generalized,wood2003thin}; shape constraints encode monotonicity
+\cite{fritsch1980monotone,pya2015shape}. Friedman's MARS \cite{friedman1991multivariate} builds adaptive hinge bases
+that represent kinks exactly, and projection pursuit regression \cite{friedman1981projection} sums ridge functions
+of learned projections---an early learned change of basis (Section~\ref{sec:latent}).
+
+\paragraph{Machine learning $\rightarrow$ trees, ensembles, neural networks, foundation models.}
+Regression trees \cite{breiman1984classification} partition the input space into boxes; bagging them gives random
+forests \cite{breiman2001random,biau2016random}, boosting them gives gradient-boosting machines
+\cite{friedman2001greedy} and their engineered descendants \cite{chen2016xgboost,ke2017lightgbm,prokhorenkova2018catboost};
+Bayesian sums of trees give BART \cite{chipman2010bart}, which has been used with sequential design for computer
+experiments \cite{chipman2012sequential}. Linear-leaf model trees \cite{quinlan1992learning} and Mondrian forests
+\cite{lakshminarayanan2014mondrian} are less common variants. Neural surrogates range from shallow perceptrons to deep
+ensembles \cite{lakshminarayanan2017simple}, Bayesian networks \cite{mackay1992practical,neal1996bayesian,daxberger2021laplace},
+derivative-aware Sobolev training \cite{czarnecki2017sobolev}, Kolmogorov--Arnold networks with spline edges
+\cite{liu2024kan} and, most recently, tabular foundation models that perform Bayesian inference in context
+\cite{hollmann2025tabpfn}. Physics-informed networks and neural operators \cite{raissi2019physics,lu2021deeponet,li2021fourier}
+target field outputs and are outside our scalar-response scope. The polynomial neural networks of Ivakhnenko's group
+method of data handling \cite{ivakhnenko1971polynomial}---self-organising, validation-selected polynomial networks from
+the late 1960s---are a largely abandoned branch of the same tree.
+
+\paragraph{Physics and numerical analysis $\rightarrow$ spectral expansions and mapped models.}
+Polynomial chaos \cite{ghanem1991stochastic,xiu2002wiener} expands the response in orthogonal polynomials of the
+inputs; sparse variants recover it from few runs \cite{luthen2021sparse}. Space mapping
+\cite{bandler1994space,koziel2008space} aligns a cheap physics model with an expensive one rather than fitting data from
+scratch (Section~\ref{sec:mf}).
+
+Simple local methods---Shepard's inverse-distance weighting \cite{shepard1968two}, Sibson's natural-neighbour
+interpolation \cite{sibson1981brief}, moving least squares \cite{lancaster1981surfaces}, LOESS
+\cite{cleveland1979robust} and Lipschitz interpolation \cite{beliakov2006interpolation}---are mostly absent from
+engineering comparisons but are the right baselines: as the climate-emulation literature shows, simple methods can
+match or beat large models when noise is significant \cite{lutjens2024climatebench}.
+
+\subsection{What each field optimises for}
+The disagreement between fields is partly explained by what they benchmark on. Engineering comparisons
+\cite{jin2001comparative,simpson2001metamodels,wang2007review,viana2014metamodeling,alizadeh2020managing,kudela2022recent,yondo2018review}
+typically use smooth analytic functions, small samples, and deterministic outputs; GPs and RBFs win there, as they did in
+the synthetic-surface study of \cite[App.~G]{poznanski2026towards}. Williams and Cremaschi trained 16\,632 models of eight families on 99 functions of the Surjanovic--Bingham
+library across five shape classes and found the winner depended on shape: GP most often on valley, bowl and
+miscellaneous shapes, MARS on many-local-minima functions; the best single predictor of accuracy was a spacing
+statistic of the design, not a landscape feature \cite{williams2021novel,williams2021selection}. In tabular machine
+learning, Grinsztajn et al.\ isolated three mechanisms behind the trees' advantage: neural networks are biased toward
+overly smooth functions (smoothing the training target hurt trees and barely affected networks), are harmed more by
+uninformative inputs, and are rotation-invariant where the data are not
+\cite{grinsztajn2022tree,rahaman2019spectral,ng2004feature}. A stationary-kernel GP shares the first bias and, with an
+isotropic kernel, the third. In agent-based modelling, ragged simulator responses led Lamperti et al.\ to boosted trees
+precisely because kriging's smoothness assumptions ``collapse interesting patterns'' \cite{lamperti2018agent}. Process
+systems engineering, water resources, building energy, reliability, reservoir engineering, finance, turbomachinery and
+additive manufacturing each report their own mix
+\cite{bhosekar2018advances,mcbride2019overview,razavi2012review,asher2015review,westermann2019surrogate,moustapha2022active,bahrami2022proxy,ludkovski2023statistical,ruf2020neural,li2017review,hu2017uncertainty}.
+
+The common lesson of every large benchmark is that there is no universal winner but there are predictable ones
+\cite{jin2001comparative,williams2021novel,fuhg2021state,moustapha2022active,luthen2021sparse,neufang2024surrogate}.
+Two further lessons shape our design. Within-family configuration can matter as much as the choice of family---solver
+and sampler choices changed sparse-PCE errors by orders of magnitude \cite{luthen2021sparse}---so each family must be
+given its best configuration under an equal tuning budget. And ensembles of surrogates weighted by cross-validation
+error \cite{goel2007ensemble,viana2009multiple,wolpert1992stacked} hedge against picking the wrong family when the
+predictors of the right one are unavailable.

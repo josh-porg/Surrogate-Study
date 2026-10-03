@@ -1,0 +1,33 @@
+\section{Surrogate-based optimization and the accuracy fallacy}
+\label{sec:sbo}
+
+\paragraph{Optimizers.} Once a surrogate exists, any optimizer can be run on it: gradient-based interior-point and SQP
+methods \cite{wachter2006implementation,nocedal2006numerical,kraft1988software}; derivative-free local methods
+\cite{nelder1965simplex,powell1994direct,audet2006mesh}; deterministic global search \cite{jones1993lipschitzian}; and
+stochastic global methods \cite{storn1997differential,hansen2001completely,kennedy1995particle,wales1997global}.
+Surrogate-managed methods instead return to the true function: EGO \cite{jones1998efficient}, trust-region model
+management with provable convergence \cite{alexandrov1998trust}, SNOBFIT \cite{huyer2008snobfit}, stochastic-RBF methods
+\cite{regis2007stochastic,regis2013combining}, SMAC and TPE \cite{hutter2011sequential,bergstra2011algorithms}, and TuRBO
+\cite{eriksson2019scalable}. Surrogate-assisted evolutionary algorithms form a parallel literature
+\cite{jin2005comprehensive,jin2011surrogate}.
+
+\paragraph{Accuracy is not the objective.} Several independent results show that the most accurate surrogate is not
+reliably the one that produces the best decision. Eggensperger et al.\ found gradient boosting gave the lowest RMSE while
+random forests gave the highest rank correlation on all nine datasets, and that tree surrogates reproduced optimizer
+behaviour where GP surrogates sometimes did not \cite{eggensperger2015efficient,eggensperger2018efficient}. Williams and
+Cremaschi found MARS and GP best for approximation but random forests, SVR and GP most robust for surrogate-based
+optimization \cite{williams2021selection}. Loshchilov et al.\ use a surrogate that only ranks candidates, because
+comparison-based evolution strategies need nothing else \cite{loshchilov2012self}. Neufang et al.\ observed optimizer
+rankings change between test functions and chemical-process cases \cite{neufang2024surrogate}, and Lütjens et al.\
+found the ranking of climate emulators flipped with the noise level of the training data \cite{lutjens2024climatebench}.
+Theory explains why (Section~\ref{sec:theory}): the regret of the surrogate's optimum is bounded by the surrogate error on
+the near-optimal sublevel sets, not by its global mean-squared error, and gradient-based optimizers additionally depend
+on derivative accuracy.
+
+\paragraph{Benchmarks.} Test-function libraries---the Surjanovic--Bingham virtual library used here, the 175-function
+survey of Jamil and Yang, and the COCO/BBOB platform \cite{jamil2013literature,hansen2021coco}---classify functions by
+shape, modality, separability and conditioning; exploratory landscape analysis computes such features from samples
+\cite{mersmann2011exploratory,kerschke2019comprehensive} and supports automated algorithm selection. Benchmarking
+practice---performance and data profiles, multiple-problem statistics and their Bayesian alternatives
+\cite{dolan2002benchmarking,more2009benchmarking,demsar2006statistical,benavoli2017time,bartzbeielstein2020benchmarking}---and
+surrogate-based benchmark suites \cite{pfisterer2022yahpo} complete the toolkit.

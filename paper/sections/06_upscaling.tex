@@ -1,0 +1,25 @@
+\section{From learner to optimizer-ready surrogate}
+\label{sec:upscaling}
+
+A gradient-based optimizer such as an interior-point method \cite{wachter2006implementation} needs a surrogate that is
+cheap to evaluate and has well-behaved first and second derivatives. Many accurate learners fail one requirement: a
+GP's prediction costs $O(n)$ per point and its derivatives must be assembled; trees and forests are piecewise constant
+with zero gradient almost everywhere. A common engineering remedy, and the production pipeline of \cite[Sec.~14.3]{poznanski2026towards}, is a two-stage
+construction: fit an intermediate model to scattered, adaptively placed samples, densify it onto a structured grid, and
+interpolate the grid with tensor-product B-splines \cite{deboor2001practical}. Pozna\'nski \cite[App.~G]{poznanski2026towards} found the grid--spline step
+preserved GP accuracy and cut evaluation cost 19--32-fold, but tested a single grid resolution and interpolant.
+
+The literature offers several alternatives with different error and cost profiles. Smoothing splines and P-splines can
+be fitted directly to scattered noisy data, removing the intermediate model
+\cite{eilers1996flexible,wahba1990spline,wood2003thin}; multilevel B-spline approximation builds a $C^2$ surface from
+scattered data by coarse-to-fine lattice refinement \cite{lee1997scattered}; hierarchical and truncated hierarchical
+B-splines refine locally without a full tensor grid \cite{forsey1988hierarchical,giannelli2012thb}; Smolyak sparse grids
+reduce the grid size for mixed-smooth functions \cite{smolyak1963quadrature,bungartz2004sparse}; Chebyshev
+interpolation is spectrally accurate for analytic intermediates \cite{trefethen2013approximation}; low-rank compression
+of the densified grid (Section~\ref{sec:latent}) reduces storage and evaluation cost from exponential to linear in
+dimension \cite{minster2020randomized,oseledets2011tensor}. The error of any two-stage construction decomposes into the
+intermediate model's error plus the upscaling error; the second vanishes at the spline's approximation order only when
+the intermediate model is smooth. For a piecewise-constant intermediate such as a tree ensemble, refining the grid
+reproduces the staircase more faithfully---which may help accuracy and hurt a gradient-based optimizer at the same time,
+whereas a \emph{smoothing} upscaler acts as a regulariser. Whether upscaling can turn the most accurate but
+non-differentiable learner into the best optimizer-facing surrogate is, to our knowledge, untested.

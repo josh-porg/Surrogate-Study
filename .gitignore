@@ -1,0 +1,13 @@
+data/local/
+results/raw/
+__pycache__/
+*.pyc
+.venv/
+.idea/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz

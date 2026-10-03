@@ -1,0 +1,70 @@
+== samplers: min pairwise distance, n=32, d=2 (larger = better fill)
+  random         n= 32  min-dist=0.0269
+  lhs            n= 32  min-dist=0.0380
+  maximin_lhs    n= 32  min-dist=0.0659
+  sobol          n= 32  min-dist=0.0374
+  halton         n= 32  min-dist=0.0485
+  cvt            n= 32  min-dist=0.1277
+  tensor_grid    n= 36  min-dist=0.2000
+== acquisitions: GP scout on plateau_bump_d2, 12 -> 30 points, NRMSE of the final GP
+  max_variance   NRMSE=1.059    0.7s
+  qbc_committee  NRMSE=1.059    0.3s
+  imse_alc       NRMSE=0.933    0.4s
+  eigf           NRMSE=1.144    0.3s
+  mepe           NRMSE=0.799   20.8s
+  lola_voronoi   NRMSE=0.665    0.3s
+  seq_maximin    NRMSE=1.037    0.4s
+  random         NRMSE=1.040    0.2s
+  ei             NRMSE=0.769    0.6s
+  lcb            NRMSE=0.922    0.7s
+  u_function     NRMSE=0.939    0.5s
+== optimizers on the true function (unit cube), budget 600: regret f(x)-f*
+  branin    slsqp                  regret= 7.198e-11 nfev= 189   0.0s
+  branin    lbfgsb                 regret= 3.553e-15 nfev= 258   0.0s
+  branin    trust_constr           regret= 6.395e-14 nfev= 354   0.2s
+  branin    nelder_mead            regret= 7.336e-08 nfev= 441   0.0s
+  branin    cobyla                 regret= 9.328e-07 nfev= 360   0.2s
+  branin    direct                 regret=  2.94e-07 nfev= 607   0.0s
+  branin    differential_evolution regret= 1.769e-07 nfev= 600   0.0s
+  branin    cmaes                  regret=         0 nfev= 510   0.5s
+  branin    pso                    regret= 9.779e-07 nfev= 588   0.0s
+  branin    basin_hopping          regret= 3.553e-15 nfev= 204   0.0s
+  branin    ipopt_multistart       regret=         0 nfev= 662   2.7s
+  rastr     slsqp                  regret=      3.98 nfev= 299   0.0s
+  rastr     lbfgsb                 regret=      3.98 nfev= 318   0.0s
+  rastr     trust_constr           regret=      3.98 nfev= 606   0.2s
+  rastr     nelder_mead            regret=     4.975 nfev= 378   0.0s
+  rastr     cobyla                 regret=     0.995 nfev= 280   0.2s
+  rastr     direct                 regret=         0 nfev= 239   0.0s
+  rastr     differential_evolution regret=   0.04238 nfev= 600   0.0s
+  rastr     cmaes                  regret=    0.9405 nfev= 606   0.1s
+  rastr     pso                    regret=   0.01296 nfev= 588   0.0s
+  rastr     basin_hopping          regret=     0.995 nfev= 315   0.0s
+  rastr     ipopt_multistart       regret=     0.995 nfev= 603   0.0s
+  rosen_d5  slsqp                  regret= 1.468e-07 nfev= 620   0.0s
+  rosen_d5  lbfgsb                 regret= 5.144e-09 nfev= 762   0.0s
+  rosen_d5  trust_constr           regret=     3.931 nfev=1230   0.2s
+  rosen_d5  nelder_mead            regret=      10.5 nfev= 526   0.0s
+  rosen_d5  cobyla                 regret=     2.236 nfev= 409   0.3s
+  rosen_d5  direct                 regret=     13.92 nfev= 473   0.0s
+  rosen_d5  differential_evolution regret=      50.7 nfev= 600   0.0s
+  rosen_d5  cmaes                  regret=    0.9545 nfev= 608   0.0s
+  rosen_d5  pso                    regret=     3.822 nfev= 600   0.0s
+  rosen_d5  basin_hopping          regret= 3.212e-09 nfev= 900   0.0s
+  rosen_d5  ipopt_multistart       regret= 1.401e-15 nfev=1227   0.1s
+== multi-fidelity: 60 LF + 10 HF points (d=2), NRMSE on the HF function
+  mf_linear__smooth_trig_d2      r=+0.94  hf_only=0.061  bridge_mult=0.087  bridge_add=0.033  ar1_cokriging=0.031  hierarchical_kriging=0.031  nargp=0.022  feature_aug=0.469  space_mapping=0.261
+  mf_nonlinear__smooth_trig_d2   r=+0.95  hf_only=0.061  bridge_mult=0.988  bridge_add=0.629  ar1_cokriging=0.153  hierarchical_kriging=0.154  nargp=0.061  feature_aug=0.371  space_mapping=0.119
+  mf_shifted__smooth_trig_d2     r=+1.00  hf_only=0.061  bridge_mult=0.073  bridge_add=0.020  ar1_cokriging=0.007  hierarchical_kriging=0.011  nargp=0.011  feature_aug=0.380  space_mapping=0.059
+  mf_weak__smooth_trig_d2        r=+0.78  hf_only=0.061  bridge_mult=48.100  bridge_add=0.831  ar1_cokriging=0.028  hierarchical_kriging=0.029  nargp=0.054  feature_aug=0.594  space_mapping=0.236
+  mf2_forrester                  r=+0.72  hf_only=0.081  bridge_mult=0.373  bridge_add=0.063  ar1_cokriging=0.000  hierarchical_kriging=0.077  nargp=0.002  feature_aug=0.577  space_mapping=0.500
+  mf2_branin                     r=+0.18  hf_only=0.286  bridge_mult=39.439  bridge_add=0.252  ar1_cokriging=0.281  hierarchical_kriging=1.496  nargp=0.286  feature_aug=0.464  space_mapping=0.545
+== upscalers: GP and XGB intermediates on smooth_trig_d2 (n=40), value NRMSE and gradient NRMSE
+  gp   none              value=0.002  grad=0.011
+  gp   tensor_spline     value=0.002  grad=0.011
+  gp   smoothing_spline  value=0.002  grad=0.014
+  gp   pspline_direct    value=0.234  grad=0.807
+  xgb  none              value=0.183  grad=122.206
+  xgb  tensor_spline     value=0.189  grad=1.032
+  xgb  smoothing_spline  value=0.171  grad=0.496
+  xgb  pspline_direct    value=0.234  grad=0.807

@@ -1,0 +1,306 @@
+<title>Surrogate Pipeline Study Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=Public+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column of plan sections; experiments as a sequenced list with a dependency diagram and a to-scale compute chart. */
+:root{
+  --bg:#f7f8f8; --surface:#ffffff; --fg:#1b2428; --muted:#5b6a70; --line:#d9e0e2;
+  --accent:#1d5e7a; --accent-soft:#e3eef3; --warn:#9a5b12; --warn-soft:#f6ecdd; --ok:#2f6b3f;
+  --f-display:"Source Serif 4", Georgia, serif;
+  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121719; --surface:#1a2124; --fg:#e4ebee; --muted:#9aaab0; --line:#2c373b;
+  --accent:#7fb7d2; --accent-soft:#1d3440; --warn:#e2b16f; --warn-soft:#3a2c18; --ok:#8cc79b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121719; --surface:#1a2124; --fg:#e4ebee; --muted:#9aaab0; --line:#2c373b;
+  --accent:#7fb7d2; --accent-soft:#1d3440; --warn:#e2b16f; --warn-soft:#3a2c18; --ok:#8cc79b; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body)}
+.wrap{max-width:62rem;margin:0 auto;padding-inline:1.25rem;padding-block:2.5rem 4rem;display:grid;gap:2.75rem}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:2.1rem;font-weight:650}
+h2{font-size:1.45rem;font-weight:650}
+h3{font-size:1.08rem;font-weight:650}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 .74rem/1 var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--muted);font-size:1.05rem}
+header{display:grid;gap:.8rem}
+section{display:grid;gap:1rem}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+.endpoint{background:var(--accent-soft);border:1px solid var(--line);border-radius:6px;padding:1rem 1.2rem;display:grid;gap:.35rem}
+.endpoint .eq{font-family:var(--f-mono);font-size:.95rem}
+ol.principles{margin:0;padding-left:1.3rem;display:grid;gap:.45rem;max-width:72ch}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:.55rem .75rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.exps{display:grid;gap:.9rem}
+.exp{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:1rem;padding:1rem 1.1rem;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.exp .id{font:600 1.15rem/1 var(--f-mono);color:var(--accent);padding-top:.15rem}
+.exp .body{display:grid;gap:.45rem;min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:.35rem}
+.tag{font:600 .7rem/1 var(--f-mono);padding:.3rem .45rem;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.tag.fix{background:var(--warn-soft);color:var(--warn)}
+.exp ul{margin:0;padding-left:1.1rem;display:grid;gap:.2rem;font-size:.94rem}
+.gate{font-size:.9rem;color:var(--warn);font-weight:600}
+.mermaid{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1rem;overflow-x:auto;margin:0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1rem 1.1rem;display:grid;gap:.55rem}
+.bar-row{display:grid;grid-template-columns:3rem minmax(0,1fr) 6.5rem;gap:.75rem;align-items:center;font-size:.85rem}
+.bar-row .lbl{font-family:var(--f-mono);font-weight:600}
+.track{position:relative;height:.8rem;background:var(--accent-soft);border-radius:3px}
+.range{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:3px;opacity:.85}
+.bar-row .val{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}
+.where{font:600 .68rem/1 var(--f-mono);margin-left:.3rem;color:var(--muted)}
+.axis{display:grid;grid-template-columns:3rem minmax(0,1fr) 6.5rem;gap:.75rem;font-size:.72rem;color:var(--muted)}
+.axis .ticks{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.callout{border-left:3px solid var(--warn);background:var(--warn-soft);padding:.85rem 1rem;border-radius:0 6px 6px 0;display:grid;gap:.4rem;font-size:.94rem}
+.callout ul{margin:0;padding-left:1.1rem}
+.foot{color:var(--muted);font-size:.85rem}
+@media (max-width:560px){h1{font-size:1.7rem}.exp{grid-template-columns:1fr;gap:.4rem}.bar-row,.axis{grid-template-columns:2.6rem minmax(0,1fr) 5.4rem}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Surrogate pipeline paper · study part</span>
+  <h1>Study Plan: experiments E0 to E11</h1>
+  <p class="lede">Twelve experiments that test, correct and extend the surrogate study in Poznański (2026), M.S. thesis, University of Kansas, Sec. 14.3 and Appendix G. Every pipeline is scored by what it delivers to the design, not only by how well it fits.</p>
+  <div class="endpoint">
+    <span class="eyebrow">Primary end-point</span>
+    <span class="eq">regret = f(x̂) − f*,  x̂ = optimizer( surrogate( design within budget B ) )</span>
+    <span class="foot">Measured on the true function at matched simulation cost. RMSE, derivative error, rank fidelity on near-optimal regions and calibration are secondary metrics.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Rules for every run</h2>
+  <ol class="principles">
+    <li>Synthetic problems are scored against the noise-free truth on at least 10,000 Sobol' test points. Noisy cross-validation is shown only as the practitioner's view.</li>
+    <li>30 seeds with common random numbers: each seed gives every pipeline the same initial design, noise draw, test set and optimizer starts.</li>
+    <li>Every learner gets the same tuning budget by nested cross-validation, and its tuning cost is reported.</li>
+    <li>Simple baselines are always present: linear and quadratic response surfaces, inverse-distance weighting, k-nearest neighbours, plus random <em>and</em> Sobol' or maximin designs.</li>
+    <li>Hypotheses H1 to H8 are frozen before E3 starts. Any deviation is logged.</li>
+    <li>Each run is one configuration row with a content hash and a result file, so jobs can be stopped, resumed and split across machines.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Problem suite</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Block</th><th>Contents</th><th>d</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">P-VLSE2</td><td>The 32 Math 796 HW1 functions in the six Surjanovic–Bingham categories</td><td class="num">2</td><td>Continuity with prior work; visual checks</td></tr>
+      <tr><td class="mono">P-VLSEd</td><td>Scalable VLSE and BBOB functions: Rosenbrock, Rastrigin, Ackley, Levy, Griewank, Zakharov, Styblinski–Tang, Dixon–Price, Michalewicz</td><td class="num">3–10</td><td>Dimension scaling</td></tr>
+      <tr><td class="mono">P-ENG</td><td>Borehole, OTL circuit, piston, wing weight, Currin, Park</td><td class="num">2–10</td><td>Engineering-like responses</td></tr>
+      <tr><td class="mono">P-THESIS</td><td>The six thesis surfaces: smooth, collapse_knee, clamp_floor, anisotropic, oscillatory, cliff</td><td class="num">3</td><td>Direct comparison with Appendix G</td></tr>
+      <tr><td class="mono">P-FEAT</td><td>One-mechanism probes: true discontinuity, plateau or floor, rotated ridge, additive, low-rank product, Fourier-sparse, wavelet-local, dummy inputs</td><td class="num">2–10</td><td>Isolating why a method wins</td></tr>
+      <tr><td class="mono">P-MF</td><td>NATO AVT-354 multi-fidelity set, the <span class="mono">mf2</span> functions, and a tunable-correlation construction</td><td class="num">1–10</td><td>Multi-fidelity</td></tr>
+      <tr><td class="mono">R-FEA</td><td>Thesis cache: 901 coupled FEA runs (623 usable), closed-form <span class="mono">t_scalar</span> at every point, 15 coarse-mesh runs</td><td class="num">3</td><td>Engineering anchor</td></tr>
+      <tr><td class="mono">R-AIR</td><td>Aircraft performance data from Math 796: 5 outputs, stratified by engine type</td><td class="num">10–20</td><td>Second real dataset</td></tr>
+      <tr><td class="mono">D-LARGE</td><td>Analytic problems sampled at 10³–10⁵ points plus public regression sets, chosen and verified in E7</td><td class="num">5–20</td><td>Co-learning methods at the sample sizes they need</td></tr>
+    </tbody>
+  </table></div>
+  <p class="foot">Noise models: none, additive, multiplicative, heteroscedastic, heavy-tailed, and repeatable numerical noise. Levels: 0, 0.5, 1, 3 and 10 % of the response standard deviation.</p>
+</section>
+
+<section>
+  <h2>Strengths, weaknesses and blind problems</h2>
+  <p>Every method has at least one problem built to favour it and one built to hurt it, with the mechanism stated in advance. A blind set has no designed winner, so the results also show what wins where nobody predicted. A checker script enforces this; the full matrix is in <span class="mono">docs/PROBLEM_MATRIX.md</span>.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Example method</th><th>Should win on</th><th>Should lose on</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">gp</td><td>GP prior draw, smooth trig, anisotropic</td><td>axis step, nonstationary chirp, heavy-tailed noise, tree draw, regimes, n ≥ 10⁴</td><td>Stationary smooth prior, Gaussian likelihood, O(n³)</td></tr>
+      <tr><td class="mono">xgb</td><td>tree draw, regimes, dummy inputs</td><td>smooth trig, rotated ridge, n ≤ 2d</td><td>Boosted axis-aligned splits</td></tr>
+      <tr><td class="mono">cs_fourier</td><td>Fourier-sparse, thesis oscillatory</td><td>smooth non-periodic, axis step, monotone</td><td>Periodic basis rings at non-periodic edges</td></tr>
+      <tr><td class="mono">gmdh</td><td>quadratic, smooth trig</td><td>axis step, n ≤ 2d, heavy-tailed noise</td><td>Composed quadratics extrapolate badly</td></tr>
+      <tr><td class="mono">ar1_cokriging</td><td>linearly related fidelities</td><td>nonlinear relation, weak correlation</td><td>Kennedy–O'Hagan linear autoregression</td></tr>
+      <tr><td class="mono">direct</td><td>many local minima, steep drops</td><td>d ≥ 10</td><td>Deterministic global partitioning</td></tr>
+    </tbody>
+  </table></div>
+  <p class="foot">Blind set: random five-mechanism composite, oblique step, borehole, OTL circuit, piston, wing weight, the VLSE "other" class, and both real datasets. Optimization and sampling runs use randomly shifted instances, because many test optima sit at the box centre, where DIRECT and space-filling designs sample first.</p>
+</section>
+
+<section>
+  <h2>Implemented so far</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Component</th><th>Implemented</th><th>Planned</th><th>Includes</th></tr></thead>
+    <tbody>
+      <tr><td>Problems</td><td class="num">161 + 27 MF pairs</td><td class="num">—</td><td>All 32 HW1 functions with optima verified, scalable VLSE, engineering, thesis surfaces, 19 probe families, mf2</td></tr>
+      <tr><td>Learners</td><td class="num">41</td><td class="num">11</td><td>RSM 1951, Matheron kriging 1963, GMDH 1968, Shepard 1968, Hardy 1971, Duchon 1977, PPR, MLS, MARS, GP family, SMT kriging, forests, boosting, neural ensembles, KAN, DKL, sparse PCE, compressed sensing, active subspaces</td></tr>
+      <tr><td>Samplers</td><td class="num">7</td><td class="num">0</td><td>Random, LHS, maximin LHS, Sobol', Halton, CVT, tensor grid</td></tr>
+      <tr><td>Scout rules</td><td class="num">11</td><td class="num">0</td><td>Max variance, IMSE, EIGF, MEPE, LOLA-Voronoi, committee, maximin, EI, LCB, U-function, random</td></tr>
+      <tr><td>Multi-fidelity</td><td class="num">8</td><td class="num">1</td><td>Bridges, AR1 co-kriging, hierarchical kriging, NARGP, feature-augmented, space mapping</td></tr>
+      <tr><td>Upscalers</td><td class="num">4</td><td class="num">4</td><td>Tensor spline (thesis path), smoothing spline, direct P-spline</td></tr>
+      <tr><td>Optimizers</td><td class="num">11</td><td class="num">4</td><td>IPOPT, SLSQP, L-BFGS-B, trust-constr, Nelder–Mead, COBYLA, DIRECT, DE, CMA-ES, PSO, basin hopping</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Order of work</h2>
+  <pre class="mermaid">
+flowchart LR
+  E0[E0 Infrastructure] --> E1[E1 Thesis errata] --> E2[E2 Screening]
+  E2 --> E3[E3 Learners] --> E4[E4 GBT mechanisms]
+  E2 --> E5[E5 Scout x deliverable]
+  E2 --> E6[E6 Multi-fidelity]
+  E2 --> E7[E7 Change of basis]
+  E2 --> E8[E8 Upscaling] --> E9[E9 Optimization]
+  E3 --> E9
+  E9 --> E10[E10 Selection model] --> E11[E11 Real data]
+  </pre>
+  <p class="foot">E3 to E8 run in parallel once E2 fixes the shortlist.</p>
+</section>
+
+<section>
+  <h2>Experiments</h2>
+  <div class="exps">
+
+    <article class="exp"><div class="id">E0</div><div class="body">
+      <h3>Infrastructure and port check</h3>
+      <p>Problem library with gradients, known optima, fidelity variants and noise wrappers; learner registry; samplers; multi-fidelity wrappers; upscalers; optimizer harness; resumable runner; statistics and plots.</p>
+      <p class="gate">Gate: reproduce Appendix G Tables canonical_a/b and scout_knee with the original settings, within their confidence intervals, before any new result.</p>
+    </div></article>
+
+    <article class="exp"><div class="id">E1</div><div class="body">
+      <h3>Thesis errata</h3>
+      <p>Re-run Appendix G with the fixes and publish both versions side by side as a paper appendix.</p>
+      <div class="tags"><span class="tag fix">B-01 clean truth</span><span class="tag fix">B-02 Sobol' control</span><span class="tag fix">B-05 nested target choice</span><span class="tag fix">B-06 noise estimator</span><span class="tag fix">B-08 30 seeds</span><span class="tag fix">B-11 CIs on real cache</span><span class="tag fix">B-12 matched settings</span></div>
+      <p class="gate">Decision: does the GP still win every synthetic surface once the 3 % noise floor is removed?</p>
+    </div></article>
+
+    <article class="exp"><div class="id">E2</div><div class="body">
+      <h3>Screening</h3>
+      <p>Reference pipeline: Sobol' start, GP-variance scout, GP intermediate, 24-point cubic grid, IPOPT multistart. Swap one stage at a time over its full menu on 12 problems, 3 budgets, 2 noise levels, 10 seeds.</p>
+      <ul><li>Keep the top five per stage, every thesis method, and any method that wins on at least one problem class.</li><li>Measured timings replace the compute estimates below.</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E3</div><div class="body">
+      <h3>Learner study</h3>
+      <div class="tags"><span class="tag">RQ1</span><span class="tag">H1</span></div>
+      <p>About 12 surviving learners across all synthetic blocks, d up to 10, n from 5d to 300d, five noise levels and five noise types, 30 seeds.</p>
+      <ul><li>Learning curves and crossover maps showing where gradient-boosted trees overtake the GP.</li><li>Mixed-effects model of error against budget, noise, dimension and landscape features.</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E4</div><div class="body">
+      <h3>Why trees won on the FEA data</h3>
+      <div class="tags"><span class="tag">H3</span></div>
+      <p>On the feature probes, the FEA cache and the aircraft data: smooth the training target at increasing length-scales, rotate the inputs randomly, add dummy inputs, check GP hyperparameters hitting their bounds, and test residuals for heavy tails.</p>
+    </div></article>
+
+    <article class="exp"><div class="id">E5</div><div class="body">
+      <h3>Scout × deliverable</h3>
+      <div class="tags"><span class="tag">RQ2</span><span class="tag">H2</span></div>
+      <p>Full factorial of 16 scouts (including a frozen-hyperparameter GP, model-free sequential maximin, random and Sobol') against 7 deliverables, plus retrospective active learning on the FEA cache.</p>
+      <ul><li>Native pairings (scout and deliverable from the same family) reported separately from cross pairings.</li><li>Samples needed to reach a target, measured against a Sobol' design, not only random sampling.</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E6</div><div class="body">
+      <h3>Multi-fidelity</h3>
+      <div class="tags"><span class="tag">RQ3</span><span class="tag">H4</span></div>
+      <p>Bridge functions, AR1, recursive and hierarchical co-kriging, NARGP, multi-fidelity deep GP and neural nets, feature-augmented trees and nets, and space mapping. Fidelity correlation 0.5–0.99, linear or nonlinear relation, cost ratio 3–1000, low-fidelity budget share 0–80 %, all at matched cost.</p>
+      <ul><li>Error grids per learner family and maps of where multi-fidelity pays.</li><li>On the FEA cache: does the thesis TMF target already capture the gain from <span class="mono">t_scalar</span>?</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E7</div><div class="body">
+      <h3>Change of basis and co-learning</h3>
+      <div class="tags"><span class="tag">H8</span></div>
+      <p>Projection pursuit, active-subspace GP, polynomial ridge, warped GP, deep kernel learning in four training variants, static SINDy autoencoder, compressed sensing in Fourier, Chebyshev, Legendre and wavelet bases, functional SVD, tensor-train cross, and automatic co-search.</p>
+      <ul><li>Each feature probe is paired with the basis it favours and the bases it does not.</li><li>Learned encoders are also tested on the large datasets (10³–10⁵ points), where they should work.</li><li>Compression sub-study: randomized SVD and tensor-train on the upscaling grid, Nyström scouts, speed against error up to d = 10.</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E8</div><div class="body">
+      <h3>Upscaling</h3>
+      <div class="tags"><span class="tag">RQ4</span><span class="tag">H5</span></div>
+      <p>Grid sizes 6–48 per axis with four interpolants, multilevel B-splines, THB-splines, direct P-splines, Smolyak sparse grids, Chebyshev, network distillation and compressed grids, applied to smooth and rough intermediate models.</p>
+      <p>Key question: can a smoothing upscaler turn gradient-boosted trees into a good surrogate for a gradient-based optimizer?</p>
+    </div></article>
+
+    <article class="exp"><div class="id">E9</div><div class="body">
+      <h3>Optimization on the surrogate</h3>
+      <div class="tags"><span class="tag">RQ5</span><span class="tag">RQ6</span><span class="tag">H6</span><span class="tag">H7</span></div>
+      <p>Surrogates from E3 and E8 against 11 optimizers (IPOPT, SLSQP, L-BFGS-B, trust-constr, Nelder–Mead, COBYLA, DIRECT, DE, CMA-ES, PSO, basin hopping), plus loops that query the true function (EGO, LCB, TuRBO, random-forest EI, DYCORS, trust-region model management).</p>
+      <ul><li>Does the RMSE ranking predict the regret ranking, per optimizer class?</li><li>At what simulation cost per run does each level of sophistication pay off?</li></ul>
+    </div></article>
+
+    <article class="exp"><div class="id">E10</div><div class="body">
+      <h3>Selection model</h3>
+      <div class="tags"><span class="tag">RQ7</span></div>
+      <p>Predict the best pipeline from features of the initial design only: landscape features, fill distance, estimated smoothness and anisotropy, noise estimate, fidelity correlation, d, n and cost. Validated leaving whole problems and whole problem classes out, then blind on the real data.</p>
+    </div></article>
+
+    <article class="exp"><div class="id">E11</div><div class="body">
+      <h3>Real-data transfer</h3>
+      <div class="tags"><span class="tag">RQ8</span></div>
+      <p>FEA cache and aircraft data: 30 repeats of nested cross-validation, retrospective active learning, multi-fidelity with <span class="mono">t_scalar</span>, the E4 diagnostics, and an optimization proxy that ranks the chosen design among held-out runs.</p>
+    </div></article>
+
+  </div>
+</section>
+
+<section>
+  <h2>Compute</h2>
+  <div class="chart" role="img" aria-label="Estimated CPU-hours per experiment, low to high range">
+    <div class="axis"><span></span><div class="ticks"><span>0</span><span>300</span><span>600</span><span>900</span><span>1200 CPU-h</span></div><span></span></div>
+    <div class="bar-row"><span class="lbl">E0</span><div class="track"><div class="range" style="left:0.17%;width:0.25%"></div></div><span class="val">2–5<span class="where">laptop</span></span></div>
+    <div class="bar-row"><span class="lbl">E1</span><div class="track"><div class="range" style="left:0.42%;width:0.83%"></div></div><span class="val">5–15<span class="where">laptop</span></span></div>
+    <div class="bar-row"><span class="lbl">E2</span><div class="track"><div class="range" style="left:3.33%;width:3.33%"></div></div><span class="val">40–80<span class="where">either</span></span></div>
+    <div class="bar-row"><span class="lbl">E3</span><div class="track"><div class="range" style="left:41.67%;width:25%"></div></div><span class="val">500–800<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E4</span><div class="track"><div class="range" style="left:1.67%;width:1.67%"></div></div><span class="val">20–40<span class="where">laptop</span></span></div>
+    <div class="bar-row"><span class="lbl">E5</span><div class="track"><div class="range" style="left:50%;width:50%"></div></div><span class="val">600–1200<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E6</span><div class="track"><div class="range" style="left:25%;width:25%"></div></div><span class="val">300–600<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E7</span><div class="track"><div class="range" style="left:25%;width:41.67%"></div></div><span class="val">300–800<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E8</span><div class="track"><div class="range" style="left:8.33%;width:8.33%"></div></div><span class="val">100–200<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E9</span><div class="track"><div class="range" style="left:25%;width:25%"></div></div><span class="val">300–600<span class="where">CRC</span></span></div>
+    <div class="bar-row"><span class="lbl">E10–11</span><div class="track"><div class="range" style="left:0.83%;width:1.67%"></div></div><span class="val">10–30<span class="where">laptop</span></span></div>
+  </div>
+  <p>Total estimate: about 2,200 to 4,400 CPU-hours. These are estimates until E0 and E2 measure real fit times. The laptop's 12 threads give roughly 250 CPU-hours per day, so it handles E0–E2, E4, E10 and E11. The rest runs on KU CRC: the <span class="mono">sixhour</span> partition for many short array tasks (each shard under 5.5 hours), and <span class="mono">math</span> for longer jobs. Each shard writes its own results file, so killed jobs are simply resubmitted.</p>
+  <div class="callout">
+    <strong>Needed from you before cluster jobs can be submitted from here</strong>
+    <ul>
+      <li>KU VPN connected. The login node <span class="mono">hpc.crc.ku.edu</span> timed out from this machine off-campus.</li>
+      <li>Your CRC username.</li>
+      <li>Key-based SSH set up with <span class="mono">ssh-copy-id</span>. Claude will not type your password or answer Duo prompts.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Milestones</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Milestone</th><th>Done when</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">M1 · E0</td><td>Thesis tables reproduced within their intervals; timing table measured</td></tr>
+      <tr><td class="mono">M2 · E1</td><td>Errata tables written; decision on the GP claim</td></tr>
+      <tr><td class="mono">M3 · E2</td><td>Shortlist and hypotheses frozen; compute budget measured</td></tr>
+      <tr><td class="mono">M4 · E3–E8</td><td>All result files in; first figures</td></tr>
+      <tr><td class="mono">M5 · E9–E11</td><td>Regret analysis, selection model and real-data transfer complete</td></tr>
+      <tr><td class="mono">M6 · Draft v1</td><td>Study sections written, review tied to results, draft sent to Dr Alonso and Dr Needels</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>What goes into the paper</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Paper element</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Appendix revisiting Poznański (2026), with corrected tables</td><td class="mono">E1</td></tr>
+      <tr><td>Learning curves and GP/GBT crossover maps</td><td class="mono">E3</td></tr>
+      <tr><td>Mechanism diagnostics: smoothing, rotation, dummy inputs</td><td class="mono">E4</td></tr>
+      <tr><td>Scout × deliverable heat map, native against cross</td><td class="mono">E5</td></tr>
+      <tr><td>Multi-fidelity error grids and where they pay</td><td class="mono">E6</td></tr>
+      <tr><td>Basis-match matrix; compression speed against error</td><td class="mono">E7</td></tr>
+      <tr><td>Upscaling error decomposition and its effect on regret</td><td class="mono">E8</td></tr>
+      <tr><td>RMSE rank against regret rank; cost crossover</td><td class="mono">E9</td></tr>
+      <tr><td>Selection rules from initial-design features</td><td class="mono">E10</td></tr>
+      <tr><td>Real-data transfer section</td><td class="mono">E11</td></tr>
+    </tbody>
+  </table></div>
+  <p class="foot">Source of truth: <span class="mono">docs/STUDY_PLAN.md</span> in the SurrogatePaper repository. Research questions and hypotheses are defined in <span class="mono">docs/STUDY.md</span>.</p>
+</section>
+
+</div>

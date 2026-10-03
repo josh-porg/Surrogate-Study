@@ -1,0 +1,144 @@
+# Strength / weakness / blind coverage matrix.
+#
+# For every method: `favored_by` = problems or conditions where theory or its design says it should do well,
+# `hurt_by` = where it should do badly, `why` = the mechanism. Ids refer to
+#   - a probe base name in surr/problems/probes.py (exists as <id>_d2, _d5, _d10), e.g. axis_step
+#   - a VLSE shape category (bowl_shaped, many_local_minima, plate_shaped, valley_shaped, steep_ridges_and_drops, other)
+#   - a full problem name (e.g. thesis_oscillatory, borehole)
+#   - a condition in surr/problems/__init__.py CONDITIONS (noise_*, n_*, d_high, mf_*, real_*)
+# check_coverage.py verifies: every id exists; every implemented or planned method has >= 1 favored and >= 1 hurt;
+# the blind set is non-empty and every blind problem has no method declaring it as favoured.
+# These are a-priori expectations, frozen before E3 (STUDY_PLAN principle 5); results may contradict them.
+
+blind:
+  - composite          # random mixture of five mechanisms
+  - oblique_step       # hurts trees and smooth bases alike
+  - borehole
+  - otlcircuit
+  - piston
+  - wingweight
+  - other              # VLSE "other" shape class
+  - real_fea
+  - real_air
+
+learners:
+  # ── classical / discontinued ───────────────────────────────────────────────────────────
+  rsm2:            {favored_by: [quadratic, bowl_shaped, n_tiny], hurt_by: [axis_step, fourier_sparse, many_local_minima], why: "global quadratic; exact on quadratics, cannot bend further"}
+  ok_variogram:    {favored_by: [gp_draw, smooth_trig], hurt_by: [rotated_ridge, uninformative_inputs, nonstationary], why: "isotropic stationary covariance"}
+  gmdh:            {favored_by: [quadratic, smooth_trig], hurt_by: [axis_step, n_tiny, noise_heavytail], why: "composed quadratics; unstable extrapolation, needs split data"}
+  idw:             {favored_by: [monotone, n_tiny], hurt_by: [quadratic, rotated_ridge, d_high], why: "weighted average; flat spots at data, distance-based"}
+  rbf_mq:          {favored_by: [smooth_trig, gp_draw], hurt_by: [axis_step, noise_numerical, n_large], why: "global smooth interpolant; Gibbs at jumps; O(n^3)"}
+  rbf_tps:         {favored_by: [smooth_trig, additive], hurt_by: [axis_step, uninformative_inputs, n_large], why: "isotropic bending-energy minimiser"}
+  ppr:             {favored_by: [rotated_ridge, additive], hurt_by: [lowrank_product, axis_step], why: "sum of ridge functions of learned projections"}
+  mls:             {favored_by: [smooth_trig, quadratic], hurt_by: [d_high, axis_step], why: "local quadratic fits; needs many neighbours in high d"}
+  knn:             {favored_by: [tree_draw, n_large], hurt_by: [smooth_trig, d_high, uninformative_inputs], why: "piecewise-constant local average, distance-based"}
+  cart:            {favored_by: [axis_step, tree_draw], hurt_by: [smooth_trig, rotated_ridge, nn_draw], why: "one axis-aligned partition"}
+  mars:            {favored_by: [kink_floor, thesis_clamp_floor, additive], hurt_by: [fourier_sparse, oblique_step], why: "adaptive hinge basis; kinks exact, oscillation costly"}
+  lipschitz:       {favored_by: [monotone, n_tiny], hurt_by: [smooth_trig, d_high], why: "worst-case optimal; ignores smoothness beyond Lipschitz"}
+  delaunay_linear: {favored_by: [kink_floor, n_large], hurt_by: [d_high, smooth_trig], why: "piecewise linear on simplices; infeasible beyond d~6"}
+  # ── kernel / GP mainstream ─────────────────────────────────────────────────────────────
+  gp:              {favored_by: [gp_draw, smooth_trig, thesis_anisotropic], hurt_by: [axis_step, nonstationary, noise_heavytail, n_large, tree_draw, regime], why: "stationary smooth prior, Gaussian likelihood, O(n^3)"}
+  gp_se:           {favored_by: [smooth_trig, quadratic], hurt_by: [kink_floor, axis_step], why: "infinitely smooth prior over-smooths kinks"}
+  smt_krg:         {favored_by: [gp_draw, smooth_trig], hurt_by: [axis_step, n_large], why: "aerospace-standard kriging (same prior class as gp)"}
+  smt_kpls:        {favored_by: [rotated_ridge, d_high], hurt_by: [nonstationary, axis_step], why: "PLS-projected length-scales for high d"}
+  hetgp:           {favored_by: [noise_hetero], hurt_by: [noise_none, n_tiny], why: "learns input-dependent noise; wasteful without it"}
+  local_gp:        {favored_by: [nonstationary, n_large], hurt_by: [n_tiny, smooth_trig], why: "local neighbourhoods; global smoothness unused"}
+  treed_gp:        {favored_by: [regime, thesis_clamp_floor, nonstationary], hurt_by: [rotated_ridge, n_tiny], why: "axis-aligned partition + local GPs"}
+  krr:             {favored_by: [smooth_trig, gp_draw], hurt_by: [axis_step, uninformative_inputs], why: "isotropic kernel, no ARD"}
+  svr:             {favored_by: [noise_heavytail, smooth_trig], hurt_by: [uninformative_inputs, n_tiny], why: "epsilon-insensitive loss robust to outliers; isotropic"}
+  # ── trees / ensembles ──────────────────────────────────────────────────────────────────
+  rf:              {favored_by: [tree_draw, axis_step, uninformative_inputs], hurt_by: [smooth_trig, rotated_ridge, n_tiny, gp_draw], why: "averaged axis-aligned partitions"}
+  extratrees:      {favored_by: [axis_step, uninformative_inputs], hurt_by: [rotated_ridge, n_tiny], why: "randomised splits smooth the average slightly"}
+  qrf:             {favored_by: [noise_hetero, noise_heavytail, axis_step], hurt_by: [smooth_trig, n_tiny], why: "conditional distribution from leaf weights"}
+  xgb:             {favored_by: [tree_draw, regime, uninformative_inputs], hurt_by: [smooth_trig, rotated_ridge, n_tiny], why: "boosted axis-aligned trees"}
+  lgbm:            {favored_by: [tree_draw, n_large], hurt_by: [n_tiny, smooth_trig], why: "leaf-wise boosting; needs data"}
+  catboost:        {favored_by: [tree_draw, noise_additive], hurt_by: [smooth_trig, rotated_ridge], why: "symmetric trees + ordered boosting; robust defaults"}
+  ngboost:         {favored_by: [noise_hetero], hurt_by: [smooth_trig, n_tiny], why: "distributional boosting"}
+  gbt_committee:   {favored_by: [axis_step, tree_draw], hurt_by: [smooth_trig, thesis_oscillatory], why: "thesis scout model; piecewise-constant spread"}
+  # ── neural ─────────────────────────────────────────────────────────────────────────────
+  mlp_ens:         {favored_by: [nn_draw, rotated_ridge, n_large], hurt_by: [fourier_sparse, uninformative_inputs, n_tiny], why: "spectral bias; rotation invariant; data hungry"}
+  mc_dropout:      {favored_by: [nn_draw, n_large], hurt_by: [n_tiny, fourier_sparse], why: "one network; dropout UQ is coarse"}
+  kan:             {favored_by: [additive, nn_draw], hurt_by: [n_tiny, d_high], why: "learnable univariate spline edges (Kolmogorov-Arnold form)"}
+  dkl:             {favored_by: [rotated_ridge, n_large], hurt_by: [n_tiny, n_small], why: "learned feature map + GP; marginal likelihood over-fits at small n (Ober 2021)"}
+  tabpfn:          {favored_by: [n_small, tree_draw], hurt_by: [n_large, d_high], why: "in-context prior up to ~1e4 points; O(n^2) attention"}
+  # ── spectral / change of basis (F10) ───────────────────────────────────────────────────
+  pce_lars:        {favored_by: [quadratic, smooth_trig, additive], hurt_by: [axis_step, pole_knee, kink_floor, regime], why: "global polynomials; Gibbs at jumps, slow on poles"}
+  cs_fourier:      {favored_by: [fourier_sparse, thesis_oscillatory], hurt_by: [smooth_trig, axis_step, monotone], why: "periodic Fourier basis; non-periodic edges ring"}
+  cs_cosine:       {favored_by: [smooth_trig, additive], hurt_by: [fourier_sparse, axis_step], why: "non-periodic cosine basis; periodic sines are not sparse in it"}
+  as_gp:           {favored_by: [rotated_ridge, d_high], hurt_by: [additive, axis_step], why: "projection onto top gradient directions"}
+  poly_ridge:      {favored_by: [rotated_ridge], hurt_by: [additive, lowrank_product], why: "single learned projection + polynomial"}
+  # ── ensembles ──────────────────────────────────────────────────────────────────────────
+  ens_press:       {favored_by: [regime, kink_floor], hurt_by: [n_tiny], why: "CV-weighted hedge; CV noisy at tiny n"}
+  # ── planned learners ───────────────────────────────────────────────────────────────────
+  natural_neighbor: {favored_by: [kink_floor, n_small], hurt_by: [d_high], why: "Voronoi-based C1 interpolation"}
+  smolyak:         {favored_by: [additive, smooth_trig], hurt_by: [axis_step, rotated_ridge], why: "sparse grid; mixed smoothness"}
+  bart:            {favored_by: [tree_draw, regime, noise_additive], hurt_by: [smooth_trig], why: "Bayesian sum of trees"}
+  sparse_gp:       {favored_by: [n_large, smooth_trig], hurt_by: [n_tiny, axis_step], why: "inducing-point GP"}
+  tt_cross:        {favored_by: [lowrank_product, additive, d_high], hurt_by: [rotated_ridge, axis_step], why: "low tensor rank in the given axes"}
+  fsvd2d:          {favored_by: [lowrank_product], hurt_by: [rotated_ridge], why: "functional SVD; rank depends on orientation"}
+  sindy_ae_static: {favored_by: [rotated_ridge, n_large], hurt_by: [n_tiny], why: "learned latent + sparse dictionary"}
+  kernel_flow_gp:  {favored_by: [nonstationary, n_small], hurt_by: [n_tiny], why: "kernel learned by sub-sampling criterion"}
+  warped_gp:       {favored_by: [pole_knee, nonstationary], hurt_by: [axis_step], why: "per-axis monotone input warping"}
+  sobolev_mlp:     {favored_by: [smooth_trig, n_small], hurt_by: [axis_step], why: "fits values and gradients"}
+  aaa_rational:    {favored_by: [pole_knee], hurt_by: [axis_step, d_high], why: "rational approximant captures poles"}
+samplers:          # initial designs
+  random:          {favored_by: [fourier_sparse], hurt_by: [plateau_bump, n_tiny], why: "i.i.d.; needed for compressed-sensing guarantees, poor fill"}
+  lhs:             {favored_by: [additive], hurt_by: [plateau_bump], why: "stratified margins"}
+  maximin_lhs:     {favored_by: [smooth_trig, gp_draw], hurt_by: [fourier_sparse], why: "best fill distance; regular structure can alias"}
+  sobol:           {favored_by: [smooth_trig, n_large], hurt_by: [n_tiny], why: "low discrepancy at powers of two"}
+  halton:          {favored_by: [smooth_trig], hurt_by: [d_high], why: "low discrepancy; correlated in high d"}
+  cvt:             {favored_by: [gp_draw, smooth_trig], hurt_by: [d_high], why: "centroidal Voronoi; costly in high d"}
+  tensor_grid:     {favored_by: [lowrank_product], hurt_by: [d_high, uninformative_inputs], why: "thesis original; m^d points, collapses onto projections"}
+acquisitions:      # adaptive (scout) rules
+  max_variance:    {favored_by: [smooth_trig, gp_draw], hurt_by: [plateau_bump, thesis_oscillatory], why: "y-independent at fixed hyper-parameters (space filling)"}
+  imse_alc:        {favored_by: [smooth_trig], hurt_by: [plateau_bump], why: "integrated variance reduction"}
+  eigf:            {favored_by: [multiscale, plateau_bump], hurt_by: [noise_heavytail], why: "local variation from nearest neighbours"}
+  mepe:            {favored_by: [multiscale, thesis_collapse_knee], hurt_by: [noise_additive], why: "cross-validation error weighted exploration"}
+  lola_voronoi:    {favored_by: [multiscale, axis_step], hurt_by: [d_high], why: "local nonlinearity x Voronoi volume"}
+  qbc_committee:   {favored_by: [axis_step, regime], hurt_by: [smooth_trig], why: "model disagreement; piecewise-constant for trees"}
+  random:          {favored_by: [fourier_sparse], hurt_by: [plateau_bump, multiscale], why: "unscouted control (thesis); i.i.d. picks from the pool"}
+  seq_maximin:     {favored_by: [smooth_trig, fourier_sparse], hurt_by: [plateau_bump, multiscale], why: "model-free space filling"}
+  ei:              {favored_by: [bowl_shaped, valley_shaped], hurt_by: [many_local_minima, fourier_sparse], why: "optimisation-directed"}
+  lcb:             {favored_by: [bowl_shaped], hurt_by: [plateau_bump], why: "optimistic exploration"}
+  u_function:      {favored_by: [regime, axis_step], hurt_by: [smooth_trig], why: "boundary-directed (feasible/floor-bound edges)"}
+multifidelity:
+  hf_only:         {favored_by: [mf_weak], hurt_by: [mf_linear], why: "ignores the low fidelity"}
+  bridge_add:      {favored_by: [mf_shifted, mf_linear], hurt_by: [mf_nonlinear, mf_weak], why: "f_H = f_L + delta(x); fails when the relation is multiplicative or nonlinear"}
+  bridge_mult:     {favored_by: [mf_linear], hurt_by: [mf_shifted, mf_nonlinear], why: "f_H = beta(x) f_L (the thesis TMF target)"}
+  ar1_cokriging:   {favored_by: [mf_linear], hurt_by: [mf_nonlinear, mf_weak], why: "Kennedy-O'Hagan linear autoregression"}
+  hierarchical_kriging: {favored_by: [mf_linear], hurt_by: [mf_nonlinear], why: "LF predictor as trend"}
+  nargp:           {favored_by: [mf_nonlinear], hurt_by: [mf_weak, n_tiny], why: "GP over (x, f_L(x))"}
+  mf_nn:           {favored_by: [mf_nonlinear, n_large], hurt_by: [n_tiny], why: "composite linear + nonlinear networks"}
+  feature_aug:     {favored_by: [mf_nonlinear], hurt_by: [mf_linear, smooth_trig], why: "trees split on the LF prediction"}
+  space_mapping:   {favored_by: [mf_shifted], hurt_by: [mf_nonlinear], why: "input alignment"}
+upscalers:
+  none:            {favored_by: [smooth_trig], hurt_by: [axis_step], why: "raw learner passed to the optimizer"}
+  tensor_spline:   {favored_by: [smooth_trig, thesis_smooth], hurt_by: [d_high, axis_step], why: "thesis production path; m^d grid"}
+  smoothing_spline: {favored_by: [tree_draw, noise_numerical], hurt_by: [axis_step], why: "low-pass filter over a rough intermediate"}
+  pspline_direct:  {favored_by: [additive, noise_additive], hurt_by: [d_high, axis_step], why: "skips the intermediate model"}
+  mba:             {favored_by: [smooth_trig, multiscale], hurt_by: [d_high], why: "multilevel lattices"}
+  thb:             {favored_by: [multiscale, plateau_bump], hurt_by: [d_high], why: "local refinement"}
+  smolyak_grid:    {favored_by: [additive, d_high], hurt_by: [axis_step, rotated_ridge], why: "mixed smoothness"}
+  tt_grid:         {favored_by: [lowrank_product, d_high], hurt_by: [rotated_ridge], why: "compressed grid, rank in given axes"}
+optimizers:
+  ipopt_multistart: {favored_by: [bowl_shaped, smooth_trig], hurt_by: [many_local_minima, axis_step], why: "second-order local; needs derivatives"}
+  slsqp:           {favored_by: [bowl_shaped, plate_shaped], hurt_by: [many_local_minima], why: "SQP local"}
+  lbfgsb:          {favored_by: [bowl_shaped, valley_shaped], hurt_by: [axis_step, many_local_minima], why: "quasi-Newton bound-constrained"}
+  trust_constr:    {favored_by: [bowl_shaped, smooth_trig], hurt_by: [many_local_minima, axis_step], why: "SciPy trust-region interior point; local, gradient-based"}
+  nelder_mead:     {favored_by: [plate_shaped, kink_floor], hurt_by: [d_high, valley_shaped], why: "derivative-free simplex"}
+  cobyla:          {favored_by: [kink_floor], hurt_by: [d_high], why: "linear-model trust region"}
+  direct:          {favored_by: [many_local_minima, steep_ridges_and_drops], hurt_by: [d_high], why: "deterministic global partitioning"}
+  differential_evolution: {favored_by: [many_local_minima, axis_step], hurt_by: [valley_shaped], why: "population; separable-friendly"}
+  cmaes:           {favored_by: [valley_shaped, rotated_ridge], hurt_by: [plateau_bump], why: "learns covariance; rotation invariant"}
+  pso:             {favored_by: [many_local_minima], hurt_by: [valley_shaped], why: "swarm"}
+  basin_hopping:   {favored_by: [many_local_minima, bowl_shaped], hurt_by: [plateau_bump], why: "perturb + local"}
+  adam:            {favored_by: [noise_numerical, smooth_trig], hurt_by: [valley_shaped, many_local_minima], why: "adaptive first-order steps; robust to gradient noise, slow on ill-conditioned valleys"}
+  sgd_momentum:    {favored_by: [noise_additive, bowl_shaped], hurt_by: [valley_shaped, plateau_bump], why: "heavy-ball SGD; needs stochastic gradients to beat quasi-Newton"}
+  bb_gd:           {favored_by: [bowl_shaped, smooth_trig], hurt_by: [noise_numerical, many_local_minima], why: "Barzilai-Borwein steps; superlinear-like on smooth convex, unstable with noisy gradients"}
+  robbins_monro:   {favored_by: [noise_additive], hurt_by: [valley_shaped, d_high], why: "1951 stochastic approximation; a/k gains converge slowly but surely under noise"}
+  kiefer_wolfowitz: {favored_by: [noise_additive, kink_floor], hurt_by: [d_high], why: "1952 finite-difference SA; 2d evaluations per step"}
+  spsa:            {favored_by: [noise_additive, d_high], hurt_by: [valley_shaped, plateau_bump], why: "simultaneous perturbation; 2 evaluations per step regardless of d"}
+  ego:             {favored_by: [bowl_shaped, smooth_trig], hurt_by: [d_high, many_local_minima], why: "queries f; GP-EI"}
+  turbo:           {favored_by: [d_high, valley_shaped], hurt_by: [n_tiny], why: "trust-region BO"}
+  dycors:          {favored_by: [d_high, many_local_minima], hurt_by: [plateau_bump], why: "stochastic RBF + coordinate perturbation"}
+  tr_model_mgmt:   {favored_by: [smooth_trig, mf_linear], hurt_by: [axis_step], why: "provably convergent with first-order-consistent corrections"}

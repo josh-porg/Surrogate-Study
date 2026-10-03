@@ -1,0 +1,76 @@
+\section{Computational complexity}
+\label{sec:complexity}
+
+Asymptotic cost decides which methods are \emph{admissible} at a given sample size, dimension and simulation cost,
+before accuracy is considered. Table~\ref{tab:complexity} collects fit, storage and prediction costs for the families
+reviewed above, in the usual algorithm for each; Table~\ref{tab:complexity_upscale} does the same for the
+representations used to make a learner optimizer-ready. Constants matter at engineering sample sizes, so the study
+also reports measured times.
+
+Three walls recur. Exact GPs and dense RBF systems need $O(n^3)$ time and $O(n^2)$ memory
+\cite{rasmussen2006gaussian,wendland2004scattered}---about 0.8\,GB of kernel matrix at $n=10^4$---which inducing-point,
+Nystr\"om and random-feature approximations reduce to $O(nq^2)$ \cite{titsias2009variational,williams2001using,rahimi2007random},
+and partitioned or local GPs reduce by working on subsets \cite{gramacy2008bayesian,gramacy2015local}. Full tensor
+grids, and hence tensor-product spline upscaling, cost $O(m^d)$: 24 points per axis is $1.4\times10^4$ nodes in three
+dimensions, $1.9\times10^8$ in six and $6\times10^{13}$ in ten; sparse grids \cite{bungartz2004sparse} and tensor-train
+formats \cite{oseledets2011tensor,oseledets2010tt} restore near-linear scaling in $d$ under mixed smoothness or low rank.
+Delaunay-based interpolants (piecewise-linear, natural neighbour) grow as $O(n^{\lceil d/2\rceil})$ in the worst case and
+are impractical beyond about six inputs. By contrast, tree ensembles fit in $O(n\log n)$ per tree and predict in time
+independent of $n$ \cite{breiman2001random,chen2016xgboost,ke2017lightgbm}, and in-context tabular models replace training
+by $O(n^2)$ attention \cite{hollmann2025tabpfn}.
+
+Loops multiply these costs. An active-learning loop that refits an exact GP after each of $N$ acquisitions costs
+$O(N^4)$ unless the Cholesky factor is updated, and joint co-kriging over $L$ fidelities costs $O((\sum_\ell n_\ell)^3)$ while
+the recursive formulation costs $O(\sum_\ell n_\ell^3)$ \cite{legratiet2014recursive}. Randomised linear algebra
+\cite{halko2011finding,erichson2019randomized} reduces the cost of a decomposition to its intrinsic rank, which is how
+compressed DMD accelerates its intermediate step. For finite-element simulators costing an hour per run, every surrogate
+term is negligible up to $n\sim10^4$; for cheap simulators these terms decide the winner.
+
+\begin{table}[ht]
+\centering\small
+\caption{Asymptotic costs of surrogate learners. $n$ training points, $d$ inputs, $P$ basis terms, $s$ active terms,
+$q$ inducing points or features, $B$ trees, $T$ boosting rounds, $D$ depth, $W$ weights, $E$ epochs, $K$ ensemble
+members, $H R$ hyperparameter iterations $\times$ restarts.}
+\label{tab:complexity}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}llll@{}}
+\toprule
+Method & Fit time & Memory & Predict (mean / variance) \\
+\midrule
+Polynomial RSM, $P=\binom{d+p}{p}$ & $O(nP^2+P^3)$ & $O(nP)$ & $O(P)$ / $O(P^2)$ \\
+Sparse regression, sparse PCE (OMP) & $O(snP)$ & $O(nP)$ & $O(s)$ \\
+Exact GP / kriging & $O(HR\,n^3)$ & $O(n^2)$ & $O(nd)$ / $O(n^2)$ \\
+Sparse GP, Nystr\"om, random features & $O(nq^2)$ & $O(nq)$ & $O(q)$ / $O(q^2)$ \\
+Treed GP (leaves $n_j$) & $O(S\sum_j n_j^3)$ & $O(\sum_j n_j^2)$ & $O(n_j)$ \\
+RBF interpolation (dense) & $O(n^3)$ & $O(n^2)$ & $O(nd)$ \\
+IDW / $k$-NN & $O(dn\log n)$ (tree build) & $O(nd)$ & $O(\log n)$--$O(nd)$ \\
+Delaunay linear / natural neighbour & $O(n^{\lceil d/2\rceil})$ worst case & same & $O(\log n)$ \\
+MARS, $M$ terms & $O(ndM^2)$ & $O(nM)$ & $O(M)$ \\
+Random forest & $O(Bd'n\log n)$ & $O(Bn)$ & $O(BD)$ \\
+Gradient boosting (histogram) & $O(Tnd)$ & $O(nd+T2^D)$ & $O(TD)$ \\
+BART, $m_t$ trees, $S$ sweeps & $O(Sm_tn)$ & $O(m_tn)$ & $O(Sm_tD)$ \\
+MLP / deep ensemble & $O(KEnW)$ & $O(KW)$ & $O(KW)$ \\
+Deep kernel learning & $O(E(n^3+nW))$ & $O(n^2+W)$ & $O(nd+W)$ / $O(n^2)$ \\
+TabPFN (in-context) & --- & $O(n^2)$ & batched $O(nM)$ \\
+Tensor train (cross) & $O(dmr^3)$; $O(dmr^2)$ samples & $O(dmr^2)$ & $O(dr^2)$ \\
+Compressed sensing (OMP), basis $N$ & $O(snN)$ & $O(nN)$ & $O(s)$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[ht]
+\centering\small
+\caption{Costs of optimizer-ready representations; $m$ nodes per axis, spline order $k$ ($k=4$ cubic), level $\lambda$, rank $r$.}
+\label{tab:complexity_upscale}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Representation & Build & Storage & Evaluate \\
+\midrule
+Tensor B-spline on dense grid & $m^d$ model calls $+\,O(dm^d)$ & $O(m^d)$ & $O(k^d)$ \\
+Multilevel B-spline (MBA) & $O(h(n+m_h^d))$ & $O(m_h^d)$ & $O(k^d)$ \\
+Smolyak sparse grid & $O(2^\lambda\lambda^{d-1})$ model calls & same & $O(2^\lambda\lambda^{d-1})$ \\
+Additive P-spline / GAM & $O(ndK)$ & $O(dK)$ & $O(dk)$ \\
+Tensor-train compressed grid & $O(dmr^3)$ & $O(dmr^2)$ & $O(dr^2)$ \\
+\bottomrule
+\end{tabular}
+\end{table}

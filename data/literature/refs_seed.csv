@@ -1,0 +1,256 @@
+key|query|arxiv|section|doi|prefer
+simpson2001metamodels|Simpson Poplinski Koch Allen Metamodels for computer-based engineering design survey and recommendations||1.1||
+jin2001comparative|Jin Chen Simpson Comparative studies of metamodelling techniques under multiple modelling criteria||1.1||
+queipo2005surrogate|Queipo Haftka Shyy Goel Vaidyanathan Tucker Surrogate-based analysis and optimization||1.1||
+wang2007review|Wang Shan Review of metamodeling techniques in support of engineering design optimization||1.1||
+forrester2008engineering|Forrester Sobester Keane Engineering Design via Surrogate Modelling A Practical Guide Wiley 2008||1.1||
+forrester2009recent|Forrester Keane Recent advances in surrogate-based optimization||1.1||
+viana2014metamodeling|Viana Simpson Balabanov Toropov Metamodeling in multidisciplinary design optimization how far have we really come||1.1|10.2514/1.J052375|
+alizadeh2020managing|Alizadeh Allen Mistree Managing computational complexity using surrogate models a critical review||1.1||
+kudela2022recent|Kudela Matousek Recent advances and applications of surrogate models for finite element method computations a review||1.1||
+yondo2018review|Yondo Andres Valero A review on design of experiments and surrogate models in aircraft real-time and many-query aerodynamic analyses||1.1||
+bouhlel2019smt|Bouhlel Hwang Bartoli Lafage Morlier Martins A Python surrogate modeling framework with derivatives||1.1||
+saves2024smt|Saves Lafage Bartoli Diouane Bussemaker Lefebvre Hwang Morlier Martins SMT 2.0 surrogate modeling toolbox hierarchical and mixed variables||1.1||
+bhosekar2018advances|Bhosekar Ierapetritou Advances in surrogate based modeling feasibility analysis and optimization a review||1.2||
+williams2021selection|Williams Cremaschi Selection of surrogate modeling techniques for surface approximation and surrogate-based optimization||1.2||
+cozad2014alamo|Cozad Sahinidis Miller Learning surrogate models for simulation-based optimization ALAMO||1.2||
+mcbride2019overview|McBride Sundmacher Overview of surrogate modeling in chemical process engineering||1.2||
+razavi2012review|Razavi Tolson Burn Review of surrogate modeling in water resources||1.3||
+asher2015review|Asher Croke Jakeman Peeters A review of surrogate models and their application to groundwater modeling||1.3||
+westermann2019surrogate|Westermann Evins Surrogate modelling for sustainable building design a review||1.4||
+moustapha2022active|Moustapha Marelli Sudret Active learning for structural reliability survey general framework and benchmark||1.5||
+moustapha2019surrogate|Moustapha Sudret Surrogate-assisted reliability-based design optimization a survey and a unified modular framework||1.5||
+luthen2021sparse|Luthen Marelli Sudret Sparse polynomial chaos expansions literature survey and benchmark||1.5||
+teixeira2021adaptive|Teixeira Nogal O'Connor Adaptive approaches in metamodel-based reliability analysis a review||1.5||
+bandler1994space|Bandler Biernacki Chen Grobelny Hemmers Space mapping technique for electromagnetic optimization||1.6||
+koziel2008space|Koziel Cheng Bandler Space mapping IEEE Microwave Magazine||1.6||
+heitmann2009coyote|Heitmann Higdon White Habib Williams Wagner The Coyote Universe II cosmological models and precision emulation of the nonlinear matter power spectrum||1.7||
+grinsztajn2022tree|Grinsztajn Oyallon Varoquaux Why do tree-based models still outperform deep learning on typical tabular data|2207.08815|1.8||
+shwartzziv2022tabular|Shwartz-Ziv Armon Tabular data deep learning is not all you need||1.8||
+mcelfresh2023neural|McElfresh When do neural nets outperform boosted trees on tabular data|2305.02997|1.8||
+hollmann2025tabpfn|Hollmann Muller Purucker Accurate predictions on small data with a tabular foundation model||1.8||
+eggensperger2015efficient|Eggensperger Hutter Hoos Leyton-Brown Efficient benchmarking of hyperparameter optimizers via surrogates||1.8||
+eggensperger2018efficient|Eggensperger Lindauer Hoos Hutter Leyton-Brown Efficient benchmarking of algorithm configurators via model-based surrogates||1.8||
+hutter2014algorithm|Hutter Xu Hoos Leyton-Brown Algorithm runtime prediction methods and evaluation||1.8||
+pfisterer2022yahpo|Pfisterer Schneider Moosbauer Binder Bischl YAHPO Gym an efficient multi-objective multi-fidelity benchmark for hyperparameter optimization|2109.03670|1.8||
+jin2005comprehensive|Jin A comprehensive survey of fitness approximation in evolutionary computation||1.9||
+jin2011surrogate|Jin Surrogate-assisted evolutionary computation recent advances and future challenges||1.9||
+loshchilov2012self|Loshchilov Schoenauer Sebag Self-adaptive surrogate-assisted covariance matrix adaptation evolution strategy||1.9||
+peherstorfer2018survey|Peherstorfer Willcox Gunzburger Survey of multifidelity methods in uncertainty propagation inference and optimization||1.10||
+fernandezgodino2016review|Fernandez-Godino Park Kim Haftka Review of multi-fidelity models|1609.07196|1.10||arxiv
+brevault2020overview|Brevault Balesdent Hebbal Overview of Gaussian process based multi-fidelity techniques with variable relationship between fidelities application to aerospace systems||1.10||
+mainini2022analytical|Mainini Serani Rumpfkeil Analytical benchmark problems for multifidelity optimization methods|2204.07867|1.10||arxiv
+liu2018survey|Liu Ong Cai A survey of adaptive sampling for global metamodeling in support of simulation-based complex engineering design||1.11||
+fuhg2021state|Fuhg Fau Nackenhorst State-of-the-art and comparative review of adaptive sampling methods for kriging||1.11||
+garud2017design|Garud Karimi Kraft Design of computer experiments a review||1.11||
+settles2009active|Settles Active learning literature survey||1.11||
+abdar2021review|Abdar Pourpanah A review of uncertainty quantification in deep learning techniques applications and challenges||1.12||
+ulmer2023prior|Ulmer Hardmeier Frellsen Prior and posterior networks a survey on evidential deep learning methods for uncertainty estimation|2110.03051|1.12||arxiv
+angelopoulos2023gentle|Angelopoulos Bates Conformal prediction a gentle introduction||1.12||
+lutjens2024climatebench|Lutjens Ferrari Watson-Parris Selin The impact of internal variability on benchmarking deep learning climate emulators|2408.05288|1.13||
+watsonparris2022climatebench|Watson-Parris ClimateBench v1.0 a benchmark for data-driven climate projections||1.13|10.1029/2021MS002954|
+ludkovski2023statistical|Ludkovski Statistical machine learning for quantitative finance||1.13||
+lamperti2018agent|Lamperti Roventini Sani Agent-based model calibration using machine learning surrogates||1.13|10.1016/j.jedc.2018.03.011|
+vernon2018bayesian|Vernon Liu Goldstein Bayesian uncertainty analysis for complex systems biology models emulation global parameter searches||1.13||
+andrianakis2015bayesian|Andrianakis Vernon McCreesh Bayesian history matching of complex infectious disease models using emulation HIV in Uganda||1.13||
+krige1951statistical|Krige A statistical approach to some basic mine valuation problems on the Witwatersrand||2.2||
+matheron1963principles|Matheron Principles of geostatistics Economic Geology||2.2||
+sacks1989design|Sacks Welch Mitchell Wynn Design and analysis of computer experiments||2.2||
+santner2003design|Santner Williams Notz The design and analysis of computer experiments||2.2||
+rasmussen2006gaussian|Rasmussen Williams Gaussian processes for machine learning||2.2||
+gramacy2020surrogates|Gramacy Surrogates Gaussian process modeling design and optimization for the applied sciences||2.2||
+kleijnen2015design|Kleijnen Design and analysis of simulation experiments||2.2|10.1007/978-3-319-18087-8|
+cressie1990origins|Cressie The origins of kriging Mathematical Geology||2.2||
+joseph2008blind|Joseph Hung Sudjianto Blind kriging a new method for developing metamodels||2.2||
+morris1993bayesian|Morris Mitchell Ylvisaker Bayesian design and analysis of computer experiments use of derivatives in surface prediction||2.2|10.1080/00401706.1993.10485320|
+bouhlel2016improving|Bouhlel Bartoli Otsmane Morlier Improving kriging surrogates of high-dimensional design models by partial least squares dimension reduction||2.2||
+ankenman2010stochastic|Ankenman Nelson Staum Stochastic kriging for simulation metamodeling||2.2|10.1287/opre.1090.0754|
+goldberg1998regression|Goldberg Williams Bishop Regression with input-dependent noise a Gaussian process treatment||2.2||
+titsias2009variational|Titsias Variational learning of inducing variables in sparse Gaussian processes||2.2||
+gramacy2015local|Gramacy Apley Local Gaussian process approximation for large computer experiments||2.2||
+gramacy2008bayesian|Gramacy Lee Bayesian treed Gaussian process models with an application to computer modeling||2.2||
+damianou2013deep|Damianou Lawrence Deep Gaussian processes|1211.0358|2.2||
+snoek2014input|Snoek Swersky Zemel Adams Input warping for Bayesian optimization of non-stationary functions|1402.0929|2.2||
+hardy1971multiquadric|Hardy Multiquadric equations of topography and other irregular surfaces||2.2||
+duchon1977splines|Duchon Splines minimizing rotation-invariant semi-norms in Sobolev spaces||2.2||
+wendland2004scattered|Wendland Scattered data approximation||2.2||
+wendland1995piecewise|Wendland Piecewise polynomial positive definite and compactly supported radial functions of minimal degree||2.2||
+fasshauer2007meshfree|Fasshauer Meshfree approximation methods with MATLAB||2.2||
+vapnik1995nature|Vapnik The nature of statistical learning theory||2.2||
+suykens1999least|Suykens Vandewalle Least squares support vector machine classifiers||2.2||
+rahimi2007random|Rahimi Recht Random features for large-scale kernel machines||2.2||
+shepard1968two|Shepard A two-dimensional interpolation function for irregularly-spaced data||2.2||
+sibson1981brief|Sibson A brief description of natural neighbour interpolation||2.2||
+lancaster1981surfaces|Lancaster Salkauskas Surfaces generated by moving least squares methods||2.2||
+cleveland1979robust|Cleveland Robust locally weighted regression and smoothing scatterplots||2.2||
+beliakov2006interpolation|Beliakov Interpolation of Lipschitz functions||2.2||
+box1951experimental|Box Wilson On the experimental attainment of optimum conditions||2.1||
+tibshirani1996regression|Tibshirani Regression shrinkage and selection via the lasso||2.1||
+brunton2016discovering|Brunton Proctor Kutz Discovering governing equations from data by sparse identification of nonlinear dynamical systems||2.1||
+xiu2002wiener|Xiu Karniadakis The Wiener-Askey polynomial chaos for stochastic differential equations||2.1||
+ghanem1991stochastic|Ghanem Spanos Stochastic finite elements a spectral approach||2.1||
+trefethen2013approximation|Trefethen Approximation theory and approximation practice||2.1||
+nakatsukasa2018aaa|Nakatsukasa Sete Trefethen The AAA algorithm for rational approximation|1612.00337|2.1||
+schmidt2009distilling|Schmidt Lipson Distilling free-form natural laws from experimental data||2.1||
+ivakhnenko1971polynomial|Ivakhnenko Polynomial theory of complex systems||2.1||
+deboor2001practical|de Boor A practical guide to splines||2.3||
+wahba1990spline|Wahba Spline models for observational data||2.3||
+kimeldorf1970correspondence|Kimeldorf Wahba A correspondence between Bayesian estimation on stochastic processes and smoothing by splines||2.3||
+eilers1996flexible|Eilers Marx Flexible smoothing with B-splines and penalties||2.3||
+wood2003thin|Wood Thin plate regression splines||2.3||
+hastie1990generalized|Hastie Tibshirani Generalized additive models||2.3||
+friedman1991multivariate|Friedman Multivariate adaptive regression splines||2.3||
+lee1997scattered|Lee Wolberg Shin Scattered data interpolation with multilevel B-splines||2.3||
+giannelli2012thb|Giannelli Juttler Speleers THB-splines the truncated basis for hierarchical splines||2.3||
+forsey1988hierarchical|Forsey Bartels Hierarchical B-spline refinement||2.3||
+smolyak1963quadrature|Smolyak Quadrature and interpolation formulas for tensor products of certain classes of functions||2.3||
+bungartz2004sparse|Bungartz Griebel Sparse grids Acta Numerica||2.3||
+fritsch1980monotone|Fritsch Carlson Monotone piecewise cubic interpolation||2.3||
+pya2015shape|Pya Wood Shape constrained additive models||2.3||
+donoho1994ideal|Donoho Johnstone Ideal spatial adaptation by wavelet shrinkage||2.3||
+breiman1984classification|Breiman Friedman Olshen Stone Classification and regression trees||2.4||
+breiman2001random|Breiman Random forests||2.4||
+meinshausen2006quantile|Meinshausen Quantile regression forests||2.4||
+wager2014confidence|Wager Hastie Efron Confidence intervals for random forests the jackknife and the infinitesimal jackknife||2.4||
+friedman2001greedy|Friedman Greedy function approximation a gradient boosting machine||2.4||
+chen2016xgboost|Chen Guestrin XGBoost a scalable tree boosting system||2.4||
+ke2017lightgbm|Ke Meng Finley LightGBM a highly efficient gradient boosting decision tree||2.4||
+prokhorenkova2018catboost|Prokhorenkova Gusev Vorobev Dorogush Gulin CatBoost unbiased boosting with categorical features|1706.09516|2.4||
+duan2020ngboost|Duan Avati Ding NGBoost natural gradient boosting for probabilistic prediction|1910.03225|2.4||
+chipman2010bart|Chipman George McCulloch BART Bayesian additive regression trees||2.4||
+chipman2012sequential|Chipman Ranjan Wang Sequential design for computer experiments with a flexible Bayesian additive model|1203.1078|2.4||
+lakshminarayanan2014mondrian|Lakshminarayanan Roy Teh Mondrian forests efficient online random forests||2.4||
+quinlan1992learning|Quinlan Learning with continuous classes||2.4||
+malinin2021uncertainty|Malinin Prokhorenkova Ustimenko Uncertainty in gradient boosting via ensembles|2006.10562|2.4||
+biau2016random|Biau Scornet A random forest guided tour||2.4||
+lakshminarayanan2017simple|Lakshminarayanan Pritzel Blundell Simple and scalable predictive uncertainty estimation using deep ensembles|1612.01474|2.5||
+gal2016dropout|Gal Ghahramani Dropout as a Bayesian approximation representing model uncertainty in deep learning|1506.02142|2.5||
+neal1996bayesian|Neal Bayesian learning for neural networks||2.5||
+mackay1992practical|MacKay A practical Bayesian framework for backpropagation networks||2.5||
+daxberger2021laplace|Daxberger Kristiadi Immer Laplace redux effortless Bayesian deep learning|2106.14806|2.5||
+amini2020deep|Amini Schwarting Soleimany Rus Deep evidential regression|1910.02600|2.5||
+czarnecki2017sobolev|Czarnecki Osindero Jaderberg Swirszcz Pascanu Sobolev training for neural networks|1706.04859|2.5||
+liu2024kan|Liu Wang Vaidya Ruehle Halverson Soljacic Hou Tegmark KAN Kolmogorov-Arnold networks|2404.19756|2.5||arxiv
+raissi2019physics|Raissi Perdikaris Karniadakis Physics-informed neural networks a deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations||2.5||
+lu2021deeponet|Lu Jin Pang Zhang Karniadakis Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators||2.5||
+li2021fourier|Li Kovachki Azizzadenesheli Fourier neural operator for parametric partial differential equations|2010.08895|2.5||arxiv
+garnelo2018neural|Garnelo Schwarz Rosenbaum Neural processes|1807.01622|2.5||
+tancik2020fourier|Tancik Srinivasan Mildenhall Fourier features let networks learn high frequency functions in low dimensional domains|2006.10739|2.5||
+goel2007ensemble|Goel Haftka Shyy Queipo Ensemble of surrogates||2.6||
+viana2009multiple|Viana Haftka Steffen Multiple surrogates how cross-validation errors can help us to obtain the best predictor||2.6||
+wolpert1992stacked|Wolpert Stacked generalization||2.6||
+jacobs1991adaptive|Jacobs Jordan Nowlan Hinton Adaptive mixtures of local experts||2.6||
+friedman1981projection|Friedman Stuetzle Projection pursuit regression||2.7||
+constantine2015active|Constantine Active subspaces emerging ideas for dimension reduction in parameter studies||2.7||
+hokanson2018data|Hokanson Constantine Data-driven polynomial ridge approximation using variable projection|1702.05859|2.7||
+tripathy2016gaussian|Tripathy Bilionis Gonzalez Gaussian processes with built-in dimensionality reduction applications to high-dimensional uncertainty propagation||2.7||
+wang2016bayesian|Wang Hutter Zoghi Matheson de Freitas Bayesian optimization in a billion dimensions via random embeddings|1301.1942|2.7||
+wilson2016deep|Wilson Hu Salakhutdinov Xing Deep kernel learning|1511.02222|2.7||arxiv
+ober2021promises|Ober Rasmussen van der Wilk The promises and pitfalls of deep kernel learning|2102.12108|2.7||
+owhadi2019kernel|Owhadi Yoo Kernel flows from learning kernels from data into the abyss|1808.04475|2.7||
+champion2019data|Champion Lusch Kutz Brunton Data-driven discovery of coordinates and governing equations||2.7||
+gomezbombarelli2018automatic|Gomez-Bombarelli Automatic chemical design using a data-driven continuous representation of molecules||2.7||
+candes2006robust|Candes Romberg Tao Robust uncertainty principles exact signal reconstruction from highly incomplete frequency information||2.7||
+donoho2006compressed|Donoho Compressed sensing||2.7||
+rauhut2012sparse|Rauhut Ward Sparse Legendre expansions via l1-minimization|1003.0251|2.7|10.1016/j.jat.2012.01.008|
+doostan2011non|Doostan Owhadi A non-adapted sparse approximation of PDEs with stochastic inputs|1006.2151|2.7||
+hampton2015compressive|Hampton Doostan Compressive sampling of polynomial chaos expansions convergence analysis and sampling strategies|1408.4157|2.7||
+wilson2013gaussian|Wilson Adams Gaussian process kernels for pattern discovery and extrapolation|1302.4245|2.7||
+townsend2013extension|Townsend Trefethen An extension of Chebfun to two dimensions||2.7||
+oseledets2010tt|Oseledets Tyrtyshnikov TT-cross approximation for multidimensional arrays||2.7||
+oseledets2011tensor|Oseledets Tensor-train decomposition||2.7||
+gorodetsky2019continuous|Gorodetsky Karaman Marzouk A continuous analogue of the tensor-train decomposition||2.7||
+erichson2019compressed|Erichson Brunton Kutz Compressed dynamic mode decomposition for background modeling||2.7||
+erichson2019randomized|Erichson Mathelin Kutz Brunton Randomized dynamic mode decomposition|1702.02912|2.7||
+halko2011finding|Halko Martinsson Tropp Finding structure with randomness probabilistic algorithms for constructing approximate matrix decompositions||2.7||
+minster2020randomized|Minster Saibaba Kilmer Randomized algorithms for low-rank tensor decompositions in the Tucker format||2.7||
+williams2001using|Williams Seeger Using the Nystrom method to speed up kernel machines||2.7||
+woodruff2014sketching|Woodruff Sketching as a tool for numerical linear algebra||2.7||
+guo2018reduced|Guo Hesthaven Reduced order modeling for nonlinear structural analysis using Gaussian process regression||2.7||
+thornton2013auto|Thornton Hutter Hoos Leyton-Brown Auto-WEKA combined selection and hyperparameter optimization of classification algorithms||2.7||
+feurer2015efficient|Feurer Klein Eggensperger Springenberg Blum Hutter Efficient and robust automated machine learning||2.7||
+mckay1979comparison|McKay Beckman Conover A comparison of three methods for selecting values of input variables in the analysis of output from a computer code||4||
+morris1995exploratory|Morris Mitchell Exploratory designs for computational experiments||4|10.1016/0378-3758(94)00035-T|
+sobol1967distribution|Sobol On the distribution of points in a cube and the approximate evaluation of integrals||4||
+du1999centroidal|Du Faber Gunzburger Centroidal Voronoi tessellations applications and algorithms||4||
+mackay1992information|MacKay Information-based objective functions for active data selection||4||
+cohn1996active|Cohn Ghahramani Jordan Active learning with statistical models||4||
+krause2008near|Krause Singh Guestrin Near-optimal sensor placements in Gaussian processes theory efficient algorithms and empirical studies||4||
+crombecq2011novel|Crombecq Gorissen Deschrijver Dhaene A novel hybrid sequential design strategy for global surrogate modeling of computer experiments||4||
+lam2008sequential|Lam Notz Sequential adaptive designs in computer experiments for response surface model fit||4||
+liu2017efficient|Liu Xu Wang An adaptive sampling approach for Kriging metamodeling by maximizing expected prediction error||4||
+mo2017taylor|Mo Lu Shi Zeng Wu A Taylor expansion-based adaptive design strategy for global surrogate modeling with applications in groundwater modeling||4||
+seung1992query|Seung Opper Sompolinsky Query by committee||4||
+jones1998efficient|Jones Schonlau Welch Efficient global optimization of expensive black-box functions||4||
+kushner1964new|Kushner A new method of locating the maximum point of an arbitrary multipeak curve in the presence of noise||4||
+srinivas2010gaussian|Srinivas Krause Kakade Seeger Gaussian process optimization in the bandit setting no regret and experimental design|0912.3995|4||arxiv
+frazier2009knowledge|Frazier Powell Dayanik The knowledge-gradient policy for correlated normal beliefs||4||
+hennig2012entropy|Hennig Schuler Entropy search for information-efficient global optimization|1112.1217|4||
+wang2017max|Wang Jegelka Max-value entropy search for efficient Bayesian optimization||4||
+gardner2014bayesian|Gardner Kusner Xu Weinberger Cunningham Bayesian optimization with inequality constraints||4||
+eriksson2019scalable|Eriksson Pearce Gardner Turner Poloczek Scalable global optimization via local Bayesian optimization|1910.01739|4||
+hutter2011sequential|Hutter Hoos Leyton-Brown Sequential model-based optimization for general algorithm configuration||4||
+bergstra2011algorithms|Bergstra Bardenet Bengio Kegl Algorithms for hyper-parameter optimization||4||
+regis2007stochastic|Regis Shoemaker A stochastic radial basis function method for the global optimization of expensive functions||4||
+regis2013combining|Regis Shoemaker Combining radial basis function surrogates and dynamic coordinate search in high-dimensional expensive black-box optimization||4||
+bichon2008efficient|Bichon Eldred Swiler Mahadevan McFarland Efficient global reliability analysis for nonlinear implicit performance functions||4||
+echard2011akmcs|Echard Gayton Lemaire AK-MCS an active learning reliability method combining Kriging and Monte Carlo simulation||4||
+kandasamy2016gaussian|Kandasamy Dasarathy Oliva Schneider Poczos Gaussian process bandit optimisation with multi-fidelity evaluations||4||
+kennedy2000predicting|Kennedy O'Hagan Predicting the output from a complex computer code when fast approximations are available||5||
+forrester2007multi|Forrester Sobester Keane Multi-fidelity optimization via surrogate modelling||5||
+legratiet2014recursive|Le Gratiet Garnier Recursive co-kriging model for design of computer experiments with multiple levels of fidelity|1210.0686|5||
+han2012hierarchical|Han Gortz Hierarchical kriging model for variable-fidelity surrogate modeling||5||
+perdikaris2017nonlinear|Perdikaris Raissi Damianou Lawrence Karniadakis Nonlinear information fusion algorithms for data-efficient multi-fidelity modelling||5||
+cutajar2019deep|Cutajar Pullin Damianou Lawrence Gonzalez Deep Gaussian processes for multi-fidelity modeling|1903.07320|5||arxiv
+meng2020composite|Meng Karniadakis A composite neural network that learns from multi-fidelity data application to function approximation and inverse PDE problems|1903.00104|5||
+alexandrov2001approximation|Alexandrov Lewis Gumbert Green Newman Approximation and model management in aerodynamic optimization with variable-fidelity models||5||
+chang1993sensitivity|Chang Haftka Giles Kao Sensitivity-based scaling for approximating structural response||5||
+gano2005hybrid|Gano Renaud Sanders Hybrid variable fidelity optimization by using a kriging-based scaling function||5||
+toal2015some|Toal Some considerations regarding the use of multi-fidelity Kriging in the construction of surrogate models||5||
+vanrijn2020mf2|van Rijn Schmitt MF2 a collection of multi-fidelity benchmark functions in Python||5||
+peherstorfer2016optimal|Peherstorfer Willcox Gunzburger Optimal model management for multifidelity Monte Carlo estimation||5||
+needels2024efficient|Needels Efficient multidisciplinary analysis and optimization of hypersonic vehicles using multi-fidelity surrogate models||0||
+wachter2006implementation|Wachter Biegler On the implementation of an interior-point filter line-search algorithm for large-scale nonlinear programming||7||
+nocedal2006numerical|Nocedal Wright Numerical optimization||7|10.1007/978-0-387-40065-5|
+kraft1988software|Kraft A software package for sequential quadratic programming||7||
+nelder1965simplex|Nelder Mead A simplex method for function minimization||7||
+powell1994direct|Powell A direct search optimization method that models the objective and constraint functions by linear interpolation||7||
+audet2006mesh|Audet Dennis Mesh adaptive direct search algorithms for constrained optimization||7||
+jones1993lipschitzian|Jones Perttunen Stuckman Lipschitzian optimization without the Lipschitz constant||7||
+storn1997differential|Storn Price Differential evolution a simple and efficient heuristic for global optimization over continuous spaces||7||
+hansen2001completely|Hansen Ostermeier Completely derandomized self-adaptation in evolution strategies||7||
+kennedy1995particle|Kennedy Eberhart Particle swarm optimization||7||
+wales1997global|Wales Doye Global optimization by basin-hopping and the lowest energy structures of Lennard-Jones clusters||7|10.1021/jp970984n|
+alexandrov1998trust|Alexandrov Dennis Lewis Torczon A trust-region framework for managing the use of approximation models in optimization||7||
+huyer2008snobfit|Huyer Neumaier SNOBFIT stable noisy optimization by branch and fit||7||
+jamil2013literature|Jamil Yang A literature survey of benchmark functions for global optimisation problems|1308.4008|8||
+hansen2021coco|Hansen Auger Ros Mersmann Tusar Brockhoff COCO a platform for comparing continuous optimizers in a black-box setting||8||
+mersmann2011exploratory|Mersmann Bischl Trautmann Preuss Weihs Rudolph Exploratory landscape analysis||8||
+kerschke2019comprehensive|Kerschke Trautmann Comprehensive feature-based landscape analysis of continuous and constrained optimization problems using the R-package flacco||8|10.1007/978-3-030-25147-5_7|
+wolpert1997no|Wolpert Macready No free lunch theorems for optimization||9||
+novak2008tractability|Novak Wozniakowski Tractability of multivariate problems||9||
+stone1982optimal|Stone Optimal global rates of convergence for nonparametric regression||9||
+schaback1995error|Schaback Error estimates and condition numbers for radial basis function interpolation||9||
+vandervaart2011information|van der Vaart van Zanten Information rates of nonparametric Gaussian process methods||9||
+bull2011convergence|Bull Convergence rates of efficient global optimization algorithms|1101.3501|9||arxiv
+barron1993universal|Barron Universal approximation bounds for superpositions of a sigmoidal function||9|10.1109/18.256500|
+yarotsky2017error|Yarotsky Error bounds for approximations with deep ReLU networks||9||
+niederreiter1992random|Niederreiter Random number generation and quasi-Monte Carlo methods||9||
+demsar2006statistical|Demsar Statistical comparisons of classifiers over multiple data sets||10||
+benavoli2017time|Benavoli Corani Demsar Zaffalon Time for a change a tutorial for comparing multiple classifiers through Bayesian analysis|1606.04316|10||
+dolan2002benchmarking|Dolan More Benchmarking optimization software with performance profiles||10||
+more2009benchmarking|More Wild Benchmarking derivative-free optimization algorithms||10||
+bartzbeielstein2020benchmarking|Bartz-Beielstein Benchmarking in optimization best practice and open issues|2007.03488|10||arxiv
+needels2024trajectory|Needels Alonso Trajectory-informed sampling for efficient construction of multi-fidelity surrogates||0|10.2514/6.2024-1013|
+mainini2025framework|Analytical benchmark problems and methodological framework for the assessment and comparison of multifidelity optimization methods||1.10||
+williams2021novel|Williams Cremaschi Novel tool for selecting surrogate modeling techniques for surface approximation||1.2||
+ng2004feature|Ng Feature selection L1 vs L2 regularization and rotational invariance||1.8||
+rahaman2019spectral|Rahaman Baratin Arpit On the spectral bias of neural networks|1806.08734|1.8||
+li2017review|Li Zheng Review of design optimization methods for turbomachinery aerodynamics||1.13||
+hu2017uncertainty|Hu Mahadevan Uncertainty quantification and management in additive manufacturing current status needs and opportunities||1.13||
+bahrami2022proxy|A review of proxy modeling highlighting applications for reservoir engineering Energies 2022||1.13||
+ruf2020neural|Ruf Wang Machine learning for option pricing and hedging neural networks literature review||1.13||
+vanrijn2021finding|van Rijn Schmitt Finding efficient trade-offs in multi-fidelity response surface modeling|2103.03280|5||
+iskauskas2024hmer|Iskauskas Vernon Goldstein Emulation and history matching using the hmer package|2209.05265|1.13||arxiv
+neufang2024surrogate|Surrogate-based optimization techniques for process systems engineering|2412.13948|1.2||arxiv
+poznanski2026towards|Poznanski Towards Ram Air Inflated Duct Eccentric Ramjet|||0||

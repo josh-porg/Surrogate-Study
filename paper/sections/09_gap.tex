@@ -1,0 +1,13 @@
+\section{Gap and contributions}
+\label{sec:gap}
+
+The reviewed literature establishes that no surrogate family dominates, that winners are predictable from problem
+features, that within-family configuration matters, and that approximation accuracy is a weak proxy for decision
+quality. It does not, to our knowledge, contain a study that jointly varies (i) surface class and landscape features,
+(ii) dimension and sample budget, (iii) noise level and type, (iv) fidelity structure and cost ratio, (v) the pairing of
+the sampling scout with the deliverable model, (vi) the upscaling from learner to optimizer-ready surrogate, including
+compression, and (vii) the optimizer---and scores complete pipelines by true-function regret per unit simulation cost,
+while explaining the persistent disagreement between engineering practice (Gaussian processes) and tabular machine
+learning (tree ensembles). The study part of this paper does this on the Surjanovic--Bingham functions, the
+multi-fidelity analytical benchmarks, and two real engineering datasets: coupled finite-element sizing of an inflatable
+ramjet duct, which carries a closed-form low-fidelity model at every point, and historical aircraft performance data.

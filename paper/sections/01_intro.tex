@@ -1,0 +1,45 @@
+\section{Introduction}
+\label{sec:intro}
+
+Design and analysis loops---optimization, uncertainty propagation, calibration, reliability---call a simulation many
+thousands of times. When one call costs minutes to hours, as for the coupled finite-element analyses behind the present
+work, the loop is run on a \emph{surrogate}: a cheap model fitted to a limited set of simulation results
+\cite{queipo2005surrogate,forrester2008engineering,forrester2009recent}. The idea has been reinvented under many names
+in many fields---response surfaces in chemical engineering \cite{box1951experimental}, kriging in mining geostatistics
+\cite{krige1951statistical,matheron1963principles,cressie1990origins}, design and analysis of computer experiments in
+statistics \cite{sacks1989design,santner2003design}, proxy models in petroleum engineering \cite{bahrami2022proxy},
+emulators in climate science, cosmology and epidemiology
+\cite{watsonparris2022climatebench,heitmann2009coyote,andrianakis2015bayesian}, metamodels in simulation and operations
+research \cite{kleijnen2015design}, surrogate benchmarks in automated machine learning
+\cite{eggensperger2015efficient}, and fitness approximation in evolutionary computation \cite{jin2005comprehensive,jin2011surrogate}.
+
+Each community has converged on its own default. In engineering design the Gaussian process (GP) is the dominant
+surrogate \cite{forrester2008engineering,gramacy2020surrogates}, and multi-fidelity GP formulations are the natural
+extension when cheaper analyses are available \cite{kennedy2000predicting,forrester2007multi,needels2024efficient}. In
+tabular machine learning, tree ensembles remain state of the art at small-to-medium sample sizes
+\cite{grinsztajn2022tree,shwartzziv2022tabular,mcelfresh2023neural}, and tree-based surrogates are preferred for
+algorithm-configuration benchmarks \cite{eggensperger2015efficient,eggensperger2018efficient} and agent-based model
+calibration \cite{lamperti2018agent}. These defaults are rarely confronted with each other on the same problems, with
+the same budgets, under the same noise.
+
+The confrontation is not academic. The surrogate study of Pozna\'nski \cite[Sec.~14.3 and App.~G]{poznanski2026towards},
+which sized the deployable duct wall of a tube-launched ramjet from coupled fluid--structure finite-element analyses,
+reported a GP with the lowest error on six synthetic surfaces, yet gradient-boosted trees with the lowest
+cross-validated error on the real finite-element data; the trees were set aside because the downstream interior-point
+optimizer requires smooth derivatives. That study selected its surrogate by approximation accuracy, implicitly assuming
+that the most accurate surrogate yields the best design---an assumption contradicted by several benchmarks in which the
+approximation winner and the optimization winner differ
+\cite{williams2021selection,eggensperger2015efficient,neufang2024surrogate}. The present paper revisits and extends that
+study; where its findings are corrected here, the corrections are stated explicitly.
+
+This paper has two parts. The \textbf{review} (Sections~\ref{sec:landscape}--\ref{sec:theory}) surveys, breadth first and
+across disciplines, the methods that make up a surrogate pipeline: the learner (Section~\ref{sec:landscape}), its
+uncertainty estimate and the sampling it drives (Section~\ref{sec:uq}), multi-fidelity fusion (Section~\ref{sec:mf}),
+change-of-basis and latent-space representations borrowed from data-driven reduced-order modelling
+(Section~\ref{sec:latent}), the conversion of a learner into an optimizer-ready representation
+(Section~\ref{sec:upscaling}), and surrogate-based optimization itself (Section~\ref{sec:sbo}), followed by the theory
+that predicts when each should win (Section~\ref{sec:theory}). We deliberately include old methods that were not pursued
+and methods that are standard outside aerospace but rare within it. The \textbf{study} (in preparation) varies surface
+class, dimension, budget, noise level and type, fidelity structure and cost, scout--learner pairing, upscaling and
+optimizer type in a factorial design, and scores pipelines by true-function regret per unit simulation cost.
+Section~\ref{sec:gap} states the gap the study fills.

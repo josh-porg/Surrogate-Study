@@ -1,0 +1,32 @@
+\documentclass[11pt]{article}
+% Working draft. Venue template (AIAA / Elsevier / Springer) to be chosen — see docs/PLAN.md open question 3.
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\title{Accuracy Is Not the Objective: A Cross-Disciplinary Review and Global Study of Surrogate Pipelines for Expensive Engineering Analyses\\[4pt]\large Working draft --- review part}
+\author{J. Poznanski}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\textit{Draft.} Surrogate models stand in for expensive simulations inside design loops. Engineering practice is dominated by Gaussian-process (kriging) surrogates, while tabular machine learning and several simulation-heavy sciences are dominated by tree ensembles; a thesis finite-element study found gradient-boosted trees out-predicting every Gaussian-process variant on real data while losing on smooth synthetic surfaces. This paper reviews surrogate, uncertainty, sampling, multi-fidelity, change-of-basis, upscaling and surrogate-based-optimization methods across disciplines, from computation theory to engineering practice, and then (in the study part, in preparation) scores complete pipelines by the true-function regret they deliver per unit of simulation cost.
+\end{abstract}
+
+\input{sections/01_intro}
+\input{sections/02_landscape}
+\input{sections/03_uq_sampling}
+\input{sections/04_multifidelity}
+\input{sections/05_latent}
+\input{sections/06_upscaling}
+\input{sections/07_sbo}
+\input{sections/08_theory}
+\input{sections/08b_complexity}
+\input{sections/09_gap}
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}

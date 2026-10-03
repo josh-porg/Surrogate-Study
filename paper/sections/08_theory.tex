@@ -1,0 +1,35 @@
+\section{What theory predicts}
+\label{sec:theory}
+
+\paragraph{No free lunch, but structured lunches.} Averaged over all functions, no optimizer or learner beats another
+\cite{wolpert1997no}; every advantage comes from matching an inductive bias to a function class. Information-based
+complexity makes the price of generality explicit: for functions of smoothness $s$ in $d$ dimensions, the minimax error
+from $n$ samples scales as $n^{-s/d}$ for approximation and $n^{-s/(2s+d)}$ for noisy regression
+\cite{novak2008tractability,stone1982optimal}. Smoothness and dimension, not the method's name, set the achievable rate.
+
+\paragraph{Kernels and GPs.} For kernel interpolation the error is controlled by the fill distance $h$ of the design
+through the power function, at a rate set by the kernel's smoothness, with a trade-off between accuracy and conditioning
+\cite{wendland2004scattered,schaback1995error}; GP posterior contraction rates match when the prior's smoothness matches
+the truth's and degrade otherwise \cite{vandervaart2011information}. The fill-distance dependence explains why a spacing
+statistic of the design predicted accuracy in a large empirical comparison \cite{williams2021novel}, and why space-filling
+designs are hard to beat for global fit. Expected improvement converges at known rates for functions in the kernel's
+reproducing-kernel Hilbert space \cite{bull2011convergence}, and confidence-bound acquisition has regret bounds
+\cite{srinivas2010gaussian}---guarantees that hold only when the function is as smooth as the kernel assumes.
+
+\paragraph{Trees and networks.} A piecewise-constant partition of $n$ cells approximates a Lipschitz function at rate
+$n^{-1/d}$, slower than a well-matched kernel on smooth functions but indifferent to discontinuities, plateaus and
+floors; ensembles are consistent under mild conditions \cite{biau2016random}. Networks escape the curse of dimension for
+functions with suitably bounded spectral norms \cite{barron1993universal} and approximate smooth functions efficiently
+with depth \cite{yarotsky2017error}, but trained networks are biased toward low frequencies \cite{rahaman2019spectral},
+and rotation-invariant learners pay linearly in the number of irrelevant inputs \cite{ng2004feature}.
+
+\paragraph{Noise.} With observation noise of variance $\sigma^2$, any held-out error measured against noisy targets is
+bounded below by $\sigma^2$; differences between models shrink toward zero as $\sigma$ grows, which is how a model-ranking
+study can be dominated by its noise level \cite{lutjens2024climatebench}. Clean-truth scoring on synthetic problems removes
+this floor.
+
+\paragraph{From surrogate error to design quality.} If $\hat x$ minimises the surrogate $s$ and $x^\star$ minimises $f$,
+then $f(\hat x)-f(x^\star)\le 2\sup|f-s|$ over the union of the near-optimal sublevel sets of $f$ and $s$. Global
+mean-squared error neither bounds nor is bounded by this quantity; rank fidelity on the sublevel sets governs
+comparison-based optimizers, and derivative fidelity near $x^\star$ governs gradient-based ones. Multi-fidelity and
+compression methods enter the same bound through their effect on $\sup|f-s|$ per unit cost.

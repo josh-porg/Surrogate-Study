@@ -1,0 +1,160 @@
+smooth_trig_d2     as_gp                     0.002    0.69s uq
+smooth_trig_d2     cart                      0.254    0.09s 
+smooth_trig_d2     catboost                  0.128    0.34s 
+smooth_trig_d2     cs_fourier                0.095    0.02s 
+smooth_trig_d2     delaunay_linear           0.110    0.00s 
+smooth_trig_d2     dkl                       0.030    4.72s uq
+smooth_trig_d2     ens_press                 0.009   32.75s uq
+smooth_trig_d2     extratrees                0.117    0.30s uq
+smooth_trig_d2     gbt_committee             0.202    3.40s uq
+smooth_trig_d2     gmdh                      0.111    0.00s 
+smooth_trig_d2     gp                        0.002    0.14s uq
+smooth_trig_d2     gp_se                     0.000    0.18s uq
+smooth_trig_d2     hetgp                     0.002    0.35s uq
+smooth_trig_d2     idw                       0.262    0.01s 
+smooth_trig_d2     kan                       0.161    1.20s 
+smooth_trig_d2     knn                       0.171    0.07s 
+smooth_trig_d2     krr                       0.008    0.21s 
+smooth_trig_d2     lgbm                      0.192    0.58s 
+smooth_trig_d2     lipschitz                 0.132    0.01s uq
+smooth_trig_d2     local_gp                  0.002    6.85s uq
+smooth_trig_d2     mars                      0.053    0.10s 
+smooth_trig_d2     mc_dropout                0.071    2.96s uq
+smooth_trig_d2     mlp_ens                   0.079    5.60s uq
+smooth_trig_d2     mls                       0.015    0.44s 
+smooth_trig_d2     ngboost                   0.166    4.44s uq
+smooth_trig_d2     ok_variogram              0.073    0.04s uq
+smooth_trig_d2     pce_lars                  0.000    0.04s 
+smooth_trig_d2     poly_ridge                0.468    0.03s 
+smooth_trig_d2     ppr                       0.074   25.19s 
+smooth_trig_d2     qrf                       0.262    0.50s uq
+smooth_trig_d2     rbf_mq                    0.009    0.01s 
+smooth_trig_d2     rbf_tps                   0.031    0.01s 
+smooth_trig_d2     rf                        0.192    0.36s uq
+smooth_trig_d2     rsm2                      0.111    0.00s 
+smooth_trig_d2     smt_kpls                  0.000    1.91s uq
+smooth_trig_d2     smt_krg                   0.002    1.29s uq
+smooth_trig_d2     svr                       0.012    0.20s 
+smooth_trig_d2     tabpfn                    ERROR    0.00s RuntimeError('TabPFN v2 weights need the Prior Labs licence: accept it at ux.priorlabs.ai 
+smooth_trig_d2     treed_gp                  0.010    0.19s uq
+smooth_trig_d2     xgb                       0.183    5.36s 
+axis_step_d2       as_gp                     0.244    0.28s uq
+axis_step_d2       cart                      0.136    0.04s 
+axis_step_d2       catboost                  0.140    0.21s 
+axis_step_d2       cs_fourier                0.436    0.05s 
+axis_step_d2       delaunay_linear           0.390    0.01s 
+axis_step_d2       dkl                       0.199    1.78s uq
+axis_step_d2       ens_press                 0.223   32.77s uq
+axis_step_d2       extratrees                0.156    0.32s uq
+axis_step_d2       gbt_committee             0.259    3.37s uq
+axis_step_d2       gmdh                      0.476    0.00s 
+axis_step_d2       gp                        0.142    0.24s uq
+axis_step_d2       gp_se                     0.190    0.12s uq
+axis_step_d2       hetgp                     0.142    0.32s uq
+axis_step_d2       idw                       0.430    0.01s 
+axis_step_d2       kan                       0.335    1.10s 
+axis_step_d2       knn                       0.384    0.06s 
+axis_step_d2       krr                       0.445    0.19s 
+axis_step_d2       lgbm                      0.133    0.53s 
+axis_step_d2       lipschitz                 0.400    0.01s uq
+axis_step_d2       local_gp                  0.142    7.15s uq
+axis_step_d2       mars                      0.321    0.13s 
+axis_step_d2       mc_dropout                0.599    1.20s uq
+axis_step_d2       mlp_ens                   0.351    7.52s uq
+axis_step_d2       mls                       0.487    0.38s 
+axis_step_d2       ngboost                   0.132    3.01s uq
+axis_step_d2       ok_variogram              0.351    0.05s uq
+axis_step_d2       pce_lars                  0.333    0.08s 
+axis_step_d2       poly_ridge                0.445    0.03s 
+axis_step_d2       ppr                       0.159   26.04s 
+axis_step_d2       qrf                       0.118    0.59s uq
+axis_step_d2       rbf_mq                    0.376    0.01s 
+axis_step_d2       rbf_tps                   0.376    0.01s 
+axis_step_d2       rf                        0.114    0.35s uq
+axis_step_d2       rsm2                      0.476    0.00s 
+axis_step_d2       smt_kpls                  0.244    1.25s uq
+axis_step_d2       smt_krg                   0.138    1.22s uq
+axis_step_d2       svr                       0.379    0.22s 
+axis_step_d2       tabpfn                    ERROR    0.00s RuntimeError('TabPFN v2 weights need the Prior Labs licence: accept it at ux.priorlabs.ai 
+axis_step_d2       treed_gp                  0.131    0.12s uq
+axis_step_d2       xgb                       0.242    5.10s 
+fourier_sparse_d2  as_gp                     1.011    0.18s uq
+fourier_sparse_d2  cart                      1.056    0.04s 
+fourier_sparse_d2  catboost                  1.078    0.23s 
+fourier_sparse_d2  cs_fourier                1.003    0.04s 
+fourier_sparse_d2  delaunay_linear           1.076    0.00s 
+fourier_sparse_d2  dkl                       1.197    1.99s uq
+fourier_sparse_d2  ens_press                 1.011   32.98s uq
+fourier_sparse_d2  extratrees                1.017    0.30s uq
+fourier_sparse_d2  gbt_committee             1.079    1.96s uq
+fourier_sparse_d2  gmdh                      1.035    0.00s 
+fourier_sparse_d2  gp                        0.999    0.11s uq
+fourier_sparse_d2  gp_se                     0.999    0.09s uq
+fourier_sparse_d2  hetgp                     0.999    0.21s uq
+fourier_sparse_d2  idw                       0.916    0.01s 
+fourier_sparse_d2  kan                       1.037    0.88s 
+fourier_sparse_d2  knn                       0.963    0.07s 
+fourier_sparse_d2  krr                       1.010    0.18s 
+fourier_sparse_d2  lgbm                      1.131    0.52s 
+fourier_sparse_d2  lipschitz                 1.020    0.01s uq
+fourier_sparse_d2  local_gp                  0.999    7.74s uq
+fourier_sparse_d2  mars                      1.000    0.08s 
+fourier_sparse_d2  mc_dropout                1.000    1.18s uq
+fourier_sparse_d2  mlp_ens                   1.122    3.01s uq
+fourier_sparse_d2  mls                       1.177    0.44s 
+fourier_sparse_d2  ngboost                   1.193    2.82s uq
+fourier_sparse_d2  ok_variogram              0.882    0.05s uq
+fourier_sparse_d2  pce_lars                  1.000    0.10s 
+fourier_sparse_d2  poly_ridge                1.074    0.03s 
+fourier_sparse_d2  ppr                       1.023   23.35s 
+fourier_sparse_d2  qrf                       1.009    0.50s uq
+fourier_sparse_d2  rbf_mq                    1.184    0.01s 
+fourier_sparse_d2  rbf_tps                   1.032    0.01s 
+fourier_sparse_d2  rf                        1.009    0.37s uq
+fourier_sparse_d2  rsm2                      1.035    0.00s 
+fourier_sparse_d2  smt_kpls                  0.871    1.52s uq
+fourier_sparse_d2  smt_krg                   0.889    1.60s uq
+fourier_sparse_d2  svr                       1.000    0.18s 
+fourier_sparse_d2  tabpfn                    ERROR    0.00s RuntimeError('TabPFN v2 weights need the Prior Labs licence: accept it at ux.priorlabs.ai 
+fourier_sparse_d2  treed_gp                  0.999    0.10s uq
+fourier_sparse_d2  xgb                       1.167    5.42s 
+rotated_ridge_d5   as_gp                     0.005    0.28s uq
+rotated_ridge_d5   cart                      0.277    0.05s 
+rotated_ridge_d5   catboost                  0.135    0.37s 
+rotated_ridge_d5   cs_fourier                0.063    0.05s 
+rotated_ridge_d5   delaunay_linear           0.416    0.19s 
+rotated_ridge_d5   dkl                       0.014    1.90s uq
+rotated_ridge_d5   ens_press                 0.057   34.16s uq
+rotated_ridge_d5   extratrees                0.186    0.36s uq
+rotated_ridge_d5   gbt_committee             0.213    3.46s uq
+rotated_ridge_d5   gmdh                      7.467    0.03s 
+rotated_ridge_d5   gp                        0.025    0.29s uq
+rotated_ridge_d5   gp_se                     0.022    0.29s uq
+rotated_ridge_d5   hetgp                     0.025    0.49s uq
+rotated_ridge_d5   idw                       0.722    0.01s 
+rotated_ridge_d5   kan                       0.225    1.44s 
+rotated_ridge_d5   knn                       0.340    0.09s 
+rotated_ridge_d5   krr                       0.122    0.19s 
+rotated_ridge_d5   lgbm                      0.169    0.81s 
+rotated_ridge_d5   lipschitz                 0.404    0.01s uq
+rotated_ridge_d5   local_gp                  0.030    6.97s uq
+rotated_ridge_d5   mars                      0.115    0.44s 
+rotated_ridge_d5   mc_dropout                0.229    1.36s uq
+rotated_ridge_d5   mlp_ens                   0.021   22.50s uq
+rotated_ridge_d5   mls                       0.234    0.87s 
+rotated_ridge_d5   ngboost                   0.198    3.13s uq
+rotated_ridge_d5   ok_variogram              0.170    0.05s uq
+rotated_ridge_d5   pce_lars                  0.167    0.04s 
+rotated_ridge_d5   poly_ridge                0.073    0.07s 
+rotated_ridge_d5   ppr                       0.001  207.49s 
+rotated_ridge_d5   qrf                       0.233    0.98s uq
+rotated_ridge_d5   rbf_mq                    0.134    0.03s 
+rotated_ridge_d5   rbf_tps                   0.157    0.03s 
+rotated_ridge_d5   rf                        0.207    0.50s uq
+rotated_ridge_d5   rsm2                      0.224    0.00s 
+rotated_ridge_d5   smt_kpls                  0.023    1.56s uq
+rotated_ridge_d5   smt_krg                   0.035    2.03s uq
+rotated_ridge_d5   svr                       0.127    0.30s 
+rotated_ridge_d5   tabpfn                    ERROR    0.00s RuntimeError('TabPFN v2 weights need the Prior Labs licence: accept it at ux.priorlabs.ai 
+rotated_ridge_d5   treed_gp                  0.053    0.30s uq
+rotated_ridge_d5   xgb                       0.210    5.49s 
