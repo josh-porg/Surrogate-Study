@@ -113,6 +113,11 @@ suites carry the factorial science.
   SINDy-AE) over-fit at n ≲ 20d and only pay at larger n or with LF inputs; the kernel-flow objective reduces that
   over-fitting relative to ML-II. Compression (randomised SVD / TT) speeds up upscaling and scout refits by orders of
   magnitude at negligible error up to a rank threshold, and makes upscaling feasible for d > 6.
+- **H9 (E12, added 2026-10-11, before E12 runs)** Rational surrogates beat every other class by orders of magnitude on
+  clean data with pole/knee/resonance structure, and lose that edge as noise rises (≥ 1 %), because AAA-type methods
+  interpolate and noise creates spurious pole–zero pairs. Pairing AAA with a dimension-reducing structure (ridge
+  direction, additive terms) carries the gain past d ≈ 3 only when the structure is present. A GP with a rational
+  mean keeps most of the gain and stays robust to noise, because the GP absorbs what the rational trend misses.
 - **H7** There is a cost crossover: below some c_H (relative to fit cost), uniform/space-filling sampling with a simple
   learner wins (as for the thesis thermochemistry ROM).
 
@@ -222,7 +227,76 @@ feasible on the "more powerful computer" or a cluster; prune n×d corners where 
 
 ## 9. Results log
 
-_Empty — no new experiments run yet._ Entries go here as `YYYY-MM-DD · experiment ID · finding · file`.
+Entries: `YYYY-MM-DD · experiment ID · finding · file`.
+
+- 2026-10-03 · **E1** · Reproduction gate passed: 71/72 published App. G canonical cells reproduced within CIs with
+  the thesis' own COMPASS code (miss: `gp_physics_mean` on `clamp_floor`, 3.8 vs 4.4 — likely a later edit of the
+  sparse-physics dictionary). · `results/E1_canon_report.md`
+- 2026-10-03 · **E1** · Clean-truth scoring (30 seeds): true relative errors are 2–4× below the published noisy-CV
+  numbers (GP ≈ 0.8–2.4 % vs 3.0–3.8 %); per-surface rankings almost unchanged (Spearman 0.91–0.99). The 3 % noise
+  floor *compressed* the gaps — GP's lead over GBT on `smooth` is 2.4× on clean truth vs 1.2× as published. The
+  thesis conclusion (GP best on the canonical surfaces) stands and is stronger; the published magnitudes are not.
+- 2026-10-04 · **E2a** · Learner screening, 32 300 fits (45 configs × 12 problems × 3 n × 2 noise × 10 seeds;
+  Kaggle + laptop). GP family leads overall (mean rank: SMT kriging 7.4, hetGP 7.8, SMT-KPLS 9.0, GP 9.4); designed
+  strengths confirmed (trees win `axis_step` and `tree_draw`; CS-Fourier wins `fourier_sparse`; AS-GP wins
+  `rotated_ridge` and `smooth_trig`). **Expectations contradicted:** MARS does not win `kink_floor` (AS-GP, GP,
+  local GP do); KRR/SVR beat ML-II GPs on the GP prior draw (check the draw's construction and GP fitting, BUGS
+  N-14). Training optimizer at scale: L-BFGS best for MLP ensembles (mean rank 17.0 vs AdamW 18.7, Adam 19.0, BB
+  23.7, SGD 25.3) and KAN. Shortlist for E3: 35 configs (top 6 ∪ top 2 per problem ∪ thesis counterparts ∪ best
+  per method family). · `results/E2a_learners_report.md`, `results/E2a_shortlist.json`
+- 2026-10-03 · **E1** · `gp_regime` is identical to `gp` on every canonical surface (no regimes to switch on);
+  grid/B-spline variants of GP match raw GP within CI (thesis claim confirmed on clean truth). · same file
+- 2026-10-10 · **E3 (interim: all non-SMT learners complete, 783 560 fits; SMT kriging still running)** ·
+  2 041 complete cells (problem × n × noise × level, 10 seeds). Best-of-family head-to-head: the GP family wins
+  51-78 % of cells at every samples-per-dimension m = n/d. Tree ensembles are strongest at m = 5 (43 %) and fade
+  with data (10 % at m = 300). Networks rise with data (3-6 % at m ≤ 20, 34 % at m = 300). Trees win
+  discontinuities (74 %) and steep ridges/drops (73 %). GP leads on smooth (97 %), ridge (96 %), multiscale (93 %),
+  engineering (89 %) and the thesis problems (81 %). Thesis pair GP vs XGBoost: geometric-mean NRMSE ratio
+  xgb/gp 1.7 at m = 5 rising to 3.1 at m = 300, but noise closes the gap (5.7× noise-free, 1.5× at 10 % additive).
+  `prior_draw` is near even (GP 52 %, trees 47 %), which is unexpected for GP prior draws (BUGS N-14 still open).
+  Gradients: GP family best (grad NRMSE ≈ 0.5); boosted trees 1.2-5.8. The wave-1 preview (L-BFGS MLP ensembles
+  leading among the slow learners at n = 600-1000) does not hold over all n: overall mean rank 17. · `results/E3_learners_report.md`
+- 2026-10-11 · **E3 inference (non-SMT, E2a-selected champions)** · Champions picked on E2a: hetgp, catboost,
+  mlp_ens[lbfgs], rbf_tps, ppr, ens_press. On 82 problems, Wilcoxon signed-rank with Holm: the GP champion beats
+  every other champion. Geometric-mean NRMSE ratio vs catboost 0.45 (cluster-bootstrap CI 0.36–0.57,
+  p_Holm = 5e-9), vs networks 0.58 (0.50–0.67), vs rbf_tps 0.49. The Bayesian signed-rank test (ROPE ±10 %) puts
+  P(GP better) = 1 for all five pairs. Trees vs RBF and trees vs basis are undecided (p_Holm 0.43 / 0.99). The
+  per-problem effects are wide, so P(equivalent) = 0 everywhere: the family matters a lot per problem even where
+  the average is even. Performance profiles: GP champion within 1.5× of the best in 83 % of cells and within 2× in
+  92 % (trees 45 % / 55 %). Networks are worst at m = 5–10 and second at m = 100–300. GP fits used E3's 1 restart
+  (N-14), so these margins are conservative. · `results/E3_stats_report.md`,
+  `results/figures/E3_performance_profiles.png`
+
+### Deviations from the pre-registered design (STUDY_PLAN principle 5)
+- **D-1 · 2026-10-09 · E3 · `smt_krg` capped at n ≤ 500** (the other O(n³) learners keep n ≤ 1000, CAP1000). On
+  Kaggle every `smt_krg` fit at n = 1000 hit the 900 s per-task cap (131/131, SMT track wave 1), so the 2 700
+  n > 500 tasks would have cost ≈ 675 CPU-h and recorded only timeouts. `smt_kpls` (same model family, PLS-reduced
+  hyper-parameters) keeps n ≤ 1000 (≈ 210 s per fit at n = 1000). The 131 timeout records stay in the data and are
+  reported as "exceeds 900 s at n = 1000". Effect on conclusions: the large-n comparison of the GP family rests on
+  `gp`, `gp_se`, `hetgp` and `smt_kpls`. Approved by the author. · `code/surr/runner.py` (CAP500)
+- **D-2 · 2026-10-11 · E3 · six E2a-cut methods reinstated:** `idw`, `knn`, `qrf`, `ngboost`, `mc_dropout`,
+  `poly_ridge` (E2a configs unchanged; 146 780 tasks, ≈ 80 CPU-h). The study is a review and survey of method
+  classes, not only a horse race, and these were cut at E2a because their family was already represented, not on
+  accuracy. QRF and NGBoost each won 7–8 E2a cells. `mc_dropout` gradients fixed first (BUGS N-19); its earlier
+  E2a gradient metric is invalid. Approved by the author.
+- **D-3 · 2026-10-11 · E3 analysis · method-level results lead.** Family claims use champions selected on E2a
+  (independent data). Per-category "best method" picks are selected on seeds 0–4 and reported on held-out seeds
+  5–9. Pairwise tests: Wilcoxon signed-rank with Holm (as in the thesis); effect sizes are geometric-mean ratios
+  with a cluster bootstrap over problems; Bayesian signed-rank with ±10 % ROPE; Dolan–Moré performance profiles.
+- **D-4 · 2026-10-11 · survey extension and symmetric tuning arm.** Twelve method classes added
+  (`learners/survey.py`): GAM, tensor P-spline, symbolic regression (gplearn), sparse GP (SGPR), warped GP, 2-layer
+  deep GP, last-layer-Laplace BNN, mean-field VI BNN (textbook ELBO and tempered KL weights 0.1 / 0.01, because the
+  untempered ELBO underfits at these n), BART (stochtree), Gaussian-gated mixture of experts, natural-neighbour
+  (Sibson) interpolation, and AAA rational (1-D, studied in E6). They are screened in E2b on the exact E2a grid
+  (9 360 fits, laptop), then go to E3. E3s_tuning gives the leading trees a 30-trial random search and the MLP
+  ensemble 10 members on seeds 0–4, the counterpart of E3s_gp_restarts, so no family is compared at a budget only
+  it received. TabPFN stays blocked by its licence (BUGS N-03). Approved by the author.
+- **D-5 · 2026-10-11 · new study E12 (rational surrogates, H9).** Established: `paaa` (scattered-data p-AAA),
+  `rat_ls` (LS rational + Sanathanan–Koerner). New pairings, with no prior use found (novelty note:
+  `data/literature/notes/aaa_multivariate.md`): `ridge_aaa`, `additive_aaa` (spline/rational hybrid), `gp_ratmean`.
+  Univariate `aaa_rational` on new 1-D problems. New block P-RAT (10 problems; outside core_set, so E3 is
+  unchanged). 35 280 fits, local after E2b. Run walls are set by cost, not by expected failure: cheap runs where a
+  method should fail are kept as evidence (author's rule).
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-03 · Thesis code, GP on `smooth`, seed 0: noisy-fold CV 3.3 % (published 3.0 ± 0.1) vs clean-truth

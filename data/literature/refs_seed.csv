@@ -254,3 +254,20 @@ vanrijn2021finding|van Rijn Schmitt Finding efficient trade-offs in multi-fideli
 iskauskas2024hmer|Iskauskas Vernon Goldstein Emulation and history matching using the hmer package|2209.05265|1.13||arxiv
 neufang2024surrogate|Surrogate-based optimization techniques for process systems engineering|2412.13948|1.2||arxiv
 poznanski2026towards|Poznanski Towards Ram Air Inflated Duct Eccentric Ramjet|||0||
+hastie1986generalized|Hastie Tibshirani Generalized additive models Statistical Science 1986||2.4||
+koza1992genetic|Koza Genetic programming on the programming of computers by means of natural selection||2.4||
+blundell2015weight|Blundell Cornebise Kavukcuoglu Wierstra Weight uncertainty in neural networks|1505.05424|2.4||
+xu1995alternative|Xu Jordan Hinton An alternative model for mixtures of experts||2.4||
+benavoli2016should|Benavoli Corani Mangili Should we really use post-hoc tests based on mean-ranks||10||
+salimbeni2017doubly|Salimbeni Deisenroth Doubly stochastic variational inference for deep Gaussian processes|1705.08933|2.4||
+kristiadi2020being|Kristiadi Hein Hennig Being Bayesian even just a bit fixes overconfidence in ReLU networks|2002.10118|2.4||
+park2006discrete|Park Linsen Kreylos Owens Hamann Discrete Sibson interpolation||2.4||
+carracedo2023paaa|Carracedo Rodriguez Balicki Gugercin The p-AAA algorithm for data driven modeling of parametric dynamical systems|2003.06536|2.4||
+balicki2025scattered|Balicki Gugercin Multivariate rational approximation of scattered data using the p-AAA algorithm|2510.22861|2.4||arxiv
+balicki2025lowrank|Balicki Gugercin Multivariate rational approximation via low-rank tensors and the p-AAA algorithm|2502.03204|2.4||arxiv
+austin2021practical|Austin Krishnamoorthy Leyffer Mrenna Muller Schulz Practical algorithms for multivariate rational approximation||2.4||
+boulle2024multivariate|Boulle Herremans Huybrechs Multivariate rational approximation of functions with curves of singularities|2312.13202|2.4||
+nakatsukasa2025applications|Nakatsukasa Sete Trefethen Applications of AAA rational approximation|2510.16237|2.4||arxiv
+floater2007barycentric|Floater Hormann Barycentric rational interpolation with no poles and high rates of approximation||2.4||
+gonnet2013robust|Gonnet Guttel Trefethen Robust Pade approximation via SVD||2.4||
+forrester2008engineering|Forrester Sobester Keane Engineering design via surrogate modelling a practical guide||2.4||

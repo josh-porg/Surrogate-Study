@@ -14,7 +14,7 @@ from .base import Learner, make, register
 class EnsemblePRESS(Learner):
     name, family, year, field, ref, uq = "ens_press", "ensemble of surrogates", 2007, "multidisciplinary design optimization", "goel2007ensemble", True
 
-    def __init__(self, members=("gp", "rbf_tps", "rsm2", "xgb"), alpha=0.05, beta=-1.0, k=5, **kw):
+    def __init__(self, members=("gp", "rbf_tps", "rsm2", "catboost"), alpha=0.05, beta=-1.0, k=3, **kw):
         super().__init__(**kw); self.members, self.alpha, self.beta, self.k = members, alpha, beta, k
 
     def _fit(self, U, z):

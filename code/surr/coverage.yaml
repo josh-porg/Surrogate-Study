@@ -69,18 +69,26 @@ learners:
   poly_ridge:      {favored_by: [rotated_ridge], hurt_by: [additive, lowrank_product], why: "single learned projection + polynomial"}
   # ── ensembles ──────────────────────────────────────────────────────────────────────────
   ens_press:       {favored_by: [regime, kink_floor], hurt_by: [n_tiny], why: "CV-weighted hedge; CV noisy at tiny n"}
-  # ── planned learners ───────────────────────────────────────────────────────────────────
+  # ── survey extension (learners/survey.py, 2026-10-11; screened in E2b) ─────────────────────
+  gam:             {favored_by: [additive, monotone], hurt_by: [rotated_ridge, lowrank_product, smooth_trig], why: "sum of 1-D penalised splines; no interactions by construction"}
+  pspline_te:      {favored_by: [smooth_trig, kink_floor], hurt_by: [d_high, axis_step], why: "tensor P-spline; full interactions but coefficients grow as k^d"}
+  symreg:          {favored_by: [quadratic, additive], hurt_by: [axis_step, noise_heavytail, nonstationary], why: "searches closed-form expressions; exact when the truth is a short formula, lost otherwise"}
+  deep_gp:         {favored_by: [nonstationary, regime], hurt_by: [n_tiny, smooth_trig], why: "composed GPs warp the input space; variational, needs data to beat one GP"}
+  bnn_laplace:     {favored_by: [smooth_trig, n_large], hurt_by: [n_tiny, axis_step], why: "MAP network + Gaussian last layer; mean as the network, UQ overconfident when it interpolates"}
+  bnn_vi:          {favored_by: [n_large, noise_additive], hurt_by: [n_tiny, smooth_trig], why: "mean-field VI; the KL term dominates at small n (underfits unless tempered)"}
+  moe:             {favored_by: [regime, nonstationary], hurt_by: [smooth_trig, d_high], why: "input-gated local quadratic experts; boundaries smoothed by the gate"}
   natural_neighbor: {favored_by: [kink_floor, n_small], hurt_by: [d_high], why: "Voronoi-based C1 interpolation"}
-  smolyak:         {favored_by: [additive, smooth_trig], hurt_by: [axis_step, rotated_ridge], why: "sparse grid; mixed smoothness"}
   bart:            {favored_by: [tree_draw, regime, noise_additive], hurt_by: [smooth_trig], why: "Bayesian sum of trees"}
   sparse_gp:       {favored_by: [n_large, smooth_trig], hurt_by: [n_tiny, axis_step], why: "inducing-point GP"}
+  warped_gp:       {favored_by: [pole_knee, nonstationary], hurt_by: [axis_step], why: "per-axis monotone input warping"}
+  aaa_rational:    {favored_by: [pole_knee], hurt_by: [axis_step, d_high], why: "rational approximant captures poles"}
+  # ── planned learners ───────────────────────────────────────────────────────────────────
+  smolyak:         {favored_by: [additive, smooth_trig], hurt_by: [axis_step, rotated_ridge], why: "sparse grid; mixed smoothness"}
   tt_cross:        {favored_by: [lowrank_product, additive, d_high], hurt_by: [rotated_ridge, axis_step], why: "low tensor rank in the given axes"}
   fsvd2d:          {favored_by: [lowrank_product], hurt_by: [rotated_ridge], why: "functional SVD; rank depends on orientation"}
   sindy_ae_static: {favored_by: [rotated_ridge, n_large], hurt_by: [n_tiny], why: "learned latent + sparse dictionary"}
   kernel_flow_gp:  {favored_by: [nonstationary, n_small], hurt_by: [n_tiny], why: "kernel learned by sub-sampling criterion"}
-  warped_gp:       {favored_by: [pole_knee, nonstationary], hurt_by: [axis_step], why: "per-axis monotone input warping"}
   sobolev_mlp:     {favored_by: [smooth_trig, n_small], hurt_by: [axis_step], why: "fits values and gradients"}
-  aaa_rational:    {favored_by: [pole_knee], hurt_by: [axis_step, d_high], why: "rational approximant captures poles"}
 samplers:          # initial designs
   random:          {favored_by: [fourier_sparse], hurt_by: [plateau_bump, n_tiny], why: "i.i.d.; needed for compressed-sensing guarantees, poor fill"}
   lhs:             {favored_by: [additive], hurt_by: [plateau_bump], why: "stratified margins"}

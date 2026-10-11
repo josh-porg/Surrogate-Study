@@ -73,6 +73,11 @@ Levels: 0, 0.5, 1, 3, 10 % of sd(f).
   rule"). Output: shortlist + measured fit/predict times (refines compute budget).
 
 ### E3 — Learner study (RQ1, H1)
+*Problem set (revised after E0 measured costs):* not all 161 problems at every level. Core set ≈ 70: every
+P-FEAT probe family at d ∈ {2, 5} plus 8 families at d = 10 (≈ 46); the 6 thesis surfaces; the 6 engineering
+functions; 2 VLSE functions per shape class at d = 2 (12); 4 scalable VLSE functions at d ∈ {5, 10} (8). All 32
+HW1 functions stay in E9 (optimisation) and in a d = 2 accuracy sweep, which is cheap. The coverage matrix is
+re-checked against the core set (every method keeps ≥ 1 favoured and ≥ 1 hurting problem).
 - Survivors (~12 learners) × P-VLSE2, P-VLSEd, P-ENG, P-THESIS, P-FEAT × d × n ∈ {5d,10d,20d,50d,100d,300d} × noise
   (5 levels, additive; 2 levels × other 4 types) × 30 seeds; one-shot Sobol' designs.
 - Metrics: clean NRMSE, sup error, H¹ error, Kendall τ (global and on 10 % sublevel set), NLPD/coverage (UQ learners),
@@ -116,6 +121,19 @@ Levels: 0, 0.5, 1, 3, 10 % of sd(f).
   best F10} × P-THESIS + 10 P-VLSEd/P-ENG problems at d ∈ {2,3,5,8} × 20 seeds.
 - Metrics: value and H¹/H² error added by upscaling (M.15), evaluation cost, memory; and the E9 regret of the result.
 - Key question: does smoothing upscaling turn GBT into a good optimizer-facing surrogate?
+
+### E12 — Rational surrogates and AAA pairings (H9; added 2026-10-11)
+- Learners: univariate AAA (1-D), p-AAA (scattered; Balicki & Gugercin 2025), LS rational p/q (Austin et al. 2021);
+  new pairings ridge-AAA, additive-AAA (spline/rational hybrid), GP with rational mean; references gp, as_gp, gam,
+  ppr, pce_lars, mlp_ens[lbfgs], xgb, catboost.
+- Problems: P-RAT (forrester, runge, near_pole, abs_kink, step1d, ratio2d, resonance2d, ridge_pole_d{3,5,10}) +
+  pole_knee_d{2,5,10}, thesis_collapse_knee + controls without rational structure (smooth_trig d2/d5, additive_d5,
+  rotated_ridge_d5, axis_step_d2, borehole, otlcircuit).
+- Factors: n ∈ {10d, 50d, 200d} ≤ 1000 × additive noise {0, 0.1 %, 1 %, 10 %} × 10 seeds (35 280 fits).
+- Output: accuracy-vs-noise curves per class; where rational methods win; how often the hybrid picks rational terms.
+- Planned extensions: low-rank p-AAA and Smolyak-rational on tensor / sparse-grid designs (grid sampler arm),
+  rational tensor-train with AAA fibres (with the F10 TT-cross work), pole-free variants (Floater–Hormann,
+  sign-constrained denominators) if E12 confirms the noise failure.
 
 ### E9 — Optimization on the surrogate (RQ5, RQ6, H6, H7)
 - Surrogate (E3/E8 survivors incl. upscaled) × optimizer ∈ {IPOPT multistart, SLSQP, L-BFGS-B, trust-constr,
@@ -172,6 +190,23 @@ E3–E8 can run in parallel once E2 has fixed the shortlist; E9 needs E3/E8 surr
 E0–E2, E4, E10–E11 locally; the rest on **KU CRC**, `sixhour` partition for many short array tasks (each shard
 < 5.5 h, resumable), `math` partition for longer jobs. Runner writes one Parquet file per shard (content-hashed
 configs), so jobs can be killed/resubmitted without loss, and results are synced back with `rsync`.
+
+### 4a. Measured budget (E0 v2, 2026-10-03) — replaces the estimates above
+E0 v2 (all 40 learners × n ∈ {20 … 2000} × d ∈ {2, 5, 10}, 1 680 fits, 77 min on 10 laptop cores): only walls left
+are the exact-GP family at n = 1000–2000 (O(n³)). Cost model `results/E0_cost_model.json`, table
+`results/E0_timing_table.md`. E3 priced with it:
+
+| E3 design | fits | CPU-h |
+|---|---|---|
+| 161 problems, 40 learners, 5 noise levels, 30 seeds (original) | 7.8 M | 41 600 (v1 code) |
+| 82-problem core set, v2 code, 30 seeds | 3.9 M | 12 000 |
+| + n ≤ 1000 for O(n³)/network learners, 3 additive noise levels (+ 4 noise types × 2 levels on ¼ of problems) | 2.6 M | 5 300 |
+| + sequential seeds, average 18 | 1.6 M | 3 200 |
+| + sequential seeds, average 12 | 1.1 M | 2 100 |
+
+Capacity: laptop ≈ 240 CPU-h/day + Kaggle ≈ 480 CPU-h/day (5 concurrent 4-core notebooks, 12-h sessions,
+relaunched) → E3 in ≈ 3–5 days; whole study ≈ 2–3 weeks. An ACCESS Explore allocation would cut this to days.
+The full 5-level additive noise sweep moves to a targeted noise sub-study on 12 problems.
 
 ### 4b. Compute strategy without the KU cluster (decided 2026-10-03)
 KU CRC access is unlikely for now. Plan, in order of use:

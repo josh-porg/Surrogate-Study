@@ -80,8 +80,12 @@ class CSFourier(_CS):
     name = "cs_fourier"
 
     def _freqs(self, d):
-        K = self.K or (6 if d <= 2 else 3 if d <= 3 else 2 if d <= 5 else 1)
-        ks = [k for k in itertools.product(range(-K, K + 1), repeat=d) if next((x for x in k if x != 0), 1) > 0]
+        K = self.K or (6 if d <= 2 else 3 if d <= 3 else 2)
+        if d <= 5:                                                         # full ||k||_inf <= K box
+            ks = [k for k in itertools.product(range(-K, K + 1), repeat=d) if next((x for x in k if x != 0), 1) > 0]
+        else:                                                              # ||k||_1 <= K keeps |basis| ~ O(d^K)
+            ks = [k for k in itertools.product(range(-K, K + 1), repeat=d)
+                  if sum(map(abs, k)) <= K and next((x for x in k if x != 0), 1) > 0]
         return np.array(sorted(ks, key=lambda k: sum(map(abs, k))), float)
 
     def _design(self, U):
@@ -112,7 +116,7 @@ class ActiveSubspaceGP(Learner):
 
     def _fit(self, U, z):
         from .kernels import _sk_gp
-        g = _sk_gp(U.shape[1], 2.5, 1, self.seed).fit(U, z)
+        g = _sk_gp(U.shape[1], 2.5, self.kw.get("restarts", 1), self.seed).fit(U, z)
         h = 1e-4; G = np.empty_like(U)
         for j in range(U.shape[1]):
             e = np.zeros(U.shape[1]); e[j] = h
@@ -120,7 +124,7 @@ class ActiveSubspaceGP(Learner):
         lam, V = np.linalg.eigh(G.T @ G / len(z)); lam, V = lam[::-1], V[:, ::-1]
         k = self.k or int(np.clip(np.searchsorted(np.cumsum(lam) / lam.sum(), 0.99) + 1, 1, min(4, U.shape[1])))
         self._W = V[:, :k]
-        self._g = _sk_gp(k, 2.5, 2, self.seed).fit(U @ self._W, z)
+        self._g = _sk_gp(k, 2.5, self.kw.get("restarts", 2), self.seed).fit(U @ self._W, z)
 
     def _predict(self, U):
         return self._g.predict(U @ self._W)

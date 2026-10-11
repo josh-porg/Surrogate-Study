@@ -15,6 +15,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import sys
 import time
 import traceback
@@ -51,6 +52,8 @@ def task_learner(cfg):
     L = REGISTRY[cfg["learner"]]
     if (L.max_n and n > L.max_n) or (L.max_d and d > L.max_d):
         return dict(status="infeasible")
+    if hasattr(L, "feasible") and not L.feasible(n, d):                 # cost wall (bound by cost, not by failure)
+        return dict(status="infeasible", error="cost wall")
     U = S.make(cfg.get("sampler", "sobol"), n, d, seed=seed)
     y_clean = p.f_unit(U)
     T = S.sobol(cfg.get("n_test", 4096), d, seed=10_000 + seed)
@@ -59,7 +62,7 @@ def task_learner(cfg):
     y = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), y_clean, U, scale, seed=20_000 + seed)
 
     t0 = time.perf_counter()
-    m = make(cfg["learner"], seed=seed).fit(U, y)
+    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(U, y)
     t_fit = time.perf_counter() - t0
     t0 = time.perf_counter()
     pred = m.predict(T)
@@ -172,12 +175,166 @@ def exp_E1_canon():
             for s in surfaces for g in strategies for lt in (False, True) for sd in range(30)]
 
 
-EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon}
+SCREEN_PROBLEMS = ["smooth_trig_d5", "axis_step_d5", "rotated_ridge_d5", "fourier_sparse_d2", "kink_floor_d2",
+                   "plateau_bump_d2", "nonstationary_d2", "gp_draw_d5", "tree_draw_d5", "composite_d5",
+                   "thesis_collapse_knee", "borehole"]
+
+
+def exp_E2a_learners():
+    """E2 learner screening: every learner (and the network training-optimizer variants) on 12 screening problems
+    × n ∈ {10d, 50d, 200d} × noise {none, additive 3 %} × 10 seeds, with gradient and calibration metrics."""
+    from surr.learners import REGISTRY
+    from surr.problems import get
+    configs = [(L, {}) for L in sorted(REGISTRY) if L not in ("tabpfn", "mlp_ens", "kan")]
+    configs += [("mlp_ens", {"opt": o}) for o in ("adam", "adamw", "sgd", "lbfgs", "bb")]
+    configs += [("kan", {"opt": o}) for o in ("adam", "lbfgs")]
+    rows = []
+    for pn in SCREEN_PROBLEMS:
+        d = get(pn).d
+        for mult in (10, 50, 200):
+            n = min(mult * d, 1000)
+            for noise, lvl in (("none", 0.0), ("additive", 0.03)):
+                for L, kw in configs:
+                    for sd in range(10):
+                        rows.append(dict(kind="learner", exp="E2a_learners", problem=pn, learner=L, kw=kw, n=n,
+                                         seed=sd, sampler="sobol", noise=noise, level=lvl, grad=True))
+    return rows
+
+
+E2B_CONFIGS = [("gam", {}), ("pspline_te", {}), ("symreg", {}), ("sparse_gp", {}), ("warped_gp", {}), ("deep_gp", {}),
+               ("bnn_laplace", {}), ("bnn_vi", {}), ("bnn_vi", {"kl_weight": 0.1}), ("bnn_vi", {"kl_weight": 0.01}),
+               ("bart", {}), ("moe", {}), ("natural_neighbor", {})]
+
+
+def exp_E2b_learners():
+    """E2b: the survey-extension learners (learners/survey.py, added 2026-10-11) on exactly the E2a screening grid, so
+    they are compared cell-for-cell with the E2a records (same problems, n, noise, seeds; the designs and noise draws
+    depend only on those). bnn_vi is screened as the textbook ELBO and two tempered KL weights. aaa_rational is 1-D
+    only and is studied in E6."""
+    from surr.problems import get
+    rows = []
+    for pn in SCREEN_PROBLEMS:
+        d = get(pn).d
+        for mult in (10, 50, 200):
+            n = min(mult * d, 1000)
+            for noise, lvl in (("none", 0.0), ("additive", 0.03)):
+                for L, kw in E2B_CONFIGS:
+                    for sd in range(10):
+                        rows.append(dict(kind="learner", exp="E2b_learners", problem=pn, learner=L, kw=kw, n=n,
+                                         seed=sd, sampler="sobol", noise=noise, level=lvl, grad=True))
+    return rows
+
+
+E12_LEARNERS = [("aaa_rational", {}), ("paaa", {}), ("rat_ls", {}), ("ridge_aaa", {}), ("additive_aaa", {}),
+                ("gp_ratmean", {}),
+                ("gp", {}), ("as_gp", {}), ("gam", {}), ("ppr", {}), ("pce_lars", {}), ("mlp_ens", {"opt": "lbfgs"}),
+                ("xgb", {}), ("catboost", {})]
+E12_PROBLEMS = ["forrester", "runge", "near_pole", "abs_kink", "step1d", "ratio2d", "resonance2d", "ridge_pole_d3",
+                "ridge_pole_d5", "ridge_pole_d10", "pole_knee_d2", "pole_knee_d5", "pole_knee_d10",
+                "thesis_collapse_knee", "smooth_trig_d2", "smooth_trig_d5", "additive_d5", "rotated_ridge_d5",
+                "axis_step_d2", "borehole", "otlcircuit"]
+
+
+def exp_E12_rational():
+    """E12 (H9): rational surrogates — the established multivariate methods (p-AAA, LS rational) and the new AAA
+    pairings (ridge, additive, GP rational mean), with univariate AAA on 1-D problems, against reference learners.
+    Problems: P-RAT (known rational structure) + pole/knee probes + controls without rational structure. Factors:
+    n ∈ {10d, 50d, 200d} (≤ 1000) × noise {0, 0.1 %, 1 %, 10 % additive} (the noise sweep is the key factor: AAA-type
+    methods interpolate) × 10 seeds. Cells a learner cannot run in cheaply are recorded as infeasible (cost walls)."""
+    from surr.problems import get
+    rows = []
+    for pn in E12_PROBLEMS:
+        d = get(pn).d
+        for mult in (10, 50, 200):
+            n = min(mult * d, 1000)
+            for noise, lvl in (("none", 0.0), ("additive", 0.001), ("additive", 0.01), ("additive", 0.10)):
+                for L, kw in E12_LEARNERS:
+                    for sd in range(10):
+                        rows.append(dict(kind="learner", exp="E12_rational", problem=pn, learner=L, kw=kw, n=n,
+                                         seed=sd, sampler="sobol", noise=noise, level=lvl, grad=True))
+    return rows
+
+
+CAP1000 = {"gp", "gp_se", "hetgp", "smt_krg", "smt_kpls", "as_gp", "dkl", "ens_press", "mlp_ens", "mc_dropout",
+           "kan", "local_gp", "ok_variogram", "rbf_mq", "rbf_tps", "krr", "svr", "cs_fourier"}
+
+
+# smt_krg (full ML-II kriging, d hyper-parameters) timed out at n = 1000 in 131/131 Kaggle fits (900 s cap, E3 wave 1 of
+# the SMT track); capped at n <= 500 on 2026-10-09 (STUDY §9 deviation D-1). Its n > 500 timeout records stay in the data.
+CAP500 = {"smt_krg"}
+# Cut at E2a only because their family was already represented; reinstated 2026-10-11 by the author for the survey
+# (STUDY §9 D-2) so every implemented method class is in the E3 accuracy study. E2a configs, unchanged.
+E3_REINSTATED = ["idw", "knn", "qrf", "ngboost", "mc_dropout", "poly_ridge"]
+
+
+def exp_E3_learners(seeds=range(10)):
+    """E3 stage 1 (10 seeds): shortlist (results/E2a_shortlist.json) × core problems (problems.core_set) ×
+    n ∈ {5d,10d,20d,50d,100d,300d} capped at 2000 (1000 for O(n^3)/network learners, CAP1000) × noise: additive
+    {0, 1 %, 10 %} on all problems + {multiplicative, heteroscedastic, heavytail, numerical} × {1 %, 10 %} on a fixed
+    quarter of the problems. Gradient and calibration metrics on."""
+    from surr.problems import core_set
+    short = json.loads((ROOT / "results" / "E2a_shortlist.json").read_text()) + E3_REINSTATED
+    configs = []
+    for k in short:
+        if "[" in k:
+            base, kv = k[:-1].split("[")
+            configs.append((base, dict(x.split("=") for x in kv.split(","))))
+        else:
+            configs.append((k, {}))
+    probs = core_set()
+    other = {p.name for i, p in enumerate(sorted(probs, key=lambda p: p.name)) if i % 4 == 0}
+    rows = []
+    for p in probs:
+        noises = [("none", 0.0), ("additive", 0.01), ("additive", 0.10)]
+        if p.name in other:
+            noises += [(k, lv) for k in ("multiplicative", "heteroscedastic", "heavytail", "numerical") for lv in (0.01, 0.10)]
+        for n in sorted({min(m * p.d, 2000) for m in (5, 10, 20, 50, 100, 300)}):
+            for L, kw in configs:
+                if L in CAP1000 and n > 1000 or L in CAP500 and n > 500:
+                    continue
+                for noise, lvl in noises:
+                    for sd in seeds:
+                        rows.append(dict(kind="learner", exp="E3_learners", problem=p.name, learner=L, kw=kw, n=n,
+                                         seed=sd, sampler="sobol", noise=noise, level=lvl, grad=True))
+    return rows
+
+
+def exp_E3s_gp_restarts():
+    """E3 sensitivity (BUGS N-14): the four sklearn GP-family learners refit on the identical E3 grid (same designs,
+    noise draws and test sets via the same seeds) with 5 ML-II restarts instead of the E3 cost setting. The 1-restart
+    E3 records stay primary; this run measures how much of the GP results is optimizer failure. Seeds 0-4 only (paired
+    with the same E3 seeds): 5 restarts cost ≈ 2.5x the E3 GP fits (292 CPU-h for 10 seeds at E3 settings)."""
+    rows = []
+    for r in exp_E3_learners(seeds=range(5)):
+        if r["learner"] in ("gp", "gp_se", "hetgp", "as_gp"):
+            rows.append({**r, "exp": "E3s_gp_restarts", "kw": {**r["kw"], "restarts": 5}})
+    return rows
+
+
+def exp_E3s_tuning():
+    """E3 sensitivity, the symmetric counterpart of E3s_gp_restarts: the leading tree and network configs with a
+    larger tuning budget on the identical E3 grid (seeds 0-4): XGBoost and CatBoost with a 30-trial random search
+    (3-fold CV) instead of the small grid / fixed config; the L-BFGS MLP ensemble with 10 members instead of 5."""
+    up = {"xgb": {"tune": "rs30"}, "catboost": {"tune": "rs30"}}
+    rows = []
+    for r in exp_E3_learners(seeds=range(5)):
+        if r["learner"] in up:
+            rows.append({**r, "exp": "E3s_tuning", "kw": {**r["kw"], **up[r["learner"]]}})
+        elif r["learner"] == "mlp_ens" and r["kw"].get("opt") == "lbfgs":
+            rows.append({**r, "exp": "E3s_tuning", "kw": {**r["kw"], "K": 10}})
+    return rows
+
+
+EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learners": exp_E2a_learners,
+               "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
+               "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
 def _done_keys(folder: Path):
     keys = set()
+    for f in folder.glob("done_keys*.txt"):                              # compact resume list shipped to remote shards
+        keys |= set(f.read_text(encoding="utf8").split())
     for f in folder.glob("*.jsonl"):
         for line in f.read_text(encoding="utf8").splitlines():
             try:
@@ -187,6 +344,26 @@ def _done_keys(folder: Path):
     return keys
 
 
+# peak RSS per worker [GB], measured on the laptop (smt_krg d=10: 0.52 GB at n=200, 0.76 at n=500; n=1000 extrapolated);
+# learners not listed are well under 0.5 GB
+MEM_GB = {**{L: 2.0 for L in CAP1000}, "treed_gp": 2.0}
+
+
+def _memory_capped_workers(workers, todo):
+    """Fewer workers when the heaviest pending learner would not fit in RAM: 10 SMT kriging fits at n=1000 on the
+    16.8 GB laptop pushed it into swap (2026-10-04). Leaves 2 GB for the OS and the driver."""
+    try:
+        import psutil
+        avail = psutil.virtual_memory().available / 1e9
+    except ImportError:
+        return workers
+    per = max((MEM_GB.get(t["cfg"].get("learner"), 0.5) for t in todo), default=0.5)
+    cap = max(1, int((avail - 2.0) // per))
+    if cap < workers:
+        print(f"  memory cap: {workers} -> {cap} workers ({avail:.1f} GB free, up to {per:g} GB per task)", flush=True)
+    return min(workers, cap)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("exp")
@@ -194,11 +371,19 @@ def main(argv=None):
     ap.add_argument("--shard", default="1/1")
     ap.add_argument("--timeout", type=float, default=600.0, help="per-task wall-clock cap [s]")
     ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--only-learners", default="", help="comma list: keep only tasks whose learner is listed")
+    ap.add_argument("--skip-learners", default="", help="comma list: drop tasks whose learner is listed")
+    ap.add_argument("--max-hours", type=float, default=0.0, help="stop cleanly after this wall time")
     ap.add_argument("--limit", type=int, default=0, help="run at most this many tasks (testing)")
+    ap.add_argument("--min-free-disk-gb", type=float, default=5.0, help="stop cleanly when the results disk gets this full")
     a = ap.parse_args(argv)
 
     cfgs = EXPERIMENTS[a.exp]()
     tasks = [dict(key=key_of(c), cfg=c) for c in cfgs]
+    if a.only_learners:
+        keep = set(a.only_learners.split(",")); tasks = [t for t in tasks if t["cfg"].get("learner") in keep]
+    if a.skip_learners:
+        drop = set(a.skip_learners.split(",")); tasks = [t for t in tasks if t["cfg"].get("learner") not in drop]
     i, k = map(int, a.shard.split("/"))
     tasks = [t for t in tasks if int(t["key"], 16) % k == i - 1]
     folder = RAW / a.exp; folder.mkdir(parents=True, exist_ok=True)
@@ -213,6 +398,7 @@ def main(argv=None):
     todo.sort(key=lambda t: (t["cfg"].get("learner") not in slow, -t["cfg"].get("n", 0)))
     if a.limit:
         todo = todo[-a.limit:]
+    a.workers = _memory_capped_workers(a.workers, todo)
     out = folder / f"part_{a.shard.replace('/', 'of')}_{os.getpid()}.jsonl"
     t_start, n_done = time.time(), 0
     from pebble import ProcessPool                                       # kills a worker that exceeds the cap
@@ -229,6 +415,14 @@ def main(argv=None):
                 r = dict(key=t["key"], cfg=t["cfg"], status="crash", error=repr(e)[:300])
             fh.write(json.dumps(r) + "\n"); fh.flush()
             n_done += 1
+            low_disk = n_done % 20 == 0 and shutil.disk_usage(folder).free < a.min_free_disk_gb * 1e9
+            if low_disk or (a.max_hours and time.time() - t_start > 3600 * a.max_hours):   # graceful stop
+                why = "free disk below %g GB" % a.min_free_disk_gb if low_disk else f"max-hours {a.max_hours} reached"
+                print(f"  {why} after {n_done} tasks; stopping (resume re-runs the rest)", flush=True)
+                for f2 in futs:
+                    f2.cancel()
+                ex.stop()
+                break
             if n_done % 50 == 0 or n_done == len(todo):
                 el = time.time() - t_start
                 print(f"  {n_done}/{len(todo)}  elapsed {el / 60:.1f} min  "

@@ -147,8 +147,8 @@
  },
  {
   "key": "forrester2008engineering",
-  "query": "Forrester Sobester Keane Engineering Design via Surrogate Modelling A Practical Guide Wiley 2008",
-  "section": "1.1",
+  "query": "Forrester Sobester Keane Engineering design via surrogate modelling a practical guide",
+  "section": "2.4",
   "crossref": {
    "source": "crossref",
    "doi": "10.2514/4.479557",
@@ -9501,5 +9501,727 @@
  {
   "key": "poznanski2026towards",
   "status": "manual"
+ },
+ {
+  "key": "hastie1986generalized",
+  "query": "Hastie Tibshirani Generalized additive models Statistical Science 1986",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1214/ss/1177013604",
+   "title": "Generalized Additive Models",
+   "year": 1986,
+   "venue": "Statistical Science",
+   "authors": [
+    "Hastie",
+    "Tibshirani"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1214/ss/1177013604",
+   "title": "Generalized Additive Models",
+   "year": 1986,
+   "venue": "Statistical Science",
+   "authors": [
+    "Hastie",
+    "Tibshirani"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "koza1992genetic",
+  "query": "Koza Genetic programming on the programming of computers by means of natural selection",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1007/bf00175355",
+   "title": "Genetic programming as a means for programming computers by natural selection",
+   "year": 1994,
+   "venue": "Statistics and Computing",
+   "authors": [
+    "Koza"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1007/bf00175355",
+   "title": "Genetic programming as a means for programming computers by natural selection",
+   "year": 1994,
+   "venue": "Statistics and Computing",
+   "authors": [
+    "Koza"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "blundell2015weight",
+  "query": "Blundell Cornebise Kavukcuoglu Wierstra Weight uncertainty in neural networks",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.5204/thesis.eprints.246038",
+   "title": "Practical uncertainty in neural networks",
+   "year": null,
+   "venue": "Queensland University of Technology",
+   "authors": [
+    "Goan"
+   ],
+   "score": 0.75,
+   "type": "dissertation"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "1505.05424",
+   "title": "Weight Uncertainty in Neural Networks",
+   "year": 2015,
+   "authors": [
+    "Blundell",
+    "Cornebise",
+    "Kavukcuoglu",
+    "Wierstra"
+   ],
+   "authors_full": [
+    "Charles Blundell",
+    "Julien Cornebise",
+    "Koray Kavukcuoglu",
+    "Daan Wierstra"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "arxiv",
+   "arxiv": "1505.05424",
+   "title": "Weight Uncertainty in Neural Networks",
+   "year": 2015,
+   "authors": [
+    "Blundell",
+    "Cornebise",
+    "Kavukcuoglu",
+    "Wierstra"
+   ],
+   "authors_full": [
+    "Charles Blundell",
+    "Julien Cornebise",
+    "Koray Kavukcuoglu",
+    "Daan Wierstra"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "status": "verified"
+ },
+ {
+  "key": "xu1995alternative",
+  "query": "Xu Jordan Hinton An alternative model for mixtures of experts",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1162/neco.1991.3.1.79",
+   "title": "Adaptive Mixtures of Local Experts",
+   "year": 1991,
+   "venue": "Neural Computation",
+   "authors": [
+    "Jacobs",
+    "Jordan",
+    "Nowlan",
+    "Hinton"
+   ],
+   "score": 0.5,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1162/neco.1991.3.1.79",
+   "title": "Adaptive Mixtures of Local Experts",
+   "year": 1991,
+   "venue": "Neural Computation",
+   "authors": [
+    "Jacobs",
+    "Jordan",
+    "Nowlan",
+    "Hinton"
+   ],
+   "score": 0.5,
+   "type": "journal-article"
+  },
+  "status": "manual"
+ },
+ {
+  "key": "benavoli2016should",
+  "query": "Benavoli Corani Mangili Should we really use post-hoc tests based on mean-ranks",
+  "section": "10",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.7717/peerj.3674/supp-9",
+   "title": "Table S9: Post-hoc Dunn tests of mean relative abundance of taxonomic orders over time",
+   "year": null,
+   "venue": "PeerJ",
+   "authors": [],
+   "score": 0.33,
+   "type": "component"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.7717/peerj.3674/supp-9",
+   "title": "Table S9: Post-hoc Dunn tests of mean relative abundance of taxonomic orders over time",
+   "year": null,
+   "venue": "PeerJ",
+   "authors": [],
+   "score": 0.33,
+   "type": "component"
+  },
+  "status": "manual"
+ },
+ {
+  "key": "salimbeni2017doubly",
+  "query": "Salimbeni Deisenroth Doubly stochastic variational inference for deep Gaussian processes",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1142/9789811264467_0001",
+   "title": "Gaussian processes",
+   "year": 2022,
+   "venue": "Stochastic Partial Differential Equations with Additive Gaussian Noise",
+   "authors": [],
+   "score": 1.0,
+   "type": "book-chapter"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "1705.08933",
+   "title": "Doubly Stochastic Variational Inference for Deep Gaussian Processes",
+   "year": 2017,
+   "authors": [
+    "Salimbeni",
+    "Deisenroth"
+   ],
+   "authors_full": [
+    "Hugh Salimbeni",
+    "Marc Deisenroth"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "crossref",
+   "doi": "10.1142/9789811264467_0001",
+   "title": "Gaussian processes",
+   "year": 2022,
+   "venue": "Stochastic Partial Differential Equations with Additive Gaussian Noise",
+   "authors": [],
+   "score": 1.0,
+   "type": "book-chapter"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "kristiadi2020being",
+  "query": "Kristiadi Hein Hennig Being Bayesian even just a bit fixes overconfidence in ReLU networks",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.2139/ssrn.4745658",
+   "title": "Being Bayesian About Learning Bayesian Networks from Ordinal Data",
+   "year": 2024,
+   "venue": "Elsevier BV",
+   "authors": [
+    "Grzegorczyk"
+   ],
+   "score": 0.43,
+   "type": "posted-content"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2002.10118",
+   "title": "Being Bayesian, Even Just a Bit, Fixes Overconfidence in ReLU Networks",
+   "year": 2020,
+   "authors": [
+    "Kristiadi",
+    "Hein",
+    "Hennig"
+   ],
+   "authors_full": [
+    "Agustinus Kristiadi",
+    "Matthias Hein",
+    "Philipp Hennig"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "arxiv",
+   "arxiv": "2002.10118",
+   "title": "Being Bayesian, Even Just a Bit, Fixes Overconfidence in ReLU Networks",
+   "year": 2020,
+   "authors": [
+    "Kristiadi",
+    "Hein",
+    "Hennig"
+   ],
+   "authors_full": [
+    "Agustinus Kristiadi",
+    "Matthias Hein",
+    "Philipp Hennig"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "status": "verified"
+ },
+ {
+  "key": "park2006discrete",
+  "query": "Park Linsen Kreylos Owens Hamann Discrete Sibson interpolation",
+  "section": "3.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1109/tvcg.2006.27",
+   "title": "Discrete Sibson interpolation",
+   "year": 2006,
+   "venue": "IEEE Transactions on Visualization and Computer Graphics",
+   "authors": [
+    "Park",
+    "Linsen",
+    "Kreylos",
+    "Owens",
+    "Hamann"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1109/tvcg.2006.27",
+   "title": "Discrete Sibson interpolation",
+   "year": 2006,
+   "venue": "IEEE Transactions on Visualization and Computer Graphics",
+   "authors": [
+    "Park",
+    "Linsen",
+    "Kreylos",
+    "Owens",
+    "Hamann"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "carracedo2023paaa",
+  "query": "Carracedo Rodriguez Balicki Gugercin The p-AAA algorithm for data driven modeling of parametric dynamical systems",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1137/20m1322698",
+   "title": "The p-AAA Algorithm for Data-Driven Modeling of Parametric Dynamical Systems",
+   "year": 2023,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Rodriguez",
+    "Balicki",
+    "Gugercin"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2003.06536",
+   "title": "The p-AAA algorithm for data driven modeling of parametric dynamical systems",
+   "year": 2020,
+   "authors": [
+    "Rodriguez",
+    "Balicki",
+    "Gugercin"
+   ],
+   "authors_full": [
+    "Andrea Carracedo Rodriguez",
+    "Linus Balicki",
+    "Serkan Gugercin"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "crossref",
+   "doi": "10.1137/20m1322698",
+   "title": "The p-AAA Algorithm for Data-Driven Modeling of Parametric Dynamical Systems",
+   "year": 2023,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Rodriguez",
+    "Balicki",
+    "Gugercin"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "balicki2025scattered",
+  "query": "Balicki Gugercin Multivariate rational approximation of scattered data using the p-AAA algorithm",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1007/s10444-026-10330-7",
+   "title": "Multivariate rational approximation via low-rank tensors and the p-AAA algorithm",
+   "year": 2026,
+   "venue": "Advances in Computational Mathematics",
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "score": 0.62,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2510.22861",
+   "title": "Multivariate Rational Approximation of Scattered Data Using the p-AAA Algorithm",
+   "year": 2025,
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "authors_full": [
+    "Linus Balicki",
+    "Serkan Gugercin"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "arxiv",
+   "arxiv": "2510.22861",
+   "title": "Multivariate Rational Approximation of Scattered Data Using the p-AAA Algorithm",
+   "year": 2025,
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "authors_full": [
+    "Linus Balicki",
+    "Serkan Gugercin"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "status": "verified"
+ },
+ {
+  "key": "balicki2025lowrank",
+  "query": "Balicki Gugercin Multivariate rational approximation via low-rank tensors and the p-AAA algorithm",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1007/s10444-026-10330-7",
+   "title": "Multivariate rational approximation via low-rank tensors and the p-AAA algorithm",
+   "year": 2026,
+   "venue": "Advances in Computational Mathematics",
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2502.03204",
+   "title": "Multivariate Rational Approximation via Low-Rank Tensors and the p-AAA Algorithm",
+   "year": 2025,
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "authors_full": [
+    "Linus Balicki",
+    "Serkan Gugercin"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "arxiv",
+   "arxiv": "2502.03204",
+   "title": "Multivariate Rational Approximation via Low-Rank Tensors and the p-AAA Algorithm",
+   "year": 2025,
+   "authors": [
+    "Balicki",
+    "Gugercin"
+   ],
+   "authors_full": [
+    "Linus Balicki",
+    "Serkan Gugercin"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "status": "verified"
+ },
+ {
+  "key": "austin2021practical",
+  "query": "Austin Krishnamoorthy Leyffer Mrenna Muller Schulz Practical algorithms for multivariate rational approximation",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1016/j.cpc.2020.107663",
+   "title": "Practical algorithms for multivariate rational approximation",
+   "year": 2021,
+   "venue": "Computer Physics Communications",
+   "authors": [
+    "Austin",
+    "Krishnamoorthy",
+    "Leyffer",
+    "Mrenna",
+    "Müller",
+    "Schulz"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1016/j.cpc.2020.107663",
+   "title": "Practical algorithms for multivariate rational approximation",
+   "year": 2021,
+   "venue": "Computer Physics Communications",
+   "authors": [
+    "Austin",
+    "Krishnamoorthy",
+    "Leyffer",
+    "Mrenna",
+    "Müller",
+    "Schulz"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "boulle2024multivariate",
+  "query": "Boulle Herremans Huybrechs Multivariate rational approximation of functions with curves of singularities",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1137/23m1626414",
+   "title": "Multivariate Rational Approximation of Functions with Curves of Singularities",
+   "year": 2024,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Boullé",
+    "Herremans",
+    "Huybrechs"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2312.13202",
+   "title": "Multivariate rational approximation of functions with curves of singularities",
+   "year": 2023,
+   "authors": [
+    "Boullé",
+    "Herremans",
+    "Huybrechs"
+   ],
+   "authors_full": [
+    "Nicolas Boullé",
+    "Astrid Herremans",
+    "Daan Huybrechs"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "crossref",
+   "doi": "10.1137/23m1626414",
+   "title": "Multivariate Rational Approximation of Functions with Curves of Singularities",
+   "year": 2024,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Boullé",
+    "Herremans",
+    "Huybrechs"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "nakatsukasa2025applications",
+  "query": "Nakatsukasa Sete Trefethen Applications of AAA rational approximation",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1017/s0962492925100263",
+   "title": "Applications of AAA rational approximation",
+   "year": 2026,
+   "venue": "Acta Numerica",
+   "authors": [
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2510.16237",
+   "title": "Applications of AAA rational approximation",
+   "year": 2025,
+   "authors": [
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "authors_full": [
+    "Yuji Nakatsukasa",
+    "Lloyd N. Trefethen"
+   ],
+   "doi": "10.1017/S0962492925100263",
+   "score": 1.0
+  },
+  "best": {
+   "source": "arxiv",
+   "arxiv": "2510.16237",
+   "title": "Applications of AAA rational approximation",
+   "year": 2025,
+   "authors": [
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "authors_full": [
+    "Yuji Nakatsukasa",
+    "Lloyd N. Trefethen"
+   ],
+   "doi": "10.1017/S0962492925100263",
+   "score": 1.0
+  },
+  "status": "verified"
+ },
+ {
+  "key": "floater2007barycentric",
+  "query": "Floater Hormann Barycentric rational interpolation with no poles and high rates of approximation",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1007/s00211-007-0093-y",
+   "title": "Barycentric rational interpolation with no poles and high rates of approximation",
+   "year": 2007,
+   "venue": "Numerische Mathematik",
+   "authors": [
+    "Floater",
+    "Hormann"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1007/s00211-007-0093-y",
+   "title": "Barycentric rational interpolation with no poles and high rates of approximation",
+   "year": 2007,
+   "venue": "Numerische Mathematik",
+   "authors": [
+    "Floater",
+    "Hormann"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "gonnet2013robust",
+  "query": "Gonnet Guttel Trefethen Robust Pade approximation via SVD",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1137/110853236",
+   "title": "Robust Padé Approximation via SVD",
+   "year": 2013,
+   "venue": "SIAM Review",
+   "authors": [
+    "Gonnet",
+    "Güttel",
+    "Trefethen"
+   ],
+   "score": 0.75,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1137/110853236",
+   "title": "Robust Padé Approximation via SVD",
+   "year": 2013,
+   "venue": "SIAM Review",
+   "authors": [
+    "Gonnet",
+    "Güttel",
+    "Trefethen"
+   ],
+   "score": 0.75,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "forrester2008engineering",
+  "query": "Forrester Sobester Keane Engineering design via surrogate modelling a practical guide",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.2514/4.479557",
+   "title": "Engineering Design via Surrogate Modelling: A Practical Guide",
+   "year": 2008,
+   "venue": "American Institute of Aeronautics and Astronautics, Inc.",
+   "authors": [
+    "Keane",
+    "Forrester",
+    "Sobester"
+   ],
+   "score": 1.0,
+   "type": "monograph"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.2514/4.479557",
+   "title": "Engineering Design via Surrogate Modelling: A Practical Guide",
+   "year": 2008,
+   "venue": "American Institute of Aeronautics and Astronautics, Inc.",
+   "authors": [
+    "Keane",
+    "Forrester",
+    "Sobester"
+   ],
+   "score": 1.0,
+   "type": "monograph"
+  },
+  "status": "verified"
  }
 ]

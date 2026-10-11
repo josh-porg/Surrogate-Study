@@ -275,7 +275,15 @@ class PPR(Learner):
         ts, rs = ts[keep], rs[keep]
         if len(ts) < 5:
             c = np.polyfit(ts, rs, min(2, len(ts) - 1)); return lambda s: np.polyval(c, s)
-        sp = make_smoothing_spline(ts, rs)                                 # GCV-chosen penalty
+        if len(ts) > 300:                                                  # bin large n: GCV is ill-posed / slow
+            edges = np.quantile(ts, np.linspace(0, 1, 201))
+            idx = np.clip(np.searchsorted(edges, ts, side="right") - 1, 0, 199)
+            cnt = np.bincount(idx, minlength=200); keep = cnt > 0
+            ts = (np.bincount(idx, ts, 200)[keep] / cnt[keep]); rs = (np.bincount(idx, rs, 200)[keep] / cnt[keep])
+        try:
+            sp = make_smoothing_spline(ts, rs)                             # GCV-chosen penalty
+        except ValueError:                                                 # GCV ill-posed: fixed mild penalty
+            sp = make_smoothing_spline(ts, rs, lam=1e-4 * (ts[-1] - ts[0]) ** 3)
         lo, hi = ts[0], ts[-1]
         return lambda s: sp(np.clip(s, lo, hi))
 
@@ -288,9 +296,16 @@ class PPR(Learner):
         starts = [np.eye(d)[k] for k in range(min(d, 3))] + [rng.normal(size=d)]
         best = min((minimize(loss, w0, method="Nelder-Mead", options=dict(maxiter=40 * d, xatol=1e-3, fatol=1e-6)) for w0 in starts),
                    key=lambda res: res.fun)
-        def loss_spline(w):                                                # short refinement with the real smoother
+        def loss_spline(w):                                                # refinement: fixed-knot LSQ cubic spline
+            from scipy.interpolate import make_lsq_spline
             w = w / (np.linalg.norm(w) + 1e-12); t = (U - .5) @ w
-            return np.mean((r - self._smooth(t, r)(t)) ** 2)
+            o = np.argsort(t); ts, rs = t[o], r[o]
+            inner = np.quantile(ts, np.linspace(0, 1, 10)[1:-1])
+            knots = np.r_[[ts[0]] * 4, inner, [ts[-1]] * 4]
+            try:
+                return np.mean((rs - make_lsq_spline(ts, rs, knots, k=3)(ts)) ** 2)
+            except Exception:
+                return loss(w)
         ref = minimize(loss_spline, best.x, method="Nelder-Mead", options=dict(maxiter=15 * d, xatol=1e-4))
         w = ref.x / (np.linalg.norm(ref.x) + 1e-12)
         return w, self._smooth((U - .5) @ w, r)

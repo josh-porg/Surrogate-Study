@@ -44,13 +44,28 @@ for pkg in "{pip}".split():
     r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--no-index", *[f"--find-links={{d}}" for d in wh],
                         pkg], capture_output=True, text=True)
     print(pkg, "ok" if r.returncode == 0 else "FAILED " + r.stderr[-400:], flush=True)
-env = subprocess.run([sys.executable, "-m", "pip", "freeze"], capture_output=True, text=True).stdout
+    if r.returncode and pkg.startswith("smt=="):
+        # every pydoe 1.x declares numpy>=2.2.6 (image: 2.1.3); pydoe is pure Python and smt only uses it for LHS, so
+        # install it and smt without dependency resolution, then prove a kriging fit works (BUGS N-10)
+        for p2, nd in (("pydoe<2", True), ("jenn<3", False), (pkg, True)):
+            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--no-index", *(["--no-deps"] if nd else []),
+                            *[f"--find-links={{d}}" for d in wh], p2], check=True)
+        chk = subprocess.run([sys.executable, "-c", "import numpy as np; from smt.surrogate_models import KRG; "
+                              "x = np.random.rand(20, 2); m = KRG(print_global=False); "
+                              "m.set_training_values(x, np.sin(6 * x).sum(1)); m.train(); print(m.predict_values(x[:2]))"],
+                             capture_output=True, text=True)
+        print(pkg, "no-deps fallback", "ok" if chk.returncode == 0 else "FAILED " + chk.stderr[-400:], flush=True)
+        if chk.returncode and {needs_smt}:     # error records count as done: never let a broken install "finish" SMT tasks
+            raise SystemExit("SMT unusable on this image; not running SMT tasks")
+env =subprocess.run([sys.executable, "-m", "pip", "freeze"], capture_output=True, text=True).stdout
 os.makedirs(f"{{W}}/proj/results/raw/{exp}", exist_ok=True)
 json.dump(dict(python=platform.python_version(), cpus=os.cpu_count(), shard="{i}/{k}", freeze=env.splitlines()),
           open(f"{{W}}/proj/results/raw/{exp}/env_shard{i}of{k}.json", "w"))
 os.chdir(f"{{W}}/proj/code")
-subprocess.run([sys.executable, "-m", "surr.runner", "{exp}", "--shard", "{i}/{k}", "--workers", str(os.cpu_count()),
-                "--timeout", "900"], check=False)
+rc = subprocess.run([sys.executable, "-m", "surr.runner", "{exp}", "--shard", "{i}/{k}", "--workers", str(os.cpu_count()),
+                     "--timeout", "900", "--max-hours", "10.5", *({extra!r})]).returncode
+if rc:                                         # make Kaggle report ERROR instead of COMPLETE so the wave driver stops
+    raise SystemExit(f"runner exited with code {{rc}}")
 '''
 
 
@@ -63,9 +78,15 @@ def build_archive(exp: str, path: Path):
     with tarfile.open(path, "w:gz") as tf:
         skip = lambda ti: None if ("__pycache__" in ti.name or ti.name.endswith(".pyc") or "/cluster" in ti.name) else ti
         tf.add(ROOT / "code", arcname="proj/code", filter=skip)
+        for f in (ROOT / "results").glob("*_shortlist.json"):           # inputs later experiments read (E3 ← E2a)
+            tf.add(f, arcname=f"proj/results/{f.name}")
         prev = ROOT / "results" / "raw" / exp
-        if prev.exists():
-            tf.add(prev, arcname=f"proj/results/raw/{exp}")
+        if prev.exists():                                                # only the finished task keys, not records
+            sys.path.insert(0, str(ROOT / "code"))
+            from surr.runner import _done_keys
+            kf = path.parent / "done_keys.txt"
+            kf.write_text("\n".join(sorted(_done_keys(prev))), encoding="utf8")
+            tf.add(kf, arcname=f"proj/results/raw/{exp}/done_keys_prev.txt")
         if exp.startswith(NEEDS_COMPASS):
             tf.add(COMPASS / "compass" / "__init__.py", arcname="COMPASS/compass/__init__.py")
             tf.add(COMPASS / "compass" / "surrogate", arcname="COMPASS/compass/surrogate", filter=skip)
@@ -74,10 +95,16 @@ def build_archive(exp: str, path: Path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("exp"); ap.add_argument("--shards", type=int, default=4); ap.add_argument("--user", required=True)
+    ap.add_argument("--skip-learners", default=""); ap.add_argument("--only-learners", default="")
+    ap.add_argument("--limit", type=int, default=0, help="tasks per shard (smoke tests)")
+    ap.add_argument("--tag", default="", help="slug suffix, so a second track (e.g. smt) never touches the main shards")
     a = ap.parse_args()
     if a.exp.startswith("E11") or "fea" in a.exp.lower():
         sys.exit("refusing: real-data experiments stay on this machine (STUDY_PLAN §4b data rule)")
-    slug = f"surrpaper-{a.exp.lower().replace('_', '-')}"
+    slug = f"surrpaper-{a.exp.lower().replace('_', '-')}" + (f"-{a.tag}" if a.tag else "")
+    extra = (["--skip-learners", a.skip_learners] if a.skip_learners else []) +             (["--only-learners", a.only_learners] if a.only_learners else []) + (["--limit", str(a.limit)] if a.limit else [])
+    smt = {"smt_krg", "smt_kpls"}
+    needs_smt = bool(smt & set(a.only_learners.split(","))) if a.only_learners else not smt <= set(a.skip_learners.split(","))
     with tempfile.TemporaryDirectory() as td:
         ds = (Path(td) / "ds").resolve(); ds.mkdir()
         build_archive(a.exp, ds / "proj.tar.gz")
@@ -99,7 +126,8 @@ def main():
         for i in range(1, a.shards + 1):
             kd = Path(td) / f"k{i}"; kd.mkdir()
             name = f"{slug}-shard-{i}of{a.shards}"
-            (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards))
+            (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards,
+                                                     extra=extra, needs_smt=needs_smt))
             (kd / "kernel-metadata.json").write_text(json.dumps({
                 "id": f"{a.user}/{name}", "title": name, "code_file": "run.py", "language": "python",
                 "kernel_type": "script", "is_private": True, "enable_gpu": False, "enable_internet": True,

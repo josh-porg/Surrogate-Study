@@ -120,7 +120,7 @@ class MLPEnsemble(Learner):
         for k in range(self.K):
             torch.manual_seed(self.seed * 100 + k)
             idx = rng.integers(0, len(z), len(z)) if self.K > 1 else np.arange(len(z))
-            self._nets.append(_train(_mlp(U.shape[1]), U[idx], z[idx], self.seed + k, opt=self.kw.get("opt", "adam")))
+            self._nets.append(_train(_mlp(U.shape[1]), U[idx], z[idx], self.seed + k, opt=self.kw.get("opt", "lbfgs")))
 
     def _all(self, U):
         torch = _torch()
@@ -144,8 +144,11 @@ class MCDropout(Learner):
         self._net = _train(_mlp(U.shape[1], p_drop=0.1), U, z, self.seed, opt=self.kw.get("opt", "adam"))
 
     def _passes(self, U, T=50):
+        # the same seeded dropout masks on every call (BUGS N-19): row i of U ± h·e_j then sees identical masks, so the
+        # central-difference gradient differentiates one fixed averaged network, not two independent random draws
         torch = _torch(); self._net.train()
-        with torch.no_grad():
+        with torch.no_grad(), torch.random.fork_rng():
+            torch.manual_seed(self.seed + 7919)
             X = torch.tensor(U, dtype=torch.float32)
             return np.vstack([self._net(X).squeeze(-1).numpy() for _ in range(T)])
 
@@ -220,7 +223,7 @@ class KAN(Learner):
 
     def _fit(self, U, z):
         torch = _torch(); torch.manual_seed(self.seed)
-        self._net = _train(_KAN([U.shape[1], 2 * U.shape[1] + 1, 1], self.seed), 2 * U - 1, z, self.seed,
+        self._net = _train(_KAN([U.shape[1], 2 * U.shape[1] + 1, 1], self.seed), 2 * U - 1, z, self.seed, opt=self.kw.get("opt", "adam"),
                            epochs=2000, lr=1e-2)
 
     def _predict(self, U):

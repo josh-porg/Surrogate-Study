@@ -4,7 +4,7 @@ Conditions (noise types, sample-size regimes, dimension regimes, fidelity struct
 experimental settings; they are listed in CONDITIONS so the coverage matrix can reference them.
 """
 from .base import REGISTRY, Problem, register  # noqa: F401
-from . import vlse, engineering, probes, mf  # noqa: F401  (registration side effects)
+from . import vlse, engineering, probes, mf, rational  # noqa: F401  (registration side effects)
 from .mf import MF_REGISTRY  # noqa: F401
 
 CONDITIONS = {
@@ -24,6 +24,23 @@ CONDITIONS = {
     "real_fea": "Poznanski (2026) FEA cache",
     "real_air": "aircraft performance data",
 }
+
+
+CORE_VLSE2 = ["boha1", "sumsqu", "ackley", "levy", "booth", "zakharov", "easom", "michal", "camel6", "rosen",
+              "branin", "goldpr"]                                       # 2 per VLSE shape class
+CORE_SCALABLE = ["rosen", "ackley", "zakharov", "stybtang"]             # at d = 5 and 10
+CORE_D10_FAMILIES = ["smooth_trig", "axis_step", "rotated_ridge", "additive", "fourier_sparse", "kink_floor",
+                     "gp_draw", "composite"]
+
+
+def core_set():
+    """E3 core problems (STUDY_PLAN E3): ~70 problems keeping every coverage-matrix case."""
+    fams = sorted({n.rsplit("_d", 1)[0] for n, p in REGISTRY.items() if p.block == "P-FEAT" and "+dummy" not in n})
+    names = [f"{f}_d{d}" for f in fams for d in (2, 5)] + [f"{f}_d10" for f in CORE_D10_FAMILIES]
+    names += [n for n, p in REGISTRY.items() if p.block in ("P-THESIS", "P-ENG")]
+    names += CORE_VLSE2 + [f"{f}_d{d}" for f in CORE_SCALABLE for d in (5, 10)]
+    names += [n for n in REGISTRY if "+dummy" in n]
+    return [REGISTRY[n] for n in names]
 
 
 def get(name: str) -> Problem:

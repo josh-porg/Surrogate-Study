@@ -76,7 +76,24 @@ class QRF(Learner):
 
 def _small_cv(est, grid, U, z, seed):
     from sklearn.model_selection import GridSearchCV
-    return GridSearchCV(est, grid, cv=min(5, len(z))).fit(U, z).best_estimator_
+    return GridSearchCV(est, grid, cv=min(3, len(z))).fit(U, z).best_estimator_
+
+
+def _random_search(est, space, U, z, seed, trials=30):
+    """Tuning-budget arm (E3s_tuning): 30-trial random search, 3-fold CV — the trees' counterpart of giving the GPs
+    5 ML-II restarts, so neither family is compared at a budget only the other got."""
+    from sklearn.model_selection import RandomizedSearchCV
+    return RandomizedSearchCV(est, space, n_iter=trials, cv=min(3, len(z)), random_state=seed).fit(U, z).best_estimator_
+
+
+def _spaces():
+    from scipy.stats import loguniform, randint, uniform
+    return {
+        "xgb": {"max_depth": randint(2, 9), "learning_rate": loguniform(0.01, 0.3), "n_estimators": randint(100, 801),
+                "subsample": uniform(0.6, 0.4), "min_child_weight": loguniform(0.5, 10), "reg_lambda": loguniform(1e-3, 10)},
+        "catboost": {"depth": randint(2, 9), "learning_rate": loguniform(0.01, 0.3), "iterations": randint(200, 1201),
+                     "l2_leaf_reg": loguniform(1, 10)},
+    }
 
 
 @register
@@ -85,8 +102,11 @@ class XGB(Learner):
 
     def _fit(self, U, z):
         import xgboost as xgb
-        est = xgb.XGBRegressor(n_estimators=300, learning_rate=0.05, subsample=0.9, random_state=self.seed, n_jobs=1)
-        self._m = _small_cv(est, {"max_depth": [2, 4, 6]}, U, z, self.seed)
+        est = xgb.XGBRegressor(n_estimators=200, learning_rate=0.08, subsample=0.9, random_state=self.seed, n_jobs=1)
+        if self.kw.get("tune") == "rs30":
+            self._m = _random_search(est, _spaces()["xgb"], U, z, self.seed)
+        else:
+            self._m = _small_cv(est, {"max_depth": [2, 4, 6]}, U, z, self.seed)
 
     def _predict(self, U):
         return self._m.predict(U)
@@ -112,8 +132,12 @@ class CatBoost(Learner):
 
     def _fit(self, U, z):
         from catboost import CatBoostRegressor
-        self._m = CatBoostRegressor(iterations=600, depth=4, learning_rate=0.05, random_seed=self.seed,
-                                    verbose=False, thread_count=1).fit(U, z)
+        est = CatBoostRegressor(iterations=600, depth=4, learning_rate=0.05, random_seed=self.seed,
+                                verbose=False, thread_count=1, allow_writing_files=False)
+        if self.kw.get("tune") == "rs30":
+            self._m = _random_search(est, _spaces()["catboost"], U, z, self.seed)
+        else:
+            self._m = est.fit(U, z)
 
     def _predict(self, U):
         return self._m.predict(U)

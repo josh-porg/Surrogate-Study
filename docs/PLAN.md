@@ -63,8 +63,8 @@ Status keys: `todo` · `doing` · `done` · `blocked`.
 ## Phase 3 — Reproduce, then correct, the thesis
 | # | Task | Status |
 |---|---|---|
-| 3.1 | Reproduce thesis Tables canonical_a/b, scout_knee, cv_full with the original settings | todo |
-| 3.2 | Re-run with clean-truth scoring (B-01), nested target choice (B-05), 30 seeds (B-08) → errata table | todo |
+| 3.1 | Reproduce thesis Tables canonical_a/b, scout_knee, cv_full with the original settings | canonical_a/b **done** (E1, 71/72 on Kaggle); scout_knee, cv_full todo |
+| 3.2 | Re-run with clean-truth scoring (B-01), nested target choice (B-05), 30 seeds (B-08) → errata table | canonical **done** (`results/E1_canon_report.md`) |
 | 3.3 | Space-filling controls for the scout study (B-02) | todo |
 | 3.4 | Real-cache GBT vs GP with repeated CV + CIs (B-11); corrected noise estimate (B-06) | todo |
 

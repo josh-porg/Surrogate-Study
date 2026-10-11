@@ -36,7 +36,7 @@ class GP(Learner):
     nu = 2.5
 
     def _fit(self, U, z):
-        self._m = _sk_gp(U.shape[1], self.nu, self.kw.get("restarts", 3), self.seed).fit(U, z)
+        self._m = _sk_gp(U.shape[1], self.nu, self.kw.get("restarts", 1), self.seed).fit(U, z)
 
     def _predict(self, U):
         return self._m.predict(U)
@@ -99,12 +99,14 @@ class HetGP(Learner):
 
     def _fit(self, U, z):
         from sklearn.gaussian_process import GaussianProcessRegressor
-        g1 = _sk_gp(U.shape[1], 2.5, 2, self.seed).fit(U, z)
+        r = self.kw.get("restarts")                                       # None = E3 defaults (2, 1, 1)
+        g1 = _sk_gp(U.shape[1], 2.5, 2 if r is None else r, self.seed).fit(U, z)
         r2 = np.log((z - g1.predict(U)) ** 2 + 1e-8)
-        self._noise = _sk_gp(U.shape[1], 2.5, 1, self.seed).fit(U, r2)
+        self._noise = _sk_gp(U.shape[1], 2.5, 1 if r is None else r, self.seed).fit(U, r2)
         a = np.exp(self._noise.predict(U))
         k = g1.kernel_.k1                                                  # signal part, re-optimised below
-        self._m = GaussianProcessRegressor(k, alpha=a, n_restarts_optimizer=1, random_state=self.seed).fit(U, z)
+        self._m = GaussianProcessRegressor(k, alpha=a, n_restarts_optimizer=1 if r is None else r,
+                                           random_state=self.seed).fit(U, z)
 
     def _predict(self, U):
         return self._m.predict(U)
