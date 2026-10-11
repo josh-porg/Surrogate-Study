@@ -1,0 +1,25 @@
+E3_learners: 45160 tasks in shard 1/1, 0 done, 45160 to run on 10 workers
+  50/45160  elapsed 29.9 min  eta 26967.8 min
+Exception in thread Thread-2 (pool_manager_loop):
+Traceback (most recent call last):
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1044, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 205, in pool_manager_loop
+    pool_manager.update_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 257, in update_status
+    self.update_tasks()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 263, in update_tasks
+    if self.worker_manager.maybe_stop_worker(task.worker_id):
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 469, in maybe_stop_worker
+    stop_process(worker)
+    ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\common\process.py", line 63, in stop_process
+    raise RuntimeError("Unable to terminate PID %d" % os.getpid())
+RuntimeError: Unable to terminate PID 76152

@@ -1,0 +1,129 @@
+[{"stream_name":"stdout","time":6.801244562,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":15.69244921,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":17.198897589,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":17.198933725,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":17.198939972,"data":"\n"}
+,{"stream_name":"stdout","time":21.224771004,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":25.545831943,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":29.243634825,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":33.213858032,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":37.495786862,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stderr","time":40.179174142,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":40.179218014,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":51.357538806,"data":"E3_learners: 156713 tasks in shard 3/5, 0 done, 156713 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":184.429155106,"data":"  50/156713  elapsed 2.2 min  eta 6929.9 min\n"}
+,{"stream_name":"stdout","time":314.242174604,"data":"  100/156713  elapsed 4.4 min  eta 6852.3 min\n"}
+,{"stream_name":"stdout","time":429.009538821,"data":"  150/156713  elapsed 6.3 min  eta 6563.2 min\n"}
+,{"stream_name":"stdout","time":570.421647567,"data":"  200/156713  elapsed 8.6 min  eta 6765.2 min\n"}
+,{"stream_name":"stdout","time":687.160257804,"data":"  250/156713  elapsed 10.6 min  eta 6628.1 min\n"}
+,{"stream_name":"stdout","time":833.020908812,"data":"  300/156713  elapsed 13.0 min  eta 6789.2 min\n"}
+,{"stream_name":"stdout","time":919.096092253,"data":"  350/156713  elapsed 14.5 min  eta 6458.3 min\n"}
+,{"stream_name":"stdout","time":990.426388042,"data":"  400/156713  elapsed 15.6 min  eta 6113.8 min\n"}
+,{"stream_name":"stdout","time":1067.634846113,"data":"  450/156713  elapsed 16.9 min  eta 5879.6 min\n"}
+,{"stream_name":"stdout","time":1136.096577659,"data":"  500/156713  elapsed 18.1 min  eta 5646.4 min\n"}
+,{"stream_name":"stdout","time":1196.136052428,"data":"  550/156713  elapsed 19.1 min  eta 5415.6 min\n"}
+,{"stream_name":"stdout","time":1259.889072404,"data":"  600/156713  elapsed 20.1 min  eta 5239.2 min\n"}
+,{"stream_name":"stdout","time":1335.111638086,"data":"  650/156713  elapsed 21.4 min  eta 5135.6 min\n"}
+,{"stream_name":"stdout","time":1397.310718417,"data":"  700/156713  elapsed 22.4 min  eta 4998.3 min\n"}
+,{"stream_name":"stdout","time":1469.00532186,"data":"  750/156713  elapsed 23.6 min  eta 4912.1 min\n"}
+,{"stream_name":"stdout","time":1537.076199325,"data":"  800/156713  elapsed 24.8 min  eta 4824.7 min\n"}
+,{"stream_name":"stdout","time":1603.507412444,"data":"  850/156713  elapsed 25.9 min  eta 4742.5 min\n"}
+,{"stream_name":"stdout","time":1705.803059524,"data":"  900/156713  elapsed 27.6 min  eta 4772.7 min\n"}
+,{"stream_name":"stdout","time":1793.178823582,"data":"  950/156713  elapsed 29.0 min  eta 4758.8 min\n"}
+,{"stream_name":"stdout","time":2912.386337855,"data":"  1000/156713  elapsed 47.7 min  eta 7424.0 min\n"}
+,{"stream_name":"stdout","time":4148.860046928,"data":"  1050/156713  elapsed 68.3 min  eta 10123.4 min\n"}
+,{"stream_name":"stdout","time":5184.705472654,"data":"  1100/156713  elapsed 85.5 min  eta 12102.4 min\n"}
+,{"stream_name":"stdout","time":5924.078379403,"data":"  1150/156713  elapsed 97.9 min  eta 13239.4 min\n"}
+,{"stream_name":"stdout","time":6680.513912326,"data":"  1200/156713  elapsed 110.5 min  eta 14317.5 min\n"}
+,{"stream_name":"stdout","time":7843.882985794,"data":"  1250/156713  elapsed 129.9 min  eta 16151.9 min\n"}
+,{"stream_name":"stdout","time":8782.532062787,"data":"  1300/156713  elapsed 145.5 min  eta 17395.9 min\n"}
+,{"stream_name":"stdout","time":9492.255865035,"data":"  1350/156713  elapsed 157.3 min  eta 18107.5 min\n"}
+,{"stream_name":"stdout","time":9990.9024292,"data":"  1400/156713  elapsed 165.7 min  eta 18377.2 min\n"}
+,{"stream_name":"stdout","time":10447.750824328,"data":"  1450/156713  elapsed 173.3 min  eta 18553.1 min\n"}
+,{"stream_name":"stdout","time":11601.891079581,"data":"  1500/156713  elapsed 192.5 min  eta 19919.3 min\n"}
+,{"stream_name":"stdout","time":11991.857193387,"data":"  1550/156713  elapsed 199.0 min  eta 19921.1 min\n"}
+,{"stream_name":"stdout","time":12513.866359347,"data":"  1600/156713  elapsed 207.7 min  eta 20135.8 min\n"}
+,{"stream_name":"stdout","time":13362.801899705,"data":"  1650/156713  elapsed 221.9 min  eta 20849.0 min\n"}
+,{"stream_name":"stdout","time":13763.413315327,"data":"  1700/156713  elapsed 228.5 min  eta 20838.1 min\n"}
+,{"stream_name":"stdout","time":15462.821596541,"data":"  1750/156713  elapsed 256.9 min  eta 22744.3 min\n"}
+,{"stream_name":"stdout","time":15949.193747084,"data":"  1800/156713  elapsed 265.0 min  eta 22803.0 min\n"}
+,{"stream_name":"stdout","time":16326.581834167,"data":"  1850/156713  elapsed 271.2 min  eta 22706.1 min\n"}
+,{"stream_name":"stdout","time":17326.700114876,"data":"  1900/156713  elapsed 287.9 min  eta 23459.6 min\n"}
+,{"stream_name":"stdout","time":17754.750737738,"data":"  1950/156713  elapsed 295.1 min  eta 23416.9 min\n"}
+,{"stream_name":"stdout","time":18173.307871829,"data":"  2000/156713  elapsed 302.0 min  eta 23363.7 min\n"}
+,{"stream_name":"stdout","time":18579.372934191,"data":"  2050/156713  elapsed 308.8 min  eta 23297.1 min\n"}
+,{"stream_name":"stdout","time":19007.702448822,"data":"  2100/156713  elapsed 315.9 min  eta 23260.6 min\n"}
+,{"stream_name":"stdout","time":19567.840617514,"data":"  2150/156713  elapsed 325.3 min  eta 23383.5 min\n"}
+,{"stream_name":"stdout","time":19762.588801547,"data":"  2200/156713  elapsed 328.5 min  eta 23072.6 min\n"}
+,{"stream_name":"stdout","time":20297.967216391,"data":"  2250/156713  elapsed 337.4 min  eta 23165.2 min\n"}
+,{"stream_name":"stdout","time":20523.759043128,"data":"  2300/156713  elapsed 341.2 min  eta 22906.9 min\n"}
+,{"stream_name":"stdout","time":20975.647824463,"data":"  2350/156713  elapsed 348.7 min  eta 22906.9 min\n"}
+,{"stream_name":"stdout","time":21331.986478491,"data":"  2400/156713  elapsed 354.7 min  eta 22804.3 min\n"}
+,{"stream_name":"stdout","time":21795.869257501,"data":"  2450/156713  elapsed 362.4 min  eta 22818.5 min\n"}
+,{"stream_name":"stdout","time":22082.967574202,"data":"  2500/156713  elapsed 367.2 min  eta 22650.0 min\n"}
+,{"stream_name":"stdout","time":22136.810992687,"data":"  2550/156713  elapsed 368.1 min  eta 22253.0 min\n"}
+,{"stream_name":"stdout","time":22553.074552773,"data":"  2600/156713  elapsed 375.0 min  eta 22229.2 min\n"}
+,{"stream_name":"stdout","time":22882.936493352,"data":"  2650/156713  elapsed 380.5 min  eta 22122.3 min\n"}
+,{"stream_name":"stdout","time":23149.434163609,"data":"  2700/156713  elapsed 385.0 min  eta 21958.9 min\n"}
+,{"stream_name":"stdout","time":23438.734424371,"data":"  2750/156713  elapsed 389.8 min  eta 21822.6 min\n"}
+,{"stream_name":"stdout","time":23774.025613524,"data":"  2800/156713  elapsed 395.4 min  eta 21733.2 min\n"}
+,{"stream_name":"stdout","time":24007.564730918,"data":"  2850/156713  elapsed 399.3 min  eta 21555.1 min\n"}
+,{"stream_name":"stdout","time":24467.444036966,"data":"  2900/156713  elapsed 406.9 min  eta 21583.1 min\n"}
+,{"stream_name":"stdout","time":24674.472364812,"data":"  2950/156713  elapsed 410.4 min  eta 21390.2 min\n"}
+,{"stream_name":"stdout","time":24866.91021811,"data":"  3000/156713  elapsed 413.6 min  eta 21191.2 min\n"}
+,{"stream_name":"stdout","time":25272.889434383,"data":"  3050/156713  elapsed 420.4 min  eta 21177.9 min\n"}
+,{"stream_name":"stdout","time":25619.328593806,"data":"  3100/156713  elapsed 426.1 min  eta 21115.7 min\n"}
+,{"stream_name":"stdout","time":25872.49075552,"data":"  3150/156713  elapsed 430.3 min  eta 20979.4 min\n"}
+,{"stream_name":"stdout","time":26169.45157207,"data":"  3200/156713  elapsed 435.3 min  eta 20882.3 min\n"}
+,{"stream_name":"stdout","time":26408.775974289,"data":"  3250/156713  elapsed 439.3 min  eta 20742.7 min\n"}
+,{"stream_name":"stdout","time":26645.965011946,"data":"  3300/156713  elapsed 443.2 min  eta 20605.6 min\n"}
+,{"stream_name":"stdout","time":26910.243881591,"data":"  3350/156713  elapsed 447.6 min  eta 20493.0 min\n"}
+,{"stream_name":"stdout","time":27131.611920435,"data":"  3400/156713  elapsed 451.3 min  eta 20351.5 min\n"}
+,{"stream_name":"stdout","time":27407.666249941,"data":"  3450/156713  elapsed 455.9 min  eta 20254.4 min\n"}
+,{"stream_name":"stdout","time":27696.467551822,"data":"  3500/156713  elapsed 460.7 min  eta 20169.2 min\n"}
+,{"stream_name":"stdout","time":27905.263431699,"data":"  3550/156713  elapsed 464.2 min  eta 20028.8 min\n"}
+,{"stream_name":"stdout","time":28218.749273223,"data":"  3600/156713  elapsed 469.5 min  eta 19966.4 min\n"}
+,{"stream_name":"stdout","time":28387.953899006,"data":"  3650/156713  elapsed 472.3 min  eta 19804.7 min\n"}
+,{"stream_name":"stdout","time":28596.027718562,"data":"  3700/156713  elapsed 475.7 min  eta 19674.1 min\n"}
+,{"stream_name":"stdout","time":28839.500034198,"data":"  3750/156713  elapsed 479.8 min  eta 19571.0 min\n"}
+,{"stream_name":"stdout","time":29084.566863649,"data":"  3800/156713  elapsed 483.9 min  eta 19471.5 min\n"}
+,{"stream_name":"stdout","time":29586.81405354,"data":"  3850/156713  elapsed 492.3 min  eta 19544.7 min\n"}
+,{"stream_name":"stdout","time":29713.777055285,"data":"  3900/156713  elapsed 494.4 min  eta 19370.7 min\n"}
+,{"stream_name":"stdout","time":29946.008213568,"data":"  3950/156713  elapsed 498.2 min  eta 19268.9 min\n"}
+,{"stream_name":"stdout","time":30241.443510505,"data":"  4000/156713  elapsed 503.2 min  eta 19209.8 min\n"}
+,{"stream_name":"stdout","time":30407.33239091,"data":"  4050/156713  elapsed 505.9 min  eta 19070.7 min\n"}
+,{"stream_name":"stdout","time":30710.18447223,"data":"  4100/156713  elapsed 511.0 min  eta 19019.8 min\n"}
+,{"stream_name":"stdout","time":31077.838649087,"data":"  4150/156713  elapsed 517.1 min  eta 19009.8 min\n"}
+,{"stream_name":"stdout","time":31434.042114732,"data":"  4200/156713  elapsed 523.0 min  eta 18992.9 min\n"}
+,{"stream_name":"stdout","time":31704.109806802,"data":"  4250/156713  elapsed 527.5 min  eta 18924.8 min\n"}
+,{"stream_name":"stdout","time":31913.571972721,"data":"  4300/156713  elapsed 531.0 min  eta 18822.3 min\n"}
+,{"stream_name":"stdout","time":32114.67358904,"data":"  4350/156713  elapsed 534.4 min  eta 18717.3 min\n"}
+,{"stream_name":"stdout","time":32398.562099176,"data":"  4400/156713  elapsed 539.1 min  eta 18662.3 min\n"}
+,{"stream_name":"stdout","time":32579.309610303,"data":"  4450/156713  elapsed 542.1 min  eta 18549.6 min\n"}
+,{"stream_name":"stdout","time":32897.564680951,"data":"  4500/156713  elapsed 547.4 min  eta 18516.9 min\n"}
+,{"stream_name":"stdout","time":33029.469944259,"data":"  4550/156713  elapsed 549.6 min  eta 18380.9 min\n"}
+,{"stream_name":"stdout","time":33278.04217887,"data":"  4600/156713  elapsed 553.8 min  eta 18312.2 min\n"}
+,{"stream_name":"stdout","time":33468.083891387,"data":"  4650/156713  elapsed 556.9 min  eta 18212.9 min\n"}
+,{"stream_name":"stdout","time":33671.947263507,"data":"  4700/156713  elapsed 560.3 min  eta 18123.1 min\n"}
+,{"stream_name":"stdout","time":33885.922297083,"data":"  4750/156713  elapsed 563.9 min  eta 18040.5 min\n"}
+,{"stream_name":"stdout","time":34081.701300879,"data":"  4800/156713  elapsed 567.2 min  eta 17950.0 min\n"}
+,{"stream_name":"stdout","time":34589.521970386,"data":"  4850/156713  elapsed 575.6 min  eta 18024.1 min\n"}
+,{"stream_name":"stdout","time":34908.054176514,"data":"  4900/156713  elapsed 580.9 min  eta 17998.8 min\n"}
+,{"stream_name":"stdout","time":35238.773494222,"data":"  4950/156713  elapsed 586.5 min  eta 17980.1 min\n"}
+,{"stream_name":"stdout","time":35545.599953417,"data":"  5000/156713  elapsed 591.6 min  eta 17949.6 min\n"}
+,{"stream_name":"stdout","time":35689.41392706,"data":"  5050/156713  elapsed 594.0 min  eta 17838.0 min\n"}
+,{"stream_name":"stdout","time":36085.493112731,"data":"  5100/156713  elapsed 600.6 min  eta 17853.6 min\n"}
+,{"stream_name":"stdout","time":36373.697913376,"data":"  5150/156713  elapsed 605.4 min  eta 17815.8 min\n"}
+,{"stream_name":"stdout","time":36693.809743616,"data":"  5200/156713  elapsed 610.7 min  eta 17794.1 min\n"}
+,{"stream_name":"stdout","time":36964.420153375,"data":"  5250/156713  elapsed 615.2 min  eta 17748.9 min\n"}
+,{"stream_name":"stdout","time":37206.929843861,"data":"  5300/156713  elapsed 619.3 min  eta 17691.1 min\n"}
+,{"stream_name":"stdout","time":37555.836747057,"data":"  5350/156713  elapsed 625.1 min  eta 17684.5 min\n"}
+,{"stream_name":"stdout","time":37821.0781749,"data":"  5400/156713  elapsed 629.5 min  eta 17638.9 min\n"}
+,{"stream_name":"stdout","time":37854.449941586,"data":"  max-hours 10.5 reached after 5420 tasks; stopping (resume re-runs the rest)\n"}
+,{"stream_name":"stderr","time":37867.5110272,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":37867.511090929,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":37867.785352936,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":37867.785396928,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":37868.701575374,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":37869.318197434,"data":"[NbConvertApp] Writing 283272 bytes to __results__.html\n"}
+]

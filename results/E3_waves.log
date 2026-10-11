@@ -1,0 +1,112 @@
+[wave 1] E3_learners: 783560 tasks in shard 1/1, 0 done, 783560 to run on 10 workers
+archive 0.10 MB
++ datasets create -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\ds
+Starting upload for file done_keys.txt
+0.00B [00:00, ?B/s]0.00B [00:00, ?B/s]0.00B [00:01, ?B/s]
+Upload successful: done_keys.txt (0B)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/98.3k [00:00<?, ?B/s] 16%|█▋        | 16.0k/98.3k [00:00<00:02, 36.5kB/s]100%|██████████| 98.3k/98.3k [00:01<00:00, 89.2kB/s]
+Upload successful: proj.tar.gz (98KB)
+Your private Dataset is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\k1
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\k2
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\k3
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\k4
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpw5pd5oxc\k5
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-5of5
+[wave 1] shard statuses: [' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"']
+('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/analysis/e0_timing.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/analysis/e1_canon.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/analysis/e2a_learners.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/catboost_info/catboost_training.json
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/catboost_info/learn/events.out.tfevents
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/catboost_info/learn_error.tsv
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/catboost_info/time_left.tsv
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/lit/check_cites.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/lit/fetch_pdfs.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/lit/verify_refs.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/__init__.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/__pycache__/__init__.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/__pycache__/runner.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/acquisitions.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/check_coverage.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/coverage.yaml
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/__init__.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/base.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/basis.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/classical.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/kernels.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/meta.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/nets.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/learners/trees.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/multifidelity.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/noise.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/optimizers.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/problems/__init__.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/problems/__pycache__/__init__.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/problems/__pycache__/base.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/problems/__pycache__/engineering.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpms0k2p8i\proj/code/surr/problems/__pycache__/mf.cpython-313.pyc
+('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/analysis/e0_timing.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/analysis/e1_canon.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/analysis/e2a_learners.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/catboost_info/catboost_training.json
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/catboost_info/learn/events.out.tfevents
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/catboost_info/learn_error.tsv
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/catboost_info/time_left.tsv
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/lit/check_cites.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/lit/fetch_pdfs.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/lit/verify_refs.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/__init__.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/__pycache__/__init__.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/__pycache__/runner.cpython-313.pyc
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/acquisitions.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/check_coverage.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/coverage.yaml
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/learners/__init__.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/learners/base.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/learners/basis.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/learners/classical.py
+Output file downloaded to C:\Users\satur\AppData\Local\Temp\tmpb0q4p0qr\proj/code/surr/learners/kernels.py
+[Errno 28] No space left on device
+[Errno 28] No space left on device
+
+
+[wave 1] E3_learners: 783560 tasks in shard 1/1, 0 done, 783560 to run on 10 workers
+archive 0.10 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/0.98k [00:00<?, ?B/s]100%|##########| 0.98k/0.98k [00:00<00:00, 4.08kB/s]100%|##########| 0.98k/0.98k [00:00<00:00, 1.07kB/s]
+Upload successful: done_keys.txt (1006B)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/99.8k [00:00<?, ?B/s] 16%|#6        | 16.0k/99.8k [00:00<00:01, 74.4kB/s]100%|##########| 99.8k/99.8k [00:00<00:00, 113kB/s] 
+Upload successful: proj.tar.gz (100KB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\k1
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\k2
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\k3
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\k4
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpl7fs2tzn\k5
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-shard-5of5
+[chain] waiting for current 5-shard wave (Tue Oct  6 16:42:51 PDT 2026)
+[chain] statuses [' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"', ' "KernelWorkerStatus.COMPLETE"']
+joshuadavidpoznanski/surrpaper-e3-learners-shard-1of5 -> joshuadavidpoznanski/surrpaper-e3-learners-shard-1of5 has status "KernelWorkerStatus.COMPLETE"
+joshuadavidpoznanski/surrpaper-e3-learners-shard-2of5 -> joshuadavidpoznanski/surrpaper-e3-learners-shard-2of5 has status "KernelWorkerStatus.COMPLETE"
+joshuadavidpoznanski/surrpaper-e3-learners-shard-3of5 -> joshuadavidpoznanski/surrpaper-e3-learners-shard-3of5 has status "KernelWorkerStatus.COMPLETE"
+joshuadavidpoznanski/surrpaper-e3-learners-shard-4of5 -> joshuadavidpoznanski/surrpaper-e3-learners-shard-4of5 has status "KernelWorkerStatus.COMPLETE"
+joshuadavidpoznanski/surrpaper-e3-learners-shard-5of5 -> joshuadavidpoznanski/surrpaper-e3-learners-shard-5of5 has status "KernelWorkerStatus.COMPLETE"
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+[chain] starting main (4 shards) and smt (1 shard) tracks (Wed Oct  7 04:07:50 PDT 2026)
+[chain] both tracks ended (Wed Oct  7 11:52:47 PDT 2026)

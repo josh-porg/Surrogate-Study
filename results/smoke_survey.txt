@@ -1,0 +1,42 @@
+smooth_trig_d2   gp                nrmse  0.0006  fit    0.4s  finite True  repeatable True  std~0.000591
+smooth_trig_d2   xgb               nrmse  0.1372  fit    1.1s  finite True  repeatable True
+smooth_trig_d2   gam               nrmse  0.4367  fit    0.1s  finite True  repeatable True  std~0.169
+smooth_trig_d2   pspline_te        nrmse  0.1360  fit    0.2s  finite True  repeatable True  std~0.0196
+smooth_trig_d2   symreg            nrmse  0.1301  fit    5.0s  finite True  repeatable True
+smooth_trig_d2   sparse_gp         nrmse  0.0025  fit    2.9s  finite True  repeatable True  std~0.00476
+smooth_trig_d2   warped_gp         nrmse  0.0030  fit    0.5s  finite True  repeatable True  std~0.00471
+smooth_trig_d2   deep_gp           nrmse  0.0250  fit    3.4s  finite True  repeatable False  std~0.029
+smooth_trig_d2   bnn_laplace       nrmse  0.0060  fit    1.0s  finite True  repeatable True  std~0.00197
+smooth_trig_d2   bnn_vi            nrmse  0.8606  fit    4.7s  finite True  repeatable False  std~0.636
+smooth_trig_d2   bart              nrmse  0.1386  fit    0.4s  finite True  repeatable True  std~0.0355
+smooth_trig_d2   moe               nrmse  0.0325  fit    4.4s  finite True  repeatable True  std~0.0136
+smooth_trig_d2   natural_neighbor  nrmse  0.0733  fit    0.0s  finite True  repeatable True
+smooth_trig_d2   aaa_rational      infeasible (d/n wall)
+borehole         gp                nrmse  0.0029  fit    0.6s  finite True  repeatable True  std~0.143
+borehole         xgb               nrmse  0.1676  fit    1.3s  finite True  repeatable True
+borehole         gam               nrmse  0.2024  fit    0.2s  finite True  repeatable True  std~9.59
+borehole         pspline_te        infeasible (d/n wall)
+borehole         symreg            nrmse  0.1617  fit    4.4s  finite True  repeatable True
+borehole         sparse_gp         nrmse  0.0166  fit    1.0s  finite True  repeatable True  std~1.24
+borehole         warped_gp         nrmse  0.0064  fit    1.1s  finite True  repeatable True  std~0.636
+borehole         deep_gp           nrmse  0.0442  fit    4.0s  finite True  repeatable False  std~2.43
+borehole         bnn_laplace       nrmse  0.0065  fit    0.9s  finite True  repeatable True  std~0.161
+borehole         bnn_vi            nrmse  0.1258  fit    5.4s  finite True  repeatable False  std~16.1
+borehole         bart              nrmse  0.1510  fit    0.4s  finite True  repeatable True  std~4.44
+borehole         moe               nrmse  0.0600  fit    0.5s  finite True  repeatable True  std~3.44
+borehole         natural_neighbor  infeasible (d/n wall)
+borehole         aaa_rational      infeasible (d/n wall)
+axis_step_d2     gp                nrmse  0.1299  fit    0.2s  finite True  repeatable True  std~0.0634
+axis_step_d2     xgb               nrmse  0.2187  fit    1.1s  finite True  repeatable True
+axis_step_d2     gam               nrmse  0.2176  fit    0.0s  finite True  repeatable True  std~0.107
+axis_step_d2     pspline_te        nrmse  0.2602  fit    0.2s  finite True  repeatable True  std~0.141
+axis_step_d2     symreg            nrmse  0.3658  fit    5.1s  finite True  repeatable True
+axis_step_d2     sparse_gp         nrmse  0.1749  fit    0.9s  finite True  repeatable True  std~0.0956
+axis_step_d2     warped_gp         nrmse  0.1005  fit    0.6s  finite True  repeatable True  std~0.00538
+axis_step_d2     deep_gp           nrmse  0.1076  fit    3.4s  finite True  repeatable False  std~0.0298
+axis_step_d2     bnn_laplace       nrmse  0.6673  fit    1.2s  finite True  repeatable True  std~1.64e-05
+axis_step_d2     bnn_vi            nrmse  0.5100  fit    5.0s  finite True  repeatable False  std~0.508
+axis_step_d2     bart              nrmse  0.1485  fit    0.1s  finite True  repeatable True  std~0.0213
+axis_step_d2     moe               nrmse  0.2556  fit    0.3s  finite True  repeatable True  std~0.0691
+axis_step_d2     natural_neighbor  nrmse  0.2515  fit    0.0s  finite True  repeatable True
+axis_step_d2     aaa_rational      infeasible (d/n wall)

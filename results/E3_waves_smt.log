@@ -1,0 +1,287 @@
+[wave 1] E3_learners: 45160 tasks in shard 1/1, 56 done, 45104 to run on 10 workers
+archive 0.34 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmpwj0zb3ef\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/449k [00:00<?, ?B/s]  4%|3         | 16.0k/449k [00:00<00:06, 64.8kB/s]100%|##########| 449k/449k [00:01<00:00, 436kB/s]  
+Upload successful: done_keys.txt (449KB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/336k [00:00<?, ?B/s]  5%|4         | 16.0k/336k [00:00<00:04, 74.7kB/s]100%|##########| 336k/336k [00:00<00:00, 384kB/s]  
+Upload successful: proj.tar.gz (336KB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpwj0zb3ef\k1
+Kernel push error: Maximum batch CPU session count of 5 reached.
+[wave 1] shard statuses: ['']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.RUNNING"
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+[wave 2] E3_learners: 45160 tasks in shard 1/1, 56 done, 45104 to run on 10 workers
+wave 1 made no progress (45104 left) — check results/kaggle_logs/
+f._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connectionpool.py", line 793, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connectionpool.py", line 494, in _make_request
+    raise new_e
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connectionpool.py", line 470, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1125, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connection.py", line 827, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connection.py", line 246, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.kaggle.com', port=443): Failed to resolve 'api.kaggle.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\connectionpool.py", line 847, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\urllib3\util\retry.py", line 555, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.kaggle.com', port=443): Max retries exceeded with url: /v1/security.OAuthService/IntrospectToken (Caused by NameResolutionError("HTTPSConnection(host='api.kaggle.com', port=443): Failed to resolve 'api.kaggle.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Scripts\kaggle.EXE\__main__.py", line 5, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kaggle\cli.py", line 75, in main
+    api.authenticate()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kaggle\api\kaggle_api_extended.py", line 1239, in authenticate
+    if self._authenticate_with_access_token():
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kaggle\api\kaggle_api_extended.py", line 1310, in _authenticate_with_access_token
+    username = self._introspect_token(access_token)
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kaggle\api\kaggle_api_extended.py", line 1352, in _introspect_token
+    response = kaggle.security.oauth_client.introspect_token(request)
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kagglesdk\security\services\oauth_service.py", line 44, in introspect_token
+    return self._client.call("security.OAuthService", "IntrospectToken", request, IntrospectTokenResponse)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\kagglesdk\kaggle_http_client.py", line 104, in call
+    http_response = self._session.send(http_request, **settings)
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\requests\adapters.py", line 729, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.kaggle.com', port=443): Max retries exceeded with url: /v1/security.OAuthService/IntrospectToken (Caused by NameResolutionError("HTTPSConnection(host='api.kaggle.com', port=443): Failed to resolve 'api.kaggle.com' ([Errno 11001] getaddrinfo failed)"))
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> 
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+[wave 2] E3_learners: 45160 tasks in shard 1/1, 56 done, 45104 to run on 10 workers
+wave 1 made no progress (45104 left) — check results/kaggle_logs/
+[resume] shards still running; waiting for them before the next push
+[resume] shards still running; waiting for them before the next push
+[resume] shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 281 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 8 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 1] E3_learners: 45160 tasks in shard 1/1, 337 done, 44823 to run on 10 workers
+archive 0.68 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmpdyso4e6o\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/1.07M [00:00<?, ?B/s]  1%|1         | 16.0k/1.07M [00:00<00:22, 49.8kB/s] 48%|####8     | 528k/1.07M [00:00<00:00, 1.62MB/s] 100%|##########| 1.07M/1.07M [00:01<00:00, 1.02MB/s]
+Upload successful: done_keys.txt (1MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/667k [00:00<?, ?B/s]  2%|2         | 16.0k/667k [00:00<00:14, 46.7kB/s] 36%|###5      | 240k/667k [00:00<00:00, 693kB/s]  100%|##########| 667k/667k [00:01<00:00, 681kB/s]
+Upload successful: proj.tar.gz (667KB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpdyso4e6o\k1
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[wave 1] shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 256 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 4 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 2] E3_learners: 45160 tasks in shard 1/1, 593 done, 44567 to run on 10 workers
+archive 0.82 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp696pbw20\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/1.34M [00:00<?, ?B/s]  1%|1         | 16.0k/1.34M [00:00<00:29, 47.6kB/s] 13%|#2        | 176k/1.34M [00:00<00:02, 509kB/s]   36%|###6      | 496k/1.34M [00:00<00:00, 1.29MB/s] 55%|#####4    | 752k/1.34M [00:00<00:00, 1.67MB/s] 77%|#######7  | 1.03M/1.34M [00:00<00:00, 2.05MB/s] 99%|#########9| 1.33M/1.34M [00:00<00:00, 2.36MB/s]100%|##########| 1.34M/1.34M [00:01<00:00, 1.04MB/s]
+Upload successful: done_keys.txt (1MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/805k [00:00<?, ?B/s]  2%|1         | 16.0k/805k [00:00<00:26, 30.6kB/s] 34%|###3      | 272k/805k [00:00<00:00, 574kB/s]   64%|######3   | 512k/805k [00:00<00:00, 992kB/s]100%|##########| 805k/805k [00:01<00:00, 623kB/s]
+Upload successful: proj.tar.gz (805KB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp696pbw20\k1
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[wave 2] shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  FAILED to fetch (rc=1, log=False): HTTPSConnectionPool(host='api.kaggle.com', port=443): Max retries exceeded with url: /v1/kernels.KernelsApiService/ListKernelSessionOutput (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+not fetched: ['joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1']
+  pull failed (attempt 1); retrying in 10 min
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 272 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 4 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 3] E3_learners: 45160 tasks in shard 1/1, 865 done, 44295 to run on 10 workers
+archive 1.91 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp4a4uhuja\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/3.41M [00:00<?, ?B/s]  0%|          | 16.0k/3.41M [00:00<00:52, 68.3kB/s] 14%|#3        | 480k/3.41M [00:00<00:01, 1.73MB/s]  58%|#####7    | 1.97M/3.41M [00:00<00:00, 6.41MB/s]100%|##########| 3.41M/3.41M [00:01<00:00, 3.25MB/s]
+Upload successful: done_keys.txt (3MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/1.82M [00:00<?, ?B/s]  1%|          | 16.0k/1.82M [00:00<00:25, 73.8kB/s] 22%|##2       | 416k/1.82M [00:00<00:00, 1.63MB/s] 100%|##########| 1.82M/1.82M [00:00<00:00, 2.08MB/s]
+Upload successful: proj.tar.gz (2MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp4a4uhuja\k1
+Kernel version 4 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[wave 3] shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 264 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 4 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 4] E3_learners: 45160 tasks in shard 1/1, 1129 done, 44031 to run on 10 workers
+archive 2.23 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp89v2me0h\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/4.02M [00:00<?, ?B/s]  0%|          | 16.0k/4.02M [00:00<01:00, 68.9kB/s] 11%|#1        | 464k/4.02M [00:00<00:02, 1.71MB/s]  46%|####5     | 1.84M/4.02M [00:00<00:00, 6.08MB/s]100%|##########| 4.02M/4.02M [00:01<00:00, 3.43MB/s]
+Upload successful: done_keys.txt (4MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/2.12M [00:00<?, ?B/s]  1%|          | 16.0k/2.12M [00:00<00:30, 73.1kB/s] 25%|##5       | 544k/2.12M [00:00<00:00, 1.91MB/s] 100%|##########| 2.12M/2.12M [00:01<00:00, 2.14MB/s]
+Upload successful: proj.tar.gz (2MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp89v2me0h\k1
+Kernel version 5 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[wave 4] shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 664 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 4 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 5] E3_learners: 45160 tasks in shard 1/1, 1793 done, 43367 to run on 10 workers
+archive 2.59 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp4bcj92go\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/4.73M [00:00<?, ?B/s]  0%|          | 16.0k/4.73M [00:00<01:52, 44.0kB/s]  5%|4         | 240k/4.73M [00:00<00:07, 642kB/s]   41%|####      | 1.92M/4.73M [00:00<00:00, 5.22MB/s] 94%|#########3| 4.44M/4.73M [00:00<00:00, 11.0MB/s]100%|##########| 4.73M/4.73M [00:01<00:00, 3.35MB/s]
+Upload successful: done_keys.txt (5MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/2.47M [00:00<?, ?B/s]  1%|          | 16.0k/2.47M [00:00<01:11, 36.2kB/s] 19%|#8        | 480k/2.47M [00:00<00:01, 1.15MB/s]  49%|####9     | 1.22M/2.47M [00:00<00:00, 2.82MB/s]100%|##########| 2.47M/2.47M [00:01<00:00, 1.99MB/s]
+Upload successful: proj.tar.gz (2MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp4bcj92go\k1
+Kernel version 6 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[resume] 1-shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 1600 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 4 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 1736 done, 40724 to run on 10 workers
+archive 2.88 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmpd4gia15h\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/5.29M [00:00<?, ?B/s]  0%|          | 16.0k/5.29M [00:00<01:36, 57.1kB/s] 10%|#         | 544k/5.29M [00:00<00:03, 1.55MB/s]  37%|###7      | 1.97M/5.29M [00:00<00:00, 5.41MB/s]100%|##########| 5.29M/5.29M [00:01<00:00, 3.93MB/s]
+Upload successful: done_keys.txt (5MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/2.75M [00:00<?, ?B/s]  1%|          | 16.0k/2.75M [00:00<01:14, 38.3kB/s] 14%|#3        | 384k/2.75M [00:00<00:02, 907kB/s]   76%|#######6  | 2.09M/2.75M [00:00<00:00, 5.18MB/s]100%|##########| 2.75M/2.75M [00:01<00:00, 2.31MB/s]
+Upload successful: proj.tar.gz (3MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpd4gia15h\k1
+Kernel version 7 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1
+[wave 1] 1-shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 1865 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 5 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 2] E3_learners: 42460 tasks in shard 1/1, 3601 done, 38859 to run on 10 workers
+archive 7.09 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/13.5M [00:00<?, ?B/s]  0%|          | 16.0k/13.5M [00:00<04:02, 58.6kB/s]  2%|1         | 256k/13.5M [00:00<00:17, 815kB/s]   14%|#3        | 1.89M/13.5M [00:00<00:02, 5.89MB/s] 47%|####7     | 6.38M/13.5M [00:00<00:00, 18.5MB/s] 64%|######3   | 8.64M/13.5M [00:00<00:00, 15.6MB/s] 78%|#######7  | 10.5M/13.5M [00:00<00:00, 15.9MB/s] 91%|######### | 12.3M/13.5M [00:01<00:00, 14.6MB/s]100%|##########| 13.5M/13.5M [00:01<00:00, 7.39MB/s]
+Upload successful: done_keys.txt (14MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/6.76M [00:00<?, ?B/s]  0%|          | 16.0k/6.76M [00:00<02:52, 41.0kB/s]  7%|7         | 512k/6.76M [00:00<00:04, 1.37MB/s]  16%|#5        | 1.08M/6.76M [00:00<00:02, 2.64MB/s] 90%|######### | 6.09M/6.76M [00:00<00:00, 16.6MB/s]100%|##########| 6.76M/6.76M [00:01<00:00, 4.68MB/s]
+Upload successful: proj.tar.gz (7MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\k1
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\k2
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\k3
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\k4
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpx960nbj2\k5
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5
+[wave 2] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 583 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 574 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 574 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 620 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 565 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 11 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 3] E3_learners: 42460 tasks in shard 1/1, 6517 done, 35943 to run on 10 workers
+archive 7.12 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/13.6M [00:00<?, ?B/s]  0%|          | 16.0k/13.6M [00:00<03:42, 64.0kB/s]  4%|3         | 528k/13.6M [00:00<00:07, 1.84MB/s]  14%|#3        | 1.86M/13.6M [00:00<00:02, 5.88MB/s] 32%|###1      | 4.31M/13.6M [00:00<00:00, 12.1MB/s] 42%|####2     | 5.73M/13.6M [00:00<00:00, 12.6MB/s] 52%|#####2    | 7.11M/13.6M [00:00<00:00, 13.1MB/s] 62%|######2   | 8.48M/13.6M [00:00<00:00, 13.1MB/s] 72%|#######2  | 9.81M/13.6M [00:00<00:00, 13.1MB/s] 83%|########3 | 11.3M/13.6M [00:01<00:00, 13.8MB/s] 93%|#########3| 12.7M/13.6M [00:01<00:00, 13.5MB/s]100%|##########| 13.6M/13.6M [00:01<00:00, 7.58MB/s]
+Upload successful: done_keys.txt (14MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/6.79M [00:00<?, ?B/s]  0%|          | 16.0k/6.79M [00:00<03:19, 35.6kB/s]  5%|5         | 368k/6.79M [00:00<00:07, 874kB/s]   22%|##2       | 1.50M/6.79M [00:00<00:01, 3.52MB/s] 54%|#####4    | 3.67M/6.79M [00:00<00:00, 8.44MB/s] 97%|#########7| 6.61M/6.79M [00:00<00:00, 12.2MB/s]100%|##########| 6.79M/6.79M [00:01<00:00, 4.32MB/s]
+Upload successful: proj.tar.gz (7MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\k1
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\k2
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\k3
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\k4
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp5wgm4lql\k5
+Kernel version 2 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5
+[resume] 1-shard statuses: ['done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 has status "KernelWorkerStatus.COMPLETE"
+  part_1of1_209.jsonl already pulled
+  1 result file(s), 1865 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 6 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results

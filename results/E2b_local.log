@@ -1,0 +1,10 @@
+E2b_learners: 9360 tasks in shard 1/1, 0 done, 9360 to run on 10 workers
+  memory cap: 10 -> 3 workers (3.9 GB free, up to 0.5 GB per task)
+  50/9360  elapsed 5.0 min  eta 934.6 min
+  100/9360  elapsed 8.9 min  eta 828.1 min
+  150/9360  elapsed 9.2 min  eta 562.9 min
+  200/9360  elapsed 15.3 min  eta 700.9 min
+  250/9360  elapsed 18.4 min  eta 670.0 min
+  300/9360  elapsed 19.1 min  eta 577.6 min
+E2b_learners: 9360 tasks in shard 1/1, 300 done, 9060 to run on 10 workers
+  memory cap: 10 -> 3 workers (3.9 GB free, up to 0.5 GB per task)

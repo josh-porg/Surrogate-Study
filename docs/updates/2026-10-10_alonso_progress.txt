@@ -1,0 +1,62 @@
+PROGRESS REPORT: SURROGATE-MODELLING PAPER (for an update to Prof. J. J. Alonso)
+Source material for drafting an email. Status as of 10 October 2026. All findings are preliminary unless stated.
+
+CONTEXT
+- The paper extends the surrogate-model study in my M.S. thesis (Poznanski, Univ. of Kansas, 2026; Sec. 14.3 and
+  App. G).
+- It asks a question the thesis did not: does the most accurate surrogate also give the best design once an
+  optimizer runs on it? The primary metric is true regret at matched computational cost, not prediction error.
+- Two fixes to the thesis methodology are built in. Surrogates are scored against clean truth instead of noisy
+  cross-validation folds, and the hypotheses were pre-registered before the main experiment ran. Any deviation is
+  logged.
+
+COMPLETED
+- E0 (cost model): timing of every learner, used to budget the study.
+- E1 (reproduction gate): 71 of 72 published thesis results were reproduced within confidence intervals using the
+  original thesis code.
+  - Scored against clean truth, the true errors are 2-4x smaller than the published noisy-CV numbers. The rankings
+    barely change (Spearman 0.91-0.99).
+  - The 3% noise floor had compressed the gaps between methods. On the smooth surface, the GP's lead over GBT is
+    2.4x on clean truth versus 1.2x as published.
+  - So the thesis conclusion stands and is stronger, but the published magnitudes were dominated by noise.
+- E2a (learner screening): 32,300 fits, covering 45 learner configurations from GPs to tree ensembles, neural nets,
+  KANs and sparse-basis methods.
+  - The GP family led overall, and each method won where its design predicts (e.g. trees on step functions).
+  - One finding matters for the study itself: the optimizer used to train a neural network can matter more than the
+    network. Full-batch L-BFGS beat Adam by an order of magnitude at engineering sample sizes.
+  - Screening produced the 35-configuration shortlist for the main experiment.
+
+IN PROGRESS
+- E3 (main learner study): 826,020 surrogate fits in total, covering 35 learners, 82 test problems, 6 sample sizes,
+  11 noise conditions and 10 seeds. About 66% are done (541,000 fits).
+- Early E3 signals, from the slower learners only; the GP and boosted-tree baselines are still running:
+  - Neural-network ensembles trained with L-BFGS rank first in most problem classes at n = 600-1000.
+  - They also give the best gradient accuracy, which matters for gradient-based design optimization.
+  - Calibration differs widely between methods: some intervals are too wide, others too narrow.
+  - The central comparison (GP vs boosted trees vs networks, measured by design regret) is not in yet.
+- One logged deviation: SMT kriging was capped at n <= 500 because every fit at n = 1000 exceeded the 15-minute
+  per-fit limit.
+
+WHAT IS SLOWING PROGRESS: LOSS OF COMPUTE AFTER GRADUATION
+- During the thesis I used university computing. After graduating, the study runs on a personal laptop (12 cores,
+  16 GB RAM) plus Kaggle's free CPU tier: 5 concurrent sessions of 4 cores, each capped at about 12 hours.
+- That is about 20 cores in 10.5-hour waves. Each wave has to be launched, collected and backed up by hand-built
+  tooling.
+- In practice:
+  - E3 alone takes about a week of continuous waves. On a cluster allocation it would take a few days.
+  - The most expensive learners (exact GPs and kriging at large n) had to be capped or scheduled around memory and
+    time limits.
+  - Engineering effort went into reliability: resumable runs, verified downloads, off-laptop backups.
+- The remaining experiments (E4 design-optimization regret, E5-E10, and the real FEA data in E11) face the same
+  limits. The estimated total is about 2-3 weeks of compute.
+- An allocation would cut that to days. Options include an NSF ACCESS Explore allocation, or access through a lab.
+
+NEXT STEPS
+- Finish E3: about 3 more days for the main learners, then about 1.5 days for SMT kriging.
+- E4: run the surviving surrogates inside design optimizers and measure true regret at matched cost. This is the
+  paper's central claim.
+- E5-E10: sampling strategies, multi-fidelity surrogates, upscaling tree models for smooth gradients, and others.
+- E11: the real thermo-mechanical FEA dataset from the thesis (623 usable runs, about 1 CPU-hour each). This stays
+  on my own machine.
+- Target: a full draft once E4 is in. I would welcome your views on the framing (accuracy vs design regret) and
+  on venue.
