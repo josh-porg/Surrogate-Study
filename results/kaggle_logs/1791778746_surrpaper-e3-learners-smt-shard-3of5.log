@@ -1,0 +1,56 @@
+[{"stream_name":"stdout","time":7.652255498,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":16.388228806,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":17.973625532,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":17.97368717,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":17.973696065,"data":"\n"}
+,{"stream_name":"stdout","time":37.196941373,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":41.22871642,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":45.568067459,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":49.365514541,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":53.250662692,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":57.578292537,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stderr","time":60.115794078,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":60.115844721,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":70.389867708,"data":"E3_learners: 8517 tasks in shard 3/5, 1271 done, 7246 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":5996.330751701,"data":"  50/7246  elapsed 98.8 min  eta 14214.2 min\n"}
+,{"stream_name":"stdout","time":8917.260577794,"data":"  100/7246  elapsed 147.4 min  eta 10536.5 min\n"}
+,{"stream_name":"stdout","time":10194.723081457,"data":"  150/7246  elapsed 168.7 min  eta 7982.4 min\n"}
+,{"stream_name":"stdout","time":10508.487933992,"data":"  200/7246  elapsed 174.0 min  eta 6128.9 min\n"}
+,{"stream_name":"stdout","time":10896.793008378,"data":"  250/7246  elapsed 180.4 min  eta 5049.4 min\n"}
+,{"stream_name":"stdout","time":14837.129031378,"data":"  300/7246  elapsed 246.1 min  eta 5698.3 min\n"}
+,{"stream_name":"stdout","time":15563.1120519,"data":"  350/7246  elapsed 258.2 min  eta 5087.5 min\n"}
+,{"stream_name":"stdout","time":16450.861876416,"data":"  400/7246  elapsed 273.0 min  eta 4672.5 min\n"}
+,{"stream_name":"stdout","time":17269.222321471,"data":"  450/7246  elapsed 286.6 min  eta 4329.0 min\n"}
+,{"stream_name":"stdout","time":17844.742134939,"data":"  500/7246  elapsed 296.2 min  eta 3996.8 min\n"}
+,{"stream_name":"stdout","time":18423.308016628,"data":"  550/7246  elapsed 305.9 min  eta 3724.0 min\n"}
+,{"stream_name":"stdout","time":19313.38677116,"data":"  600/7246  elapsed 320.7 min  eta 3552.5 min\n"}
+,{"stream_name":"stdout","time":19995.020587125,"data":"  650/7246  elapsed 332.1 min  eta 3369.8 min\n"}
+,{"stream_name":"stdout","time":20647.017759549,"data":"  700/7246  elapsed 342.9 min  eta 3207.0 min\n"}
+,{"stream_name":"stdout","time":21406.736248574,"data":"  750/7246  elapsed 355.6 min  eta 3080.0 min\n"}
+,{"stream_name":"stdout","time":21893.518956358,"data":"  800/7246  elapsed 363.7 min  eta 2930.7 min\n"}
+,{"stream_name":"stdout","time":22429.176078,"data":"  850/7246  elapsed 372.6 min  eta 2804.0 min\n"}
+,{"stream_name":"stdout","time":22532.908644713,"data":"  900/7246  elapsed 374.4 min  eta 2639.8 min\n"}
+,{"stream_name":"stdout","time":22644.861729241,"data":"  950/7246  elapsed 376.2 min  eta 2493.5 min\n"}
+,{"stream_name":"stdout","time":22763.211265101,"data":"  1000/7246  elapsed 378.2 min  eta 2362.3 min\n"}
+,{"stream_name":"stdout","time":22880.48833995,"data":"  1050/7246  elapsed 380.2 min  eta 2243.3 min\n"}
+,{"stream_name":"stdout","time":22990.663718824,"data":"  1100/7246  elapsed 382.0 min  eta 2134.4 min\n"}
+,{"stream_name":"stdout","time":23104.392680962,"data":"  1150/7246  elapsed 383.9 min  eta 2035.0 min\n"}
+,{"stream_name":"stdout","time":23215.44872705,"data":"  1200/7246  elapsed 385.7 min  eta 1943.5 min\n"}
+,{"stream_name":"stdout","time":25738.221689671,"data":"  1250/7246  elapsed 427.8 min  eta 2052.1 min\n"}
+,{"stream_name":"stdout","time":29035.040594112,"data":"  1300/7246  elapsed 482.7 min  eta 2208.0 min\n"}
+,{"stream_name":"stdout","time":30867.166432127,"data":"  1350/7246  elapsed 513.3 min  eta 2241.7 min\n"}
+,{"stream_name":"stdout","time":31186.342611011,"data":"  1400/7246  elapsed 518.6 min  eta 2165.5 min\n"}
+,{"stream_name":"stdout","time":31291.432988692,"data":"  1450/7246  elapsed 520.3 min  eta 2080.0 min\n"}
+,{"stream_name":"stdout","time":31409.351097977,"data":"  1500/7246  elapsed 522.3 min  eta 2000.8 min\n"}
+,{"stream_name":"stdout","time":31530.838808642,"data":"  1550/7246  elapsed 524.3 min  eta 1926.9 min\n"}
+,{"stream_name":"stdout","time":31635.067531484,"data":"  1600/7246  elapsed 526.1 min  eta 1856.4 min\n"}
+,{"stream_name":"stdout","time":33475.284770812,"data":"  1650/7246  elapsed 556.7 min  eta 1888.2 min\n"}
+,{"stream_name":"stdout","time":36263.1076942,"data":"  1700/7246  elapsed 603.2 min  eta 1967.9 min\n"}
+,{"stream_name":"stdout","time":37873.519208946,"data":"  max-hours 10.5 reached after 1738 tasks; stopping (resume re-runs the rest)\n"}
+,{"stream_name":"stderr","time":37882.874168435,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":37882.874217044,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":37883.252713118,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":37883.2527478,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":37884.275129324,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":37885.63245369,"data":"[NbConvertApp] Writing 287834 bytes to __results__.html\n"}
+]

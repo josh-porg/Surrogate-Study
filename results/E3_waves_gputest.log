@@ -1,0 +1,46 @@
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+archive 0.13 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmp1rafbili\ds -m update
+Starting upload for file done_keys.txt
+0.00B [00:00, ?B/s]0.00B [00:00, ?B/s]0.00B [00:01, ?B/s]
+Upload successful: done_keys.txt (0B)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/131k [00:00<?, ?B/s] 12%|#2        | 16.0k/131k [00:00<00:03, 33.3kB/s]100%|##########| 131k/131k [00:01<00:00, 110kB/s]  
+Upload successful: proj.tar.gz (131KB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3s-tuning-gputest
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmp1rafbili\k1 --accelerator NvidiaTeslaT4
+Kernel push error: Maximum batch CPU session count of 5 reached.
+[wave 1] 1-shard statuses: ['missing']
+joshuadavidpoznanski/surrpaper-e3s-tuning-gputest-shard-1of1 -> 
+  not on Kaggle (never pushed); skipped
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3s_tuning
+backup: 11 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
+[wave 1] 1-shard statuses: ['missing']
+max waves reached
+[resume] 1-shard statuses: ['missing']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
