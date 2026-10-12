@@ -127,6 +127,170 @@ def aaa_holdout(x, y, seed, mmax=40, bins=False):
     return aaa(x, y, 1)
 
 
+# ── 1-D profile methods: robust variants of univariate rational fitting (shared by all pairings) ───────────────
+#   aaa      hold-out support size + reject real poles / spikes in range            (this study)
+#   cleanup  AAA + Froissart-doublet detection by residue and removal, then LS refit (Nakatsukasa, Sète & Trefethen
+#            2018, §5; tolerance tied to the data's noise scale, since doublets from noise are not 1e-13 small)
+#   svd      AAA stopped by numerical rank: stop adding support points once more than one singular value of the
+#            Loewner matrix falls below tol·σ_max (robust Padé idea, Gonnet, Güttel & Trefethen 2013); tol on hold-out
+#   caaa     denoise with a 1-D GP, then continuum AAA on the GP mean over the whole interval (Driscoll, Nakatsukasa
+#            & Trefethen 2024): rational compression of a smooth fit, so AAA never sees the noise
+#   fh       Floater–Hormann barycentric rational interpolation of bin means: provably no real poles; blending degree
+#            0..6 on hold-out (Floater & Hormann 2007)
+def aaa_weights(x, y, zs, fs):
+    """LS barycentric weights for fixed support (zs, fs): smallest right singular vector of the Loewner matrix built
+    from the non-support data. Returns (w, singular values)."""
+    J = ~np.isin(np.round(x, 12), np.round(zs, 12))
+    A = (y[J][:, None] - fs[None, :]) / (x[J][:, None] - zs[None, :])
+    _, sv, Vt = np.linalg.svd(A, full_matrices=False)
+    return Vt[-1], sv
+
+
+def aaa_residues(p):
+    zs, fs, w = p
+    pl = aaa_poles(p)
+    if len(pl) == 0:
+        return pl, pl
+    D = pl[:, None] - zs[None, :]
+    num = (w * fs / D).sum(1)
+    dden = -(w / D ** 2).sum(1)
+    return pl, num / dden
+
+
+def aaa_cleanup(x, y, p, tol, lo, hi, rounds=3):
+    """Remove the support point nearest each spurious pole — |residue| < tol, or a (numerically) real pole inside
+    [lo, hi] — and refit the weights by least squares on all data; repeat until clean."""
+    zs, fs, w = p
+    for _ in range(rounds):
+        if len(zs) < 2:
+            break
+        pl, res = aaa_residues((zs, fs, w))
+        real_in = (np.abs(pl.imag) < 1e-6 * max(1.0, hi - lo)) & (pl.real > lo - 1e-9) & (pl.real < hi + 1e-9)
+        bad = pl[(np.abs(res) < tol) | real_in]
+        if len(bad) == 0:
+            break
+        drop = {int(np.argmin(np.abs(zs - b))) for b in bad}
+        keep = np.array([i not in drop for i in range(len(zs))])
+        zs, fs = zs[keep], fs[keep]
+        w = aaa_weights(x, y, zs, fs)[0] if len(zs) > 1 else np.ones(len(zs))
+    return zs, fs, w
+
+
+def aaa_svd(x, y, tol, mmax=40):
+    """AAA that stops when the Loewner matrix has a numerical null space of dimension > 1 (degree too high for the
+    data's accuracy: the extra freedom would only create doublets)."""
+    J = np.ones(len(x), bool); zs, fs = [], []; R = np.full(len(x), y.mean()); best = None
+    for _ in range(min(mmax, len(x) - 1)):
+        j = int(np.argmax(np.abs(y - R) * J)); zs.append(x[j]); fs.append(y[j]); J[j] = False
+        C = 1.0 / (x[J][:, None] - np.array(zs)[None, :])
+        A = (y[J][:, None] - np.array(fs)[None, :]) * C
+        _, sv, Vt = np.linalg.svd(A, full_matrices=False)
+        if len(zs) > 1 and np.sum(sv < tol * sv[0]) > 1:
+            break
+        w = Vt[-1]; best = (np.array(zs), np.array(fs), w)
+        R = y.copy(); R[J] = (C @ (w * fs)) / (C @ w)
+    return best or aaa(x, y, 1)
+
+
+def aaa_continuum(f, lo, hi, tol=1e-8, mmax=40, per_gap=10):
+    """Continuum AAA for a callable f on [lo, hi]: support points chosen greedily from test points refined between
+    the current support points, weights by LS on the test points (simplified from Driscoll et al. 2024: equispaced
+    rather than graded sampling of each gap)."""
+    ref = np.linspace(lo, hi, 4001); fref = f(ref); scale = max(np.ptp(fref), _EPS)
+    zs, fs = [], []
+    T = np.linspace(lo, hi, 3 * per_gap); FT = f(T)
+    p = (np.array([]), np.array([]), np.array([]))
+    for _ in range(mmax):
+        r = aaa_eval(p, T) if zs else np.full(len(T), FT.mean())
+        k = int(np.argmax(np.abs(FT - r)))
+        zs.append(T[k]); fs.append(FT[k])
+        knots = np.unique(np.r_[lo, np.sort(zs), hi])
+        T = np.unique(np.concatenate([np.linspace(a, b, per_gap + 2)[1:-1] for a, b in zip(knots[:-1], knots[1:])]
+                                     + [np.array([lo, hi])]))
+        T = T[~np.isin(np.round(T, 12), np.round(zs, 12))]; FT = f(T)
+        w = aaa_weights(np.r_[T, zs], np.r_[FT, fs], np.array(zs), np.array(fs))[0]
+        p = (np.array(zs), np.array(fs), w)
+        if np.max(np.abs(aaa_eval(p, ref) - fref)) <= tol * scale:
+            break
+    return p
+
+
+def fh_weights(x, d):
+    n = len(x) - 1; d = min(d, n); w = np.zeros(n + 1)
+    for k in range(n + 1):
+        s = 0.0
+        for i in range(max(0, k - d), min(k, n - d) + 1):
+            prod = 1.0
+            for j in range(i, i + d + 1):
+                if j != k:
+                    prod /= abs(x[k] - x[j])
+            s += prod
+        w[k] = (-1) ** (k - d) * s
+    return w
+
+
+def _split(n, seed):
+    idx = np.random.default_rng(seed).permutation(n); h = max(2, n // 5)
+    return idx[h:], idx[:h]
+
+
+class Profile:
+    """A fitted univariate profile g(t) from one of the methods above; `kind` and the chosen settings are kept for
+    reporting (e.g. how often cleanup removed poles)."""
+
+    def __init__(self, kind, params):
+        self.kind, self.params = kind, params
+
+    def __call__(self, t):
+        if self.kind == "fh":
+            xs, ys, w = self.params
+            return aaa_eval((xs, ys, w), t)                  # same barycentric evaluation, FH weights
+        return aaa_eval(self.params, t)
+
+
+def fit_profile(x, y, method, seed, binned_input=True):
+    """Fit a 1-D profile t -> g(t). `binned_input`: x, y are already bin means (pairings) or raw samples (1-D AAA)."""
+    x, y = _dedupe(x, y)
+    lo, hi = x.min(), x.max(); span = max(np.ptp(y), _EPS)
+    if len(x) < 6:
+        return Profile("aaa", aaa(x, y, max(len(x) - 1, 1)))
+    tr, va = _split(len(x), seed)
+    err = lambda g: np.mean((g(x[va]) - y[va]) ** 2)
+    if method == "aaa":
+        return Profile("aaa", aaa_holdout(x, y, seed))
+    if method == "cleanup":
+        best = None
+        for m in range(1, min(40, len(tr) - 1) + 1):
+            for tol in (1e-3, 1e-2):
+                g = Profile("aaa", aaa_cleanup(x[tr], y[tr], aaa(x[tr], y[tr], m), tol * span, lo, hi))
+                e = err(g)
+                if best is None or e < best[0]:
+                    best = (e, m, tol)
+        _, m, tol = best
+        return Profile("aaa", aaa_cleanup(x, y, aaa(x, y, m), tol * span, lo, hi))
+    if method == "svd":
+        tols = (1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 1e-4, 1e-6, 1e-8)
+        e = {t: err(Profile("aaa", aaa_svd(x[tr], y[tr], t))) for t in tols}
+        return Profile("aaa", aaa_svd(x, y, min(e, key=e.get)))
+    if method == "caaa":
+        from sklearn.gaussian_process import GaussianProcessRegressor
+        from sklearn.gaussian_process.kernels import ConstantKernel as C, Matern, WhiteKernel
+        k = C(1.0, (1e-3, 1e3)) * Matern(0.2 * (hi - lo + _EPS), (1e-3 * (hi - lo + _EPS), 1e2 * (hi - lo + _EPS)), nu=2.5) \
+            + WhiteKernel(1e-4, (1e-10, 1e0))
+        gp = GaussianProcessRegressor(k, normalize_y=True, n_restarts_optimizer=2, random_state=seed).fit(x[:, None], y)
+        sd = float(np.median(gp.predict(x[:, None], return_std=True)[1]))
+        f = lambda t: gp.predict(np.asarray(t)[:, None])
+        return Profile("aaa", aaa_continuum(f, lo, hi, tol=max(sd / span, 1e-10)))
+    if method == "fh":
+        e = {}
+        for dd in range(0, 7):
+            g = Profile("fh", (x[tr][np.argsort(x[tr])], y[tr][np.argsort(x[tr])], fh_weights(np.sort(x[tr]), dd)))
+            e[dd] = err(g)
+        dd = min(e, key=e.get); o = np.argsort(x)
+        return Profile("fh", (x[o], y[o], fh_weights(x[o], dd)))
+    raise ValueError(method)
+
+
 # ── established: p-AAA for scattered data ────────────────────────────────────────────────────────────────────
 def _cauchy(x, nodes):
     D = x[:, None] - np.asarray(nodes)[None, :]
@@ -240,40 +404,94 @@ def _total_degree(d, deg):
     return out
 
 
+def _legendre_degrees(d, deg):
+    idx = [a for a in product(range(deg + 1), repeat=d) if sum(a) <= deg] if d <= 6 else _total_degree(d, deg)
+    return np.array([sum(a) for a in idx])
+
+
+def _bernstein_basis(U, k):
+    """Tensor Bernstein basis of degree k per input on [0,1]^d: non-negative and a partition of unity, so positive
+    coefficients give a function bounded below by its smallest coefficient on the whole box."""
+    from math import comb as _c
+    cols = [np.ones(len(U))]
+    for j in range(U.shape[1]):
+        t = U[:, j]
+        Bj = np.column_stack([_c(k, i) * t ** i * (1 - t) ** (k - i) for i in range(k + 1)])
+        cols = [c * Bj[:, i] for c in cols for i in range(k + 1)]
+    return np.column_stack(cols)
+
+
 @register
 class RatLS(Learner):
-    """r = p/q with p, q total-degree (m, k) Legendre expansions; min ‖y·q − p‖ with ‖coefficients‖ = 1 (SVD),
-    then 3 Sanathanan–Koerner reweightings (rows / |q_prev|). (m, k) chosen on a 20 % hold-out among degree pairs
-    whose total coefficient count is ≤ n/2 and ≤ 400 (cost wall)."""
+    """r = p/q with p a total-degree-m Legendre expansion and q of degree k, fitted by linearised least squares.
+    `reg` selects how q is controlled (all choose degrees — and λ — on a 20 % hold-out, coefficient count ≤ n/2 and
+    ≤ 400 as the cost wall):
+      None  min ‖y·q − p‖ with ‖coefficients‖ = 1 (SVD) + 3 Sanathanan–Koerner reweightings   (Austin et al. 2021)
+      "tik" q = 1 + Σ b_k φ_k, Tikhonov penalty λ Σ deg(φ_k)² b_k² (degree-weighted, Sobolev-like): λ → ∞ gives
+            the polynomial fit (no poles possible), λ → 0 the full rational one; + 2 SK reweightings   (this study)
+      "pos" q in a tensor Bernstein basis of degree k per input with coefficients ≥ 1e-3 and mean(q) = 1 on the data:
+            q ≥ 1e-3·(scale) on the whole box, so r is provably pole-free there; bounded LS (scipy lsq_linear)
+            — the sign-constrained-denominator variant (cf. pole relocation in vector fitting)"""
     name, family, year, field, ref, smooth = "rat_ls", "rational", 2021, "computational physics / numerical analysis", "austin2021practical", True
 
     PAIRS = [(1, 1), (2, 1), (2, 2), (3, 1), (3, 2), (3, 3), (4, 2), (4, 4), (5, 3), (6, 4), (8, 4)]
+    LAMS = (1e-8, 1e-6, 1e-4, 1e-2, 1e0, 1e2)
+
+    def _count(self, d, m, k):
+        reg = self.kw.get("reg")
+        return comb(d + m, m) + ((k + 1) ** d if reg == "pos" else comb(d + k, k))
 
     def _fit(self, U, z):
-        n, d = U.shape
-        ok = [(m, k) for m, k in self.PAIRS if comb(d + m, m) + comb(d + k, k) <= min(n / 2, 400)] or [(1, 1)]
+        n, d = U.shape; reg = self.kw.get("reg")
+        pairs = self.PAIRS if reg != "pos" else [(m, k) for m in (1, 2, 3, 4, 6, 8) for k in (1, 2, 3)]
+        ok = [(m, k) for m, k in pairs if self._count(d, m, k) <= min(n / 2, 400)] or [(1, 0)]
         idx = np.random.default_rng(self.seed).permutation(n); h = max(2, n // 5)
         va, tr = idx[:h], idx[h:]
         err = {}
         for m, k in ok:
-            c = self._solve(U[tr], z[tr], m, k)
-            err[(m, k)] = np.mean((self._eval(c, U[va]) - z[va]) ** 2)
-        m, k = min(err, key=err.get)
-        self._c = self._solve(U, z, m, k)
+            for lam in (self.LAMS if reg == "tik" else (None,)):
+                c = self._solve(U[tr], z[tr], m, k, lam)
+                err[(m, k, lam)] = np.mean((self._eval(c, U[va]) - z[va]) ** 2)
+        m, k, lam = min(err, key=lambda q: err[q] if np.isfinite(err[q]) else np.inf)
+        self._c = self._solve(U, z, m, k, lam)
 
-    def _solve(self, U, z, m, k, sk=3):
-        P, Q = _legendre_basis(U, m), _legendre_basis(U, k)
+    def _solve(self, U, z, m, k, lam=None, sk=3):
+        reg = self.kw.get("reg")
+        P = _legendre_basis(U, m)
+        if reg == "pos":
+            from scipy.optimize import lsq_linear
+            B = _bernstein_basis(U, k) if k > 0 else np.ones((len(z), 1))
+            nb = B.shape[1]; wn = 10.0 * np.sqrt(len(z))
+            A = np.vstack([np.hstack([-P, z[:, None] * B]), np.r_[np.zeros(P.shape[1]), wn * B.mean(0)][None, :]])
+            rhs = np.r_[np.zeros(len(z)), wn]
+            lb = np.r_[np.full(P.shape[1], -np.inf), np.full(nb, 1e-3)]
+            v = lsq_linear(A, rhs, bounds=(lb, np.full(len(lb), np.inf)), lsmr_tol="auto").x
+            return dict(reg="pos", m=m, k=k, a=v[:P.shape[1]], b=v[P.shape[1]:])
+        Q = _legendre_basis(U, k)
+        if reg == "tik":
+            Q1 = Q[:, 1:]; deg = _legendre_degrees(U.shape[1], k)[1:].astype(float)
+            w = np.ones(len(z))
+            for _ in range(3):
+                A = np.hstack([P, -z[:, None] * Q1]) * w[:, None]
+                R = np.hstack([np.zeros((len(deg), P.shape[1])), np.diag(np.sqrt(lam) * deg)])
+                v = np.linalg.lstsq(np.vstack([A, R]), np.r_[z * w, np.zeros(len(deg))], rcond=None)[0]
+                a, b = v[:P.shape[1]], np.r_[1.0, v[P.shape[1]:]]
+                w = 1.0 / np.maximum(np.abs(Q @ b), 1e-8)
+            return dict(reg="tik", m=m, k=k, a=a, b=b)
         w = np.ones(len(z))
         for _ in range(sk + 1):
             A = np.hstack([-P, z[:, None] * Q]) * w[:, None]
             v = np.linalg.svd(A, full_matrices=False)[2][-1]
             a, b = v[:P.shape[1]], v[P.shape[1]:]
             w = 1.0 / np.maximum(np.abs(Q @ b), 1e-8)
-        return dict(m=m, k=k, a=a, b=b)
+        return dict(reg=None, m=m, k=k, a=a, b=b)
 
     @staticmethod
     def _eval(c, U):
-        den = _legendre_basis(U, c["k"]) @ c["b"]
+        if c["reg"] == "pos":
+            den = (_bernstein_basis(U, c["k"]) if c["k"] > 0 else np.ones((len(U), 1))) @ c["b"]
+        else:
+            den = _legendre_basis(U, c["k"]) @ c["b"]
         return (_legendre_basis(U, c["m"]) @ c["a"]) / np.where(np.abs(den) < _EPS, _EPS, den)
 
     def _predict(self, U):
@@ -292,34 +510,38 @@ def _active_direction(U, z, seed):
     return V[:, -1], g
 
 
+PROFILES = ("aaa", "cleanup", "svd", "caaa", "fh")
+
+
 @register
 class RidgeAAA(Learner):
-    """Rational ridge function r(wᵀx): w = leading active-subspace direction of an ML-II GP fitted to the data,
-    r = univariate AAA on the projected samples with hold-out stopping. NEW (E12)."""
+    """Rational ridge function g(wᵀx): w = leading active-subspace direction of an ML-II GP fitted to the data,
+    g = a 1-D profile fitted to quantile-bin means of (wᵀx, y) by `profile` ∈ PROFILES (default plain AAA with
+    hold-out + pole rejection; see fit_profile). NEW (E12)."""
     name, family, year, field, ref, smooth = "ridge_aaa", "rational", 2026, "this study (E12)", "", True
 
     def _fit(self, U, z):
         self._w, _ = _active_direction(U, z, self.seed)
-        self._p = aaa_holdout(U @ self._w, z, self.seed, bins=True)
+        t = U @ self._w
+        self._g = fit_profile(*binned(t, z), self.kw.get("profile", "aaa"), self.seed)
 
     def _predict(self, U):
-        return aaa_eval(self._p, U @ self._w)
+        return self._g(U @ self._w)
 
 
 @register
 class AdditiveAAA(Learner):
-    """Additive model whose 1-D terms are AAA rational functions where that helps: start from a penalised-spline
-    GAM (one s(x_j) per input), then for each input fit pole-free AAA (largest support size <= 12 with no real pole or
-    spike in the data range, Froissart cleanup) to the binned partial residual and keep it only if it beats the spline
-    term on the bins by > 5 %; two backfitting sweeps. NEW (E12).
-    Why hybrid: at ~4 % residual noise (the partial residuals of a sine sum after the spline fit) plain AAA places
-    real poles inside the interval at every degree >= 4 (E12 smoke test, 2026-10-11), so a pure-AAA additive model
-    collapses to constants; `n_rational` records how many terms ended up rational."""
+    """Additive model whose 1-D terms become rational where that helps: start from a penalised-spline GAM (one
+    s(x_j) per input), then for each input fit a 1-D rational profile (`profile` ∈ PROFILES) to the binned partial
+    residual and keep it only if it beats the spline term on the bins by > 5 %; two backfitting sweeps. NEW (E12).
+    Why hybrid: at ~4 % residual noise plain AAA places real poles inside the interval at every degree >= 4 (E12 smoke
+    test, 2026-10-11), so a pure-AAA additive model collapses to constants; `n_rational` records how many terms are
+    rational."""
     name, family, year, field, ref, smooth = "additive_aaa", "rational", 2026, "this study (E12)", "", True
 
     def _fit(self, U, z, sweeps=2):
         from pygam import LinearGAM, s as _s
-        d = U.shape[1]
+        d = U.shape[1]; method = self.kw.get("profile", "aaa")
         tt = _s(0, n_splines=12)
         for j in range(1, d):
             tt = tt + _s(j, n_splines=12)
@@ -331,43 +553,46 @@ class AdditiveAAA(Learner):
             for j in range(d):
                 res = z - self._c - F.sum(1) + F[:, j]
                 xs, ys = binned(U[:, j], res)
-                spl = self._gm.partial_dependence(term=j, X=np.column_stack([xs] * d)) - self._shift[j]                     if self._terms[j] is None else aaa_eval(self._terms[j], xs) - self._shift[j]
-                base = np.sqrt(np.mean((spl - ys) ** 2))
-                best = None
-                for mm in range(min(12, len(xs) - 1), 1, -1):
-                    t = aaa(xs, ys, mm)
-                    if pole_free(t, xs.min(), xs.max(), yspan=(ys.mean(), np.ptp(ys))):
-                        best = t; break
-                if best is not None:
-                    raw = aaa_eval(best, xs)
-                    if np.sqrt(np.mean((raw - raw.mean() - (ys - ys.mean())) ** 2)) < 0.95 * base:
-                        self._terms[j] = best
-                        r = aaa_eval(best, U[:, j]); self._shift[j] = r.mean(); F[:, j] = r - r.mean()
+                if self._terms[j] is None:
+                    cur = self._gm.partial_dependence(term=j, X=np.column_stack([xs] * d)) - self._shift[j]
+                else:
+                    cur = self._terms[j](xs) - self._shift[j]
+                base = np.sqrt(np.mean((cur - ys) ** 2))
+                g = fit_profile(xs, ys, method, self.seed + j)
+                # every AAA-type profile must be pole/spike-free over the data range (Floater–Hormann is by proof);
+                # the bin means can look fine while the profile spikes between them (seen with "svd", 2026-10-11)
+                if g.kind != "fh" and not pole_free(g.params, xs.min(), xs.max(), yspan=(ys.mean(), np.ptp(ys))):
+                    continue
+                raw = g(xs)
+                if np.sqrt(np.mean((raw - raw.mean() - (ys - ys.mean())) ** 2)) < 0.95 * base:
+                    self._terms[j] = g
+                    r = g(U[:, j]); self._shift[j] = r.mean(); F[:, j] = r - r.mean()
         self.n_rational = sum(t is not None for t in self._terms)
 
     def _predict(self, U):
         out = np.full(len(U), self._c)
         for j, t in enumerate(self._terms):
-            v = self._gm.partial_dependence(term=j, X=U) if t is None else aaa_eval(t, U[:, j])
+            v = self._gm.partial_dependence(term=j, X=U) if t is None else t(U[:, j])
             out += v - self._shift[j]
         return out
 
 
 @register
 class GPRatMean(Learner):
-    """GP with a rational mean: trend = rational ridge function (ridge_aaa), then an ML-II GP on the residuals. The
-    GP posterior std is the UQ. NEW (E12)."""
+    """GP with a rational mean: trend = rational ridge profile (as ridge_aaa, `profile` ∈ PROFILES), then an ML-II GP
+    on the residuals. The GP posterior std is the UQ. NEW (E12)."""
     name, family, year, field, ref, uq, smooth = "gp_ratmean", "rational", 2026, "this study (E12)", "", True, True
     max_n = 5000
 
     def _fit(self, U, z):
         from .kernels import _sk_gp
         self._w, _ = _active_direction(U, z, self.seed)
-        self._p = aaa_holdout(U @ self._w, z, self.seed, bins=True)
-        self._g = _sk_gp(U.shape[1], 2.5, 1, self.seed).fit(U, z - aaa_eval(self._p, U @ self._w))
+        t = U @ self._w
+        self._g = fit_profile(*binned(t, z), self.kw.get("profile", "aaa"), self.seed)
+        self._gp = _sk_gp(U.shape[1], 2.5, 1, self.seed).fit(U, z - self._g(t))
 
     def _predict(self, U):
-        return aaa_eval(self._p, U @ self._w) + self._g.predict(U)
+        return self._g(U @ self._w) + self._gp.predict(U)
 
     def _predict_std(self, U):
-        return self._g.predict(U, return_std=True)[1]
+        return self._gp.predict(U, return_std=True)[1]

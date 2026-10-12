@@ -32,20 +32,45 @@ def _reg(fn):
     return fn
 
 
+MEMO = True        # module switch so tests can compare memo on / off (results must be bit-identical)
+_SHARED = None     # memo dict shared across optimizer runs on the same surrogate (set by run(..., memo=...))
+
+
 class _Counter:
+    """Counts evaluations against the budget and tracks the best point. With MEMO, an exact repeat of x (same bytes
+    after clipping) returns the stored value instead of re-predicting: optimizers revisit points (converged
+    multistarts, Nelder–Mead shrinks, DIRECT centres). A repeat still counts as an evaluation, so budgets, iteration
+    paths and results are unchanged; only wall time drops for expensive surrogates. Requires a deterministic f,
+    which every learner's predict is (BUGS N-19 and the survey learners use fixed random streams)."""
+
     def __init__(self, f, budget):
         self.f, self.budget, self.n, self.best = f, budget, 0, (np.inf, None)
+        # a shared dict (set by `run(..., memo=...)`) lets every optimizer in one E9 task reuse the same surrogate
+        # values; the values are identical either way, so results do not depend on sharing or on method order
+        self._memo = (_SHARED if _SHARED is not None else {}) if MEMO else None
+        self.hits = 0
 
     def __call__(self, x):
         x = np.clip(np.asarray(x, float), 0, 1)
         self.n += 1
-        v = float(self.f(x[None])[0])
+        key = x.tobytes() if self._memo is not None else None
+        if key is not None and key in self._memo:
+            v = self._memo[key]; self.hits += 1
+        else:
+            v = float(self.f(x[None])[0])
+            if key is not None:
+                self._memo[key] = v
         if v < self.best[0]:
             self.best = (v, x.copy())
         return v
 
 
 def _starts(d, k, seed):
+    """Shared multistart points: one scrambled Sobol' stream per (d, seed); a method needing k starts takes the
+    first k, so every multistart method (SLSQP, L-BFGS-B, trust-constr, Nelder–Mead, COBYLA, IPOPT, basin hopping,
+    the first-order family) starts from the same points as every other — common random numbers across optimizers,
+    without changing any method. Population methods (DE, PSO, CMA-ES) and DIRECT keep their own initialisation,
+    which is part of the algorithm. Prefix property checked by tests/test_optimizers_shared.py."""
     import warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -313,5 +338,11 @@ def spsa(f, d, budget, seed=0, grad=None, stochastic_grad=None, a=0.1, c=0.05, A
     return dict(x=F.best[1], f=F.best[0], nfev=F.n)
 
 
-def run(name, f, d, budget=2000, seed=0, grad=None):
-    return REGISTRY[name](f, d, budget, seed=seed, grad=grad)
+def run(name, f, d, budget=2000, seed=0, grad=None, memo=None):
+    """`memo`: a dict shared by every run on the same f (one E9 task = one fitted surrogate); None = per-run memo."""
+    global _SHARED
+    prev, _SHARED = _SHARED, memo
+    try:
+        return REGISTRY[name](f, d, budget, seed=seed, grad=grad)
+    finally:
+        _SHARED = prev

@@ -91,6 +91,7 @@ def main():
     ap.add_argument("exp"); ap.add_argument("--shards", type=int, default=5); ap.add_argument("--user", required=True)
     ap.add_argument("--skip-learners", default=""); ap.add_argument("--max-waves", type=int, default=20)
     ap.add_argument("--only-learners", default=""); ap.add_argument("--tag", default="")
+    ap.add_argument("--gpu", action="store_true"); ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--grow-to", type=int, default=0, help="use this many shards once the track named by --after is done")
     ap.add_argument("--after", default="", help="--skip-learners list of the other track whose slots this one inherits")
     ap.add_argument("--start-after", default="", help="EXP:ONLY_LEARNERS — wait until that track has no tasks left "
@@ -128,6 +129,7 @@ def main():
         push = [PY, str(HERE / "push_shards.py"), a.exp, "--shards", str(k), "--user", a.user]
         for flag, v in (("--skip-learners", a.skip_learners), ("--only-learners", a.only_learners), ("--tag", a.tag)):
             push += [flag, v] if v else []
+        push += (["--gpu"] if a.gpu else []) + (["--limit", str(a.limit)] if a.limit else [])
         until_ok(push, "push")       # a re-push of a just-started shard only restarts it; resume skips done tasks
         nap(120)
         st = wait_all(slug, a.user, k)

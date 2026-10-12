@@ -40,7 +40,7 @@ Poznański (2026), M.S. thesis, Univ. of Kansas — Sec. 14.3 and App. G (`pozna
 | P-FEAT | constructed feature probes: true discontinuity, plateau/floor, ridge (rotated), additive, low-rank product, Fourier-sparse, wavelet-local, uninformative inputs (+k dummy dims) | 2–10 | isolate one mechanism each (H1, H3, H8) |
 | P-MF | Mainini AVT-354 set (Forrester cont./discont., Rosenbrock, shifted-rotated Rastrigin, heterogeneous, spring–mass, Paciorek-noisy) + `mf2` (Branin, Currin, Park, Borehole, Hartmann6, Bohachevsky, Booth, Himmelblau, Six-hump camel) + tunable-r construction (M.2) | 1–10 | RQ3 |
 | R-FEA | thesis cache `tmf_bbd96c4b56` (901 runs, 623 usable, 3 inputs) + `t_scalar` LF at every point + 15 coarse-mesh runs; `tmf_dca5926004` (post-Bauschinger) as a second version | 3 | engineering anchor (RQ8) |
-| R-AIR | aircraft performance data (Math 796), 5 outputs, stratified by engine type | ~10–20 | second real tabular anchor (RQ8) |
+| R-AIR | Aircraft Bluebook (Kaggle `heitornunes/aircraft-performance-dataset-aircraft-bluebook`), 860 airplanes, Wikidata-augmented dates; author's Math 796 processing (`data/local/r_air/PROVENANCE.md`). **Strongly imbalanced:** Piston 71 %, Jet 18 %, Propjet 11 % | ~10–20 | second real tabular anchor (RQ8); biased vs debiased comparison |
 | D-LARGE | **large-n datasets for co-learning (author's note):** analytic problems sampled at n = 10³–10⁵; public regression sets (to verify and select in E7: e.g. NASA airfoil self-noise, combined-cycle power plant, building energy efficiency, concrete strength, OpenML-CTR23 suite) | 5–20 | let F10 learned encoders (DKL, SINDy-AE, KAN, TabPFN) be tested where they *should* work, not only at n≈100 |
 
 Noise models (M §1.1): none · additive · multiplicative · heteroscedastic · heavy-tailed · deterministic-numerical.
@@ -91,6 +91,15 @@ re-checked against the core set (every method keeps ≥ 1 favoured and ≥ 1 hur
   pathology check (bounds hit) and (e) heavy-tail noise probe (residual kurtosis on R-FEA).
 - Output: which mechanism(s) reproduce "GBT > GP" on synthetic data with the same signature as R-FEA.
 
+- **R-AIR bias arm (added 2026-10-11).** The author's Math 796 analysis found the aircraft data heavily imbalanced by
+  engine type and debiased it with inverse-frequency strata weights. Run every learner on R-AIR in three settings:
+  (i) **biased**: plain fit, random split, unweighted metrics; (ii) **debiased-weights**: the author's strata
+  (EIS decade × fuel-fraction quartile × range quartile × engine type), inverse-frequency weights in training where the
+  learner accepts them, and weighted bootstrap resampling where it does not (one mechanism for every learner);
+  (iii) **debiased-balanced**: stratified subsample to equal engine-type counts. Report overall *and* per-engine-type
+  error plus the macro average. The question: do conclusions about which surrogate class wins (H1/H3) change when
+  the data are debiased? (A GBT win on imbalanced data may be partly a win on the majority class.)
+
 ### E5 — Sampling study: scout × deliverable (RQ2, H2)
 - Full factorial scout ∈ {GP-var (refit θ), GP-var (frozen θ), RF-IJ, QRF, GBT committee K∈{4,20}, NGBoost, deep
   ensemble, BART, TabPFN, conformal-wrapped, LOLA-Voronoi, EIGF, MEPE, sequential maximin (model-free), random, Sobol'}
@@ -122,6 +131,19 @@ re-checked against the core set (every method keeps ≥ 1 favoured and ≥ 1 hur
 - Metrics: value and H¹/H² error added by upscaling (M.15), evaluation cost, memory; and the E9 regret of the result.
 - Key question: does smoothing upscaling turn GBT into a good optimizer-facing surrogate?
 
+### E13 — Gradient-enhanced surrogates (added 2026-10-11)
+- Question: when the simulator also returns ∇f (adjoint solvers, automatic differentiation), how much does using it
+  buy, per unit cost, and which classes exploit it best? A d-dimensional gradient costs about 1–5 function evaluations
+  with an adjoint, so "n samples with gradients" is compared with "≈ (1 + d) n samples without" at matched cost.
+- Learners: gradient-enhanced kriging (GEK: GP with derivative observations), Sobolev-trained MLP (values + gradient
+  loss; Czarnecki et al. 2017), Hermite RBF, gradient-enhanced PCE (derivative rows in the regression), and the
+  value-only counterparts.
+- Problems: the analytic P-FEAT, P-VLSE and P-ENG problems (exact gradients), with gradient noise ∈ {0, 1 %, 10 %}
+  (adjoint gradients are often less accurate than values), n ∈ {5d, 10d, 20d}, 10 seeds.
+- Outputs: value and gradient error versus matched cost; the effect on E9 regret for gradient-based optimizers.
+- Needs: a `grad` field in the learner task (the runner passes ∇f at the design points); GEK cost O((n(d+1))³) gives
+  the cost wall.
+
 ### E12 — Rational surrogates and AAA pairings (H9; added 2026-10-11)
 - Learners: univariate AAA (1-D), p-AAA (scattered; Balicki & Gugercin 2025), LS rational p/q (Austin et al. 2021);
   new pairings ridge-AAA, additive-AAA (spline/rational hybrid), GP with rational mean; references gp, as_gp, gam,
@@ -129,7 +151,9 @@ re-checked against the core set (every method keeps ≥ 1 favoured and ≥ 1 hur
 - Problems: P-RAT (forrester, runge, near_pole, abs_kink, step1d, ratio2d, resonance2d, ridge_pole_d{3,5,10}) +
   pole_knee_d{2,5,10}, thesis_collapse_knee + controls without rational structure (smooth_trig d2/d5, additive_d5,
   rotated_ridge_d5, axis_step_d2, borehole, otlcircuit).
-- Factors: n ∈ {10d, 50d, 200d} ≤ 1000 × additive noise {0, 0.1 %, 1 %, 10 %} × 10 seeds (35 280 fits).
+- Robust variants (D-6): every pairing × profile ∈ {hold-out AAA, residue cleanup, SVD-rank stop, continuum AAA on a
+  GP, Floater–Hormann}; `rat_ls` × denominator ∈ {SVD-normalised, Tikhonov, positive Bernstein}.
+- Factors: n ∈ {10d, 50d, 200d} ≤ 1000 × additive noise {0, 0.1 %, 1 %, 10 %} × 10 seeds (32 configs, 80 640 fits).
 - Output: accuracy-vs-noise curves per class; where rational methods win; how often the hybrid picks rational terms.
 - Planned extensions: low-rank p-AAA and Smolyak-rational on tensor / sparse-grid designs (grid sampler arm),
   rational tensor-train with AAA fibres (with the F10 TT-cross work), pole-free variants (Floater–Hormann,
@@ -148,6 +172,17 @@ re-checked against the core set (every method keeps ≥ 1 favoured and ≥ 1 hur
   c_H ∈ {1 ms, 0.1 s, 10 s, 1 h}.
 - Analysis: rank correlation between RMSE ranking and regret ranking per optimizer class (**H6**); cost crossover map
   (**H7**); surrogate × optimizer × landscape interaction (the coupling the author flagged).
+
+- **Harness guarantees (2026-10-11; no change to any method's mathematics or behaviour):** (1) shared multistart
+  points: every multistart method takes the first k points of one scrambled Sobol' stream per (d, seed); population
+  methods and DIRECT keep their own initialisation; (2) one E9 task = one fitted surrogate + every optimizer and
+  budget on it; (3) an evaluation memo shared by all optimizers in a task: exact repeats return the stored value
+  and still count against the budget. Tested bit-identical, memo on vs off, and shared memo in forward vs reverse
+  method order, on 6 surrogates including those with fixed random prediction streams
+  (`code/tests/test_optimizers_shared.py`). (4) Reference optima: `results/fstar_table.json`, 5 301 instances
+  (every analytic problem, unshifted plus shift seeds 0–29), from three independent global searches; "confirmed"
+  when ≥ 2 agree. The gradient source (analytic vs finite differences at practitioner step sizes) is an explicit
+  E9 factor.
 
 ### E10 — Selection model (RQ7)
 - Features from the *initial design only*: ELA set (flacco-style), fill distance, estimated smoothness/anisotropy,

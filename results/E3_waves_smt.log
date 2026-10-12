@@ -285,3 +285,37 @@ joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of1 -> joshuadavidpoznansk
   1 result file(s), 1865 records
 merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
 backup: 6 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 2294 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 2094 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 1738 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 2299 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 1731 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 19 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 16673 done, 25787 to run on 10 workers
+archive 7.24 MB
++ datasets version -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\ds -m update
+Starting upload for file done_keys.txt
+  0%|          | 0.00/13.8M [00:00<?, ?B/s]  0%|          | 16.0k/13.8M [00:00<04:20, 55.3kB/s]  4%|3         | 528k/13.8M [00:00<00:09, 1.49MB/s]  15%|#4        | 2.00M/13.8M [00:00<00:02, 5.40MB/s] 31%|###1      | 4.33M/13.8M [00:00<00:00, 10.5MB/s] 41%|####      | 5.62M/13.8M [00:00<00:00, 10.4MB/s] 65%|######5   | 9.02M/13.8M [00:00<00:00, 16.7MB/s] 79%|#######8  | 10.8M/13.8M [00:01<00:00, 14.9MB/s] 90%|######### | 12.5M/13.8M [00:01<00:00, 15.0MB/s]100%|##########| 13.8M/13.8M [00:02<00:00, 6.04MB/s]
+Upload successful: done_keys.txt (14MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/6.90M [00:00<?, ?B/s]  0%|          | 16.0k/6.90M [00:00<04:02, 29.7kB/s]  2%|2         | 160k/6.90M [00:00<00:21, 322kB/s]    9%|8         | 624k/6.90M [00:00<00:05, 1.30MB/s] 30%|##9       | 2.05M/6.90M [00:00<00:01, 4.56MB/s] 63%|######2   | 4.33M/6.90M [00:00<00:00, 9.09MB/s] 80%|#######9  | 5.52M/6.90M [00:01<00:00, 9.91MB/s]100%|##########| 6.90M/6.90M [00:01<00:00, 4.00MB/s]
+Upload successful: proj.tar.gz (7MB)
+Dataset version is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-smt
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k1
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k2
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k3
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k4
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k5
+Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5

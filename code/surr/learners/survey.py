@@ -478,6 +478,11 @@ class AAARational(Learner):
     max_d = 1
 
     def _fit(self, U, z, tol=1e-10, mmax=None):
+        if self.kw.get("profile"):                     # robust variants: aaa / cleanup / svd / caaa / fh (rational.py)
+            from .rational import fit_profile
+            self._g = fit_profile(U[:, 0], z, self.kw["profile"], self.seed, binned_input=False)
+            return
+        self._g = None
         x = U[:, 0]; mmax = mmax or min(len(x) // 2, 60)
         J = np.ones(len(x), bool); zs, fs = [], []; R = np.full(len(x), z.mean())
         for _ in range(mmax):
@@ -491,6 +496,8 @@ class AAARational(Learner):
         self._zs, self._fs, self._w = np.array(zs), np.array(fs), w
 
     def _predict(self, U):
+        if self._g is not None:
+            return self._g(U[:, 0])
         x = U[:, 0]; D = x[:, None] - self._zs[None, :]
         hit = np.isclose(D, 0)
         D[hit] = 1.0

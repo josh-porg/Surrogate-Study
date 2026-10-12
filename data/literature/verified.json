@@ -10223,5 +10223,123 @@
    "type": "monograph"
   },
   "status": "verified"
+ },
+ {
+  "key": "driscoll2024continuum",
+  "query": "Driscoll Nakatsukasa Trefethen AAA rational approximation on a continuum",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1137/23m1570508",
+   "title": "AAA Rational Approximation on a Continuum",
+   "year": 2024,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Driscoll",
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": {
+   "source": "arxiv",
+   "arxiv": "2305.03677",
+   "title": "AAA rational approximation on a continuum",
+   "year": 2023,
+   "authors": [
+    "Driscoll",
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "authors_full": [
+    "Toby Driscoll",
+    "Yuji Nakatsukasa",
+    "Lloyd N. Trefethen"
+   ],
+   "doi": null,
+   "score": 1.0
+  },
+  "best": {
+   "source": "crossref",
+   "doi": "10.1137/23m1570508",
+   "title": "AAA Rational Approximation on a Continuum",
+   "year": 2024,
+   "venue": "SIAM Journal on Scientific Computing",
+   "authors": [
+    "Driscoll",
+    "Nakatsukasa",
+    "Trefethen"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "gustavsen1999rational",
+  "query": "Gustavsen Semlyen Rational approximation of frequency domain responses by vector fitting",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1109/61.772353",
+   "title": "Rational approximation of frequency domain responses by vector fitting",
+   "year": 1999,
+   "venue": "IEEE Transactions on Power Delivery",
+   "authors": [
+    "Gustavsen",
+    "Semlyen"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1109/61.772353",
+   "title": "Rational approximation of frequency domain responses by vector fitting",
+   "year": 1999,
+   "venue": "IEEE Transactions on Power Delivery",
+   "authors": [
+    "Gustavsen",
+    "Semlyen"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
+ },
+ {
+  "key": "hua1990matrix",
+  "query": "Hua Sarkar Matrix pencil method for estimating parameters of exponentially damped undamped sinusoids in noise",
+  "section": "2.4",
+  "crossref": {
+   "source": "crossref",
+   "doi": "10.1109/29.56027",
+   "title": "Matrix pencil method for estimating parameters of exponentially damped/undamped sinusoids in noise",
+   "year": 1990,
+   "venue": "IEEE Transactions on Acoustics, Speech, and Signal Processing",
+   "authors": [
+    "Hua",
+    "Sarkar"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "arxiv": null,
+  "best": {
+   "source": "crossref",
+   "doi": "10.1109/29.56027",
+   "title": "Matrix pencil method for estimating parameters of exponentially damped/undamped sinusoids in noise",
+   "year": 1990,
+   "venue": "IEEE Transactions on Acoustics, Speech, and Signal Processing",
+   "authors": [
+    "Hua",
+    "Sarkar"
+   ],
+   "score": 1.0,
+   "type": "journal-article"
+  },
+  "status": "verified"
  }
 ]

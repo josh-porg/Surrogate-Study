@@ -297,8 +297,29 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   Univariate `aaa_rational` on new 1-D problems. New block P-RAT (10 problems; outside core_set, so E3 is
   unchanged). 35 280 fits, local after E2b. Run walls are set by cost, not by expected failure: cheap runs where a
   method should fail are kept as evidence (author's rule).
+- **D-6 · 2026-10-11 · E12 robust-rational variants (before E12 runs).** Five 1-D profile methods shared by all
+  pairings: hold-out AAA with pole/spike rejection; residue-based Froissart cleanup (detect and remove, LS refit;
+  Nakatsukasa et al. 2018); SVD numerical-rank stopping (robust-Padé idea, Gonnet et al. 2013); continuum AAA on a
+  1-D GP mean (Driscoll et al. 2024); Floater–Hormann (provably pole-free). `rat_ls` gains a Tikhonov denominator
+  (q = 1 + Σ b_k φ_k, degree-weighted penalty, λ on hold-out) and a positive-Bernstein denominator (provably
+  pole-free on the box). E12 = 32 configs, 80 640 fits. Approved by the author.
+- **D-7 · 2026-10-11 · planned methods implemented for fixed designs** (`learners/latent.py`): Kernel-Flows GP,
+  low-rank CP (the scattered-data functional SVD), functional tensor train by ALS, static SINDy autoencoder. ALS needs
+  an explicit intercept and a warm-started final refit (non-convex). Smoke test: CP beats the GP 8× (d = 5) and 28×
+  (d = 10) on low-rank products; Kernel Flows recover nonstationary_d2 where ML-II fails (0.065 vs 1.0). Added to E2b
+  (now 14 400 fits). E2a/E2b screening is a fairness and smoke check only: its 12 problems favour GP and tree
+  families and have no polynomial, additive, low-rank or network-native case. No method is cut on E2a/E2b; every
+  method goes to E3's 82-problem core set. Still planned, needing their own designs or data: Smolyak, TT-cross
+  (sampling/upscaling studies), Sobolev MLP (gradient data; with gradient-enhanced kriging).
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
+- 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee
+  and ratio problems (GP 1e-2..1e-3); 1-D raw AAA 1e-11..1e-16. At 1 % noise raw AAA collapses (0.09–0.28) while
+  `rat_ls` stays 5–17× ahead of the GP on rational structure (2–4e-3 vs 2–4e-2; resonance 2e-3 vs 0.79). Hold-out
+  AAA beats the GP 7× on near_pole at 1 % noise. GP + continuum AAA ≈ GP (a rational compression of the GP, not a gain).
+  The Tikhonov denominator stops `rat_ls` blow-ups (additive_d5: 24 → 0.68). The positive-Bernstein denominator fails
+  on resonance2d (6.2): positive Bernstein coefficients are sufficient, not necessary, for q > 0, and exclude
+  denominators with a near-zero minimum. The GP with a rational mean beats the GP 6× on ridge_pole_d5 at 1 % noise.
 - 2026-10-03 · Thesis code, GP on `smooth`, seed 0: noisy-fold CV 3.3 % (published 3.0 ± 0.1) vs clean-truth
   ≈ 1.1 % — the published canonical numbers are mostly the 3 % noise floor (B-01). Full test: E1.
 - 2026-10-03 · Fourier-sparse probe, n = 120: CS in a periodic Fourier basis recovers it exactly (NRMSE 0.000), GP

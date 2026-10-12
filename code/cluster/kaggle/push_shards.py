@@ -62,6 +62,12 @@ os.makedirs(f"{{W}}/proj/results/raw/{exp}", exist_ok=True)
 json.dump(dict(python=platform.python_version(), cpus=os.cpu_count(), shard="{i}/{k}", freeze=env.splitlines()),
           open(f"{{W}}/proj/results/raw/{exp}/env_shard{i}of{k}.json", "w"))
 os.chdir(f"{{W}}/proj/code")
+try:
+    import torch
+    if torch.cuda.is_available():
+        os.environ["SURR_DEVICE"] = "cuda"; print("GPU:", torch.cuda.get_device_name(0), flush=True)
+except Exception as e:
+    print("no torch/cuda:", e, flush=True)
 rc = subprocess.run([sys.executable, "-m", "surr.runner", "{exp}", "--shard", "{i}/{k}", "--workers", str(os.cpu_count()),
                      "--timeout", "900", "--max-hours", "10.5", *({extra!r})]).returncode
 if rc:                                         # make Kaggle report ERROR instead of COMPLETE so the wave driver stops
@@ -98,6 +104,7 @@ def main():
     ap.add_argument("--skip-learners", default=""); ap.add_argument("--only-learners", default="")
     ap.add_argument("--limit", type=int, default=0, help="tasks per shard (smoke tests)")
     ap.add_argument("--tag", default="", help="slug suffix, so a second track (e.g. smt) never touches the main shards")
+    ap.add_argument("--gpu", action="store_true", help="GPU session (Kaggle weekly GPU quota); nets train on cuda")
     a = ap.parse_args()
     if a.exp.startswith("E11") or "fea" in a.exp.lower():
         sys.exit("refusing: real-data experiments stay on this machine (STUDY_PLAN §4b data rule)")
@@ -130,9 +137,9 @@ def main():
                                                      extra=extra, needs_smt=needs_smt))
             (kd / "kernel-metadata.json").write_text(json.dumps({
                 "id": f"{a.user}/{name}", "title": name, "code_file": "run.py", "language": "python",
-                "kernel_type": "script", "is_private": True, "enable_gpu": False, "enable_internet": True,
+                "kernel_type": "script", "is_private": True, "enable_gpu": bool(a.gpu), "enable_internet": True,
                 "dataset_sources": [f"{a.user}/{slug}", f"{a.user}/{WHEELS_DS}"]}))
-            sh(KAGGLE, "kernels", "push", "-p", str(kd))
+            sh(KAGGLE, "kernels", "push", "-p", str(kd), *(["--accelerator", "NvidiaTeslaT4"] if a.gpu else []))
 
 
 if __name__ == "__main__":

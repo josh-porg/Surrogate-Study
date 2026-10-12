@@ -67,7 +67,12 @@ def _train(net, X, y, seed, epochs=3000, lr=3e-3, wd=1e-5, patience=200, val_fra
     n = len(y); idx = rng.permutation(n)
     nv = int(val_frac * n) if n >= 20 else 0
     va, tr = idx[:nv], idx[nv:]
-    Xt, yt = torch.tensor(X, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
+    # SURR_DEVICE=cuda (set by GPU Kaggle shards) trains on the GPU; the trained net is returned on the CPU, so every
+    # learner's prediction code is unchanged. Results must not depend on the device beyond float round-off.
+    import os
+    dev = "cuda" if os.environ.get("SURR_DEVICE") == "cuda" and torch.cuda.is_available() else "cpu"
+    net = net.to(dev)
+    Xt = torch.tensor(X, dtype=torch.float32, device=dev); yt = torch.tensor(y, dtype=torch.float32, device=dev)
     optim = _optimizer(opt, net.parameters(), lr, wd)
     if opt == "lbfgs":
         epochs, patience = max(epochs // 20, 10), max(patience // 20, 5)
@@ -95,7 +100,7 @@ def _train(net, X, y, seed, epochs=3000, lr=3e-3, wd=1e-5, patience=200, val_fra
                     break
     if best_state is not None:
         net.load_state_dict(best_state)
-    return net
+    return net.cpu()
 
 
 def _mlp(d, width=64, depth=3, p_drop=0.0, act="silu"):

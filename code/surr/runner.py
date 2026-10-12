@@ -203,7 +203,9 @@ def exp_E2a_learners():
 
 E2B_CONFIGS = [("gam", {}), ("pspline_te", {}), ("symreg", {}), ("sparse_gp", {}), ("warped_gp", {}), ("deep_gp", {}),
                ("bnn_laplace", {}), ("bnn_vi", {}), ("bnn_vi", {"kl_weight": 0.1}), ("bnn_vi", {"kl_weight": 0.01}),
-               ("bart", {}), ("moe", {}), ("natural_neighbor", {})]
+               ("bart", {}), ("moe", {}), ("natural_neighbor", {}),
+               ("kernel_flow_gp", {}), ("lowrank_cp", {}), ("ft_als", {}), ("sindy_ae_static", {}),
+               ("paaa", {}), ("rat_ls", {}), ("rat_ls", {"reg": "tik"})]
 
 
 def exp_E2b_learners():
@@ -225,10 +227,14 @@ def exp_E2b_learners():
     return rows
 
 
-E12_LEARNERS = [("aaa_rational", {}), ("paaa", {}), ("rat_ls", {}), ("ridge_aaa", {}), ("additive_aaa", {}),
-                ("gp_ratmean", {}),
-                ("gp", {}), ("as_gp", {}), ("gam", {}), ("ppr", {}), ("pce_lars", {}), ("mlp_ens", {"opt": "lbfgs"}),
-                ("xgb", {}), ("catboost", {})]
+_PROF = ("aaa", "cleanup", "svd", "caaa", "fh")     # 1-D profile methods (rational.fit_profile)
+E12_LEARNERS = ([("aaa_rational", {})] + [("aaa_rational", {"profile": q}) for q in _PROF]      # 1-D problems only
+                + [("paaa", {}), ("rat_ls", {}), ("rat_ls", {"reg": "tik"}), ("rat_ls", {"reg": "pos"})]
+                + [("ridge_aaa", {"profile": q}) for q in _PROF]
+                + [("additive_aaa", {"profile": q}) for q in _PROF]
+                + [("gp_ratmean", {"profile": q}) for q in ("aaa", "cleanup", "caaa", "fh")]
+                + [("gp", {}), ("as_gp", {}), ("gam", {}), ("ppr", {}), ("pce_lars", {}), ("mlp_ens", {"opt": "lbfgs"}),
+                   ("xgb", {}), ("catboost", {})])
 E12_PROBLEMS = ["forrester", "runge", "near_pole", "abs_kink", "step1d", "ratio2d", "resonance2d", "ridge_pole_d3",
                 "ridge_pole_d5", "ridge_pole_d10", "pole_knee_d2", "pole_knee_d5", "pole_knee_d10",
                 "thesis_collapse_knee", "smooth_trig_d2", "smooth_trig_d5", "additive_d5", "rotated_ridge_d5",

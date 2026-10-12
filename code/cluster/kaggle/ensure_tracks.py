@@ -25,6 +25,9 @@ TRACKS = {
     "gprestarts": ["E3s_gp_restarts", "--shards", "5", "--max-waves", "10",
                    "--start-after", "E3_learners:idw,knn,qrf,ngboost,mc_dropout,poly_ridge"],
     "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E3s_gp_restarts:"],
+    # one-off: does a GPU session add capacity beyond the 5 batch sessions, and how fast are the nets on a T4?
+    "gputest": ["E3s_tuning", "--shards", "1", "--only-learners", "mlp_ens", "--tag", "gputest", "--gpu", "--limit",
+                "40", "--max-waves", "1"],
 }
 
 

@@ -82,12 +82,20 @@ learners:
   sparse_gp:       {favored_by: [n_large, smooth_trig], hurt_by: [n_tiny, axis_step], why: "inducing-point GP"}
   warped_gp:       {favored_by: [pole_knee, nonstationary], hurt_by: [axis_step], why: "per-axis monotone input warping"}
   aaa_rational:    {favored_by: [pole_knee], hurt_by: [axis_step, d_high], why: "rational approximant captures poles"}
+  # ── rational surrogates (learners/rational.py, E12) ──────────────────────────────────────────
+  paaa:            {favored_by: [ratio2d, pole_knee, near_pole], hurt_by: [d_high, noise_additive, axis_step], why: "multivariate barycentric on a tensor node grid; unknowns grow as nodes^d"}
+  rat_ls:          {favored_by: [ratio2d, resonance2d, pole_knee], hurt_by: [additive, axis_step, noise_heavytail], why: "global p/q; exact on rational truth, spurious poles otherwise"}
+  ridge_aaa:       {favored_by: [ridge_pole_d5, rotated_ridge], hurt_by: [additive, lowrank_product], why: "rational profile along one active direction"}
+  additive_aaa:    {favored_by: [additive, pole_knee], hurt_by: [rotated_ridge, lowrank_product], why: "spline GAM with rational terms where they beat the spline"}
+  gp_ratmean:      {favored_by: [ridge_pole_d5, pole_knee, rotated_ridge], hurt_by: [axis_step, n_tiny], why: "rational ridge trend + GP on the residual"}
+  # ── learned kernels, low-rank formats, latent sparse regression (learners/latent.py) ──────────
+  kernel_flow_gp:  {favored_by: [nonstationary, n_small], hurt_by: [n_tiny], why: "kernel learned by sub-sampling criterion"}
+  sindy_ae_static: {favored_by: [rotated_ridge, n_large], hurt_by: [n_tiny], why: "learned latent + sparse dictionary"}
+  lowrank_cp:      {favored_by: [lowrank_product], hurt_by: [rotated_ridge], why: "functional SVD; rank depends on orientation"}
+  ft_als:          {favored_by: [lowrank_product, additive, d_high], hurt_by: [rotated_ridge, axis_step], why: "functional tensor train; ranks bound the interactions"}
   # ── planned learners ───────────────────────────────────────────────────────────────────
   smolyak:         {favored_by: [additive, smooth_trig], hurt_by: [axis_step, rotated_ridge], why: "sparse grid; mixed smoothness"}
   tt_cross:        {favored_by: [lowrank_product, additive, d_high], hurt_by: [rotated_ridge, axis_step], why: "low tensor rank in the given axes"}
-  fsvd2d:          {favored_by: [lowrank_product], hurt_by: [rotated_ridge], why: "functional SVD; rank depends on orientation"}
-  sindy_ae_static: {favored_by: [rotated_ridge, n_large], hurt_by: [n_tiny], why: "learned latent + sparse dictionary"}
-  kernel_flow_gp:  {favored_by: [nonstationary, n_small], hurt_by: [n_tiny], why: "kernel learned by sub-sampling criterion"}
   sobolev_mlp:     {favored_by: [smooth_trig, n_small], hurt_by: [axis_step], why: "fits values and gradients"}
 samplers:          # initial designs
   random:          {favored_by: [fourier_sparse], hurt_by: [plateau_bump, n_tiny], why: "i.i.d.; needed for compressed-sensing guarantees, poor fill"}
