@@ -10,6 +10,11 @@ or no progress, or the kill switch is turned on. Turn off: set "enabled": false 
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import quiet  # noqa: E402,F401  (no console windows for child processes)
+
 import json
 import re
 import shutil

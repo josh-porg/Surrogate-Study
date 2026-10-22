@@ -9,3 +9,79 @@
 [queued] waiting for E3_learners (smt_krg,smt_kpls): 35943 tasks left
 [queued] waiting for E3_learners (smt_krg,smt_kpls): 35943 tasks left
 [queued] waiting for E3_learners (smt_krg,smt_kpls): 35943 tasks left
+[queued] waiting for E3_learners (smt_krg,smt_kpls): 25787 tasks left
+[queued] waiting for E3_learners (smt_krg,smt_kpls): 25787 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E3_learners: 146780 tasks in shard 1/1, 0 done, 146780 to run on 10 workers
+archive 7.46 MB
++ datasets create -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\ds
+Starting upload for file done_keys.txt
+  0%|          | 0.00/14.2M [00:00<?, ?B/s]  0%|          | 16.0k/14.2M [00:00<05:59, 41.4kB/s]  3%|2         | 416k/14.2M [00:00<00:13, 1.10MB/s]   9%|9         | 1.28M/14.2M [00:00<00:04, 3.28MB/s] 30%|###       | 4.30M/14.2M [00:00<00:00, 11.2MB/s] 52%|#####2    | 7.39M/14.2M [00:00<00:00, 13.7MB/s] 70%|#######   | 10.0M/14.2M [00:00<00:00, 17.1MB/s] 84%|########4 | 11.9M/14.2M [00:01<00:00, 15.3MB/s] 96%|#########5| 13.6M/14.2M [00:01<00:00, 15.8MB/s]100%|##########| 14.2M/14.2M [00:02<00:00, 6.81MB/s]
+Upload successful: done_keys.txt (14MB)
+Starting upload for file proj.tar.gz
+  0%|          | 0.00/7.12M [00:00<?, ?B/s]  0%|          | 16.0k/7.12M [00:00<05:18, 23.4kB/s]  7%|6         | 496k/7.12M [00:00<00:08, 852kB/s]   16%|#5        | 1.12M/7.12M [00:00<00:03, 1.99MB/s] 56%|#####5    | 3.98M/7.12M [00:01<00:00, 8.02MB/s] 76%|#######5  | 5.39M/7.12M [00:01<00:00, 9.48MB/s] 95%|#########4| 6.75M/7.12M [00:01<00:00, 9.31MB/s]100%|##########| 7.12M/7.12M [00:01<00:00, 3.90MB/s]
+Upload successful: proj.tar.gz (7MB)
+Your private Dataset is being created. Please check progress at https://www.kaggle.com/datasets/joshuadavidpoznanski/surrpaper-e3-learners-re
+dataset status: ready
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\k1
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-re-shard-1of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\k2
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-re-shard-2of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\k3
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-re-shard-3of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\k4
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-re-shard-4of5
++ kernels push -p C:\Users\satur\AppData\Local\Temp\tmpximi45hk\k5
+Kernel version 1 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-re-shard-5of5
+Traceback (most recent call last):
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 140, in <module>
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 133, in main
+    until_ok(push, "push")       # a re-push of a just-started shard only restarts it; resume skips done tasks
+         ~~~^^^^^^^^^^^^^^~~~~~~~~
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 68, in wait_all
+    st = statuses(slug, user, k)
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 61, in statuses
+    return [shard_status(f"{user}/{slug}-shard-{i}of{k}") for i in range(1, k + 1)]
+            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 49, in shard_status
+    r = subprocess.run([KAGGLE, "kernels", "status", name], capture_output=True, text=True, timeout=120)
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1554, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+OSError: [WinError 1455] The paging file is too small for this operation to complete
+Traceback (most recent call last):
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 142, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 102, in main
+    while (left := remaining(exp2, "", only2)[0]) > 0:
+                   ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 43, in remaining
+    return int(out.split(" done, ")[1].split(" to run")[0]), out.strip()
+               ~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 146780 tasks in shard 1/1, 145990 done, 790 to run on 10 workers
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 146780 tasks in shard 1/1, 146780 done, 0 to run on 10 workers
+nothing left — done

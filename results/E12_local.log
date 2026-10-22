@@ -1,0 +1,133 @@
+E12_rational: 80640 tasks in shard 1/1, 0 done, 80640 to run on 10 workers
+  memory cap: 10 -> 1 workers (3.7 GB free, up to 2 GB per task)
+  50/80640  elapsed 4.2 min  eta 6758.3 min
+  100/80640  elapsed 12.7 min  eta 10259.1 min
+  150/80640  elapsed 20.6 min  eta 11075.0 min
+  200/80640  elapsed 28.9 min  eta 11624.9 min
+  250/80640  elapsed 34.8 min  eta 11202.4 min
+  300/80640  elapsed 157.0 min  eta 42044.8 min
+  350/80640  elapsed 413.8 min  eta 94920.1 min
+E12_rational: 80640 tasks in shard 1/1, 357 done, 80283 to run on 10 workers
+  memory cap: 10 -> 3 workers (4.2 GB free, up to 0.6 GB per task)
+  50/80283  elapsed 13.6 min  eta 21765.9 min
+  100/80283  elapsed 59.7 min  eta 47877.2 min
+  150/80283  elapsed 74.6 min  eta 39854.7 min
+  200/80283  elapsed 123.4 min  eta 49395.4 min
+  250/80283  elapsed 137.5 min  eta 44028.3 min
+  300/80283  elapsed 153.3 min  eta 40869.7 min
+  350/80283  elapsed 168.2 min  eta 38420.9 min
+  400/80283  elapsed 174.1 min  eta 34772.5 min
+  450/80283  elapsed 178.9 min  eta 31739.4 min
+  500/80283  elapsed 474.1 min  eta 75647.2 min
+  550/80283  elapsed 483.1 min  eta 70029.9 min
+  600/80283  elapsed 492.4 min  eta 65394.6 min
+  650/80283  elapsed 502.9 min  eta 61606.2 min
+  700/80283  elapsed 510.7 min  eta 58061.5 min
+  750/80283  elapsed 513.7 min  eta 54473.5 min
+  800/80283  elapsed 522.2 min  eta 51878.6 min
+  850/80283  elapsed 529.1 min  eta 49448.5 min
+  900/80283  elapsed 533.4 min  eta 47045.6 min
+  950/80283  elapsed 538.7 min  eta 44983.7 min
+  1000/80283  elapsed 546.3 min  eta 43313.8 min
+  1050/80283  elapsed 1237.6 min  eta 93388.2 min
+  1100/80283  elapsed 1251.4 min  eta 90079.7 min
+  1150/80283  elapsed 1261.9 min  eta 86832.3 min
+  1200/80283  elapsed 1864.9 min  eta 122902.3 min
+  1250/80283  elapsed 2653.5 min  eta 167769.7 min
+  1300/80283  elapsed 2658.6 min  eta 161524.2 min
+  1350/80283  elapsed 2663.0 min  eta 155701.4 min
+  1400/80283  elapsed 2668.7 min  eta 150366.1 min
+  1450/80283  elapsed 2677.0 min  eta 145543.6 min
+  1500/80283  elapsed 2685.5 min  eta 141046.6 min
+  1550/80283  elapsed 2692.2 min  eta 136753.4 min
+  1600/80283  elapsed 2696.9 min  eta 132622.7 min
+  1650/80283  elapsed 2701.4 min  eta 128738.5 min
+  1700/80283  elapsed 2707.1 min  eta 125135.6 min
+  1750/80283  elapsed 2710.6 min  eta 121641.2 min
+  1800/80283  elapsed 2713.9 min  eta 118332.0 min
+  1850/80283  elapsed 2715.7 min  eta 115135.6 min
+  1900/80283  elapsed 2718.9 min  eta 112166.7 min
+  1950/80283  elapsed 2722.2 min  eta 109352.5 min
+  2000/80283  elapsed 2726.7 min  eta 106725.3 min
+  2050/80283  elapsed 2729.8 min  eta 104174.9 min
+  2100/80283  elapsed 2732.8 min  eta 101742.1 min
+  2150/80283  elapsed 2738.1 min  eta 99505.0 min
+  2200/80283  elapsed 2746.6 min  eta 97482.5 min
+  2250/80283  elapsed 2749.0 min  eta 95338.7 min
+  2300/80283  elapsed 2753.9 min  eta 93371.7 min
+  2350/80283  elapsed 2758.3 min  eta 91472.1 min
+  2400/80283  elapsed 2763.9 min  eta 89693.3 min
+  2450/80283  elapsed 2767.9 min  eta 87932.0 min
+  2500/80283  elapsed 2770.0 min  eta 86183.3 min
+  2550/80283  elapsed 2773.5 min  eta 84544.7 min
+  2600/80283  elapsed 2778.5 min  eta 83016.7 min
+  2650/80283  elapsed 2782.4 min  eta 81511.8 min
+  2700/80283  elapsed 2787.5 min  eta 80096.7 min
+  2750/80283  elapsed 2792.3 min  eta 78725.6 min
+  2800/80283  elapsed 2797.1 min  eta 77403.3 min
+  2850/80283  elapsed 2800.9 min  eta 76097.7 min
+  2900/80283  elapsed 2804.9 min  eta 74846.0 min
+  2950/80283  elapsed 2808.2 min  eta 73616.2 min
+  3000/80283  elapsed 2812.8 min  eta 72459.4 min
+  3050/80283  elapsed 2815.0 min  eta 71281.2 min
+  3100/80283  elapsed 2817.5 min  eta 70148.7 min
+  3150/80283  elapsed 3300.7 min  eta 80823.6 min
+  3200/80283  elapsed 3303.7 min  eta 79581.9 min
+  3250/80283  elapsed 3305.7 min  eta 78352.6 min
+  3300/80283  elapsed 3308.8 min  eta 77188.9 min
+  3350/80283  elapsed 3579.6 min  eta 82206.4 min
+E12_rational: 80640 tasks in shard 1/1, 3737 done, 76903 to run on 10 workers
+  memory cap: 10 -> 2 workers (3.3 GB free, up to 0.6 GB per task)
+  50/76903  elapsed 4.4 min  eta 6706.5 min
+  100/76903  elapsed 9.0 min  eta 6947.4 min
+  150/76903  elapsed 356.4 min  eta 182353.2 min
+  200/76903  elapsed 362.6 min  eta 139061.8 min
+  250/76903  elapsed 366.8 min  eta 112459.1 min
+  300/76903  elapsed 371.9 min  eta 94960.3 min
+  350/76903  elapsed 376.3 min  eta 82297.7 min
+  400/76903  elapsed 379.4 min  eta 72564.4 min
+  450/76903  elapsed 383.6 min  eta 65175.2 min
+  500/76903  elapsed 388.2 min  eta 59318.6 min
+  550/76903  elapsed 390.6 min  eta 54224.7 min
+  600/76903  elapsed 394.3 min  eta 50146.6 min
+  650/76903  elapsed 397.0 min  eta 46572.9 min
+  700/76903  elapsed 399.4 min  eta 43482.8 min
+  750/76903  elapsed 401.9 min  eta 40809.6 min
+  800/76903  elapsed 405.6 min  eta 38584.7 min
+  850/76903  elapsed 408.4 min  eta 36539.4 min
+  900/76903  elapsed 411.1 min  eta 34714.5 min
+  950/76903  elapsed 414.5 min  eta 33141.8 min
+  1000/76903  elapsed 609.5 min  eta 46264.9 min
+  1050/76903  elapsed 613.1 min  eta 44289.7 min
+  1100/76903  elapsed 616.5 min  eta 42487.3 min
+  1150/76903  elapsed 619.3 min  eta 40793.8 min
+  1200/76903  elapsed 622.4 min  eta 39264.1 min
+  1250/76903  elapsed 624.8 min  eta 37815.5 min
+  1300/76903  elapsed 627.4 min  eta 36484.5 min
+  1350/76903  elapsed 627.6 min  eta 35126.5 min
+  1400/76903  elapsed 628.5 min  eta 33895.0 min
+  1450/76903  elapsed 733.5 min  eta 38170.2 min
+  1500/76903  elapsed 745.0 min  eta 37449.7 min
+Exception in thread Thread-2 (pool_manager_loop):
+Traceback (most recent call last):
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 1044, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Users\satur\AppData\Local\Programs\Python\Python313\Lib\threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 205, in pool_manager_loop
+    pool_manager.update_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 257, in update_status
+    self.update_tasks()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 263, in update_tasks
+    if self.worker_manager.maybe_stop_worker(task.worker_id):
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\pool\process.py", line 469, in maybe_stop_worker
+    stop_process(worker)
+    ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\.venv\Lib\site-packages\pebble\common\process.py", line 63, in stop_process
+    raise RuntimeError("Unable to terminate PID %d" % os.getpid())
+RuntimeError: Unable to terminate PID 24480

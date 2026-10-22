@@ -1,0 +1,57 @@
+\documentclass[11pt,oneside]{book}
+% Private working textbook (not for publication): first-principles companion to the surrogate paper's review.
+% Build: latexmk -pdf main.tex   (figures: python make_chNN.py)
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs,graphicx,enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\newtheoremstyle{plainbox}{8pt}{8pt}{\normalfont}{}{\bfseries}{.}{0.6em}{}
+\theoremstyle{plainbox}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{result}[definition]{Result}
+\newtheorem{example}[definition]{Example}
+\newtheoremstyle{aside}{8pt}{8pt}{\normalfont\small}{}{\bfseries\small}{.}{0.6em}{}
+\theoremstyle{aside}
+\newtheorem*{intuition}{Intuition}
+\newtheorem*{connection}{Connection}
+\newtheorem*{pitfall}{Pitfall}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\T}{^{\mathsf{T}}}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\ip}[2]{\langle #1,\, #2\rangle}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\N}{\mathcal{N}}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{Surrogate Modelling from First Principles\\[6pt]\large A private working textbook}
+\author{Written for J.~Poznanski}
+\date{Draft, \today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\chapter*{How to read this book}
+This is a companion to the surrogate-modelling paper, not part of it. The paper's review says \emph{who} did
+\emph{what}; this book says \emph{why it works}, \emph{what it is really computing}, and \emph{when it must fail}.
+Every tool is built up from things you already know, and every named property is restated in words together with
+the idea behind its proof. Probability is done with integrals throughout; a statistical table, when one appears, is
+shown to be a precomputed integral.
+
+Boxes: \textbf{Intuition} gives the informal reason a result is true; \textbf{Connection} links an idea to proper
+orthogonal decomposition (POD), dynamic mode decomposition (DMD) or computational fluid dynamics (CFD);
+\textbf{Pitfall} marks a place where practice goes wrong. Worked numbers come from scripts in this folder, so they
+can be re-run.
+
+\tableofcontents
+\mainmatter
+\input{chapters/ch01}
+\input{chapters/ch02}
+\end{document}

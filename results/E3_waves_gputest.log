@@ -46,3 +46,43 @@ max waves reached
 [wave 1] E3s_tuning: 11290 tasks in shard 1/1, 0 done, 11290 to run on 10 workers
 [wave 1] 1-shard statuses: ['done']
 max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 40 done, 11250 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 40 done, 11250 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 80 done, 11210 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[wave 1] 1-shard statuses: ['done']
+max waves reached
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 120 done, 11170 to run on 10 workers
+[resume] 1-shard statuses: ['done']
+[wave 1] E3s_tuning: 11290 tasks in shard 1/1, 160 done, 11130 to run on 10 workers

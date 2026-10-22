@@ -1,0 +1,22 @@
+[{"stream_name":"stdout","time":8.098875116,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":17.325249042,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":19.009499419,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":19.009539285,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":19.009544964,"data":"\n"}
+,{"stream_name":"stdout","time":41.448116535,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":45.681994326,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":50.366781114,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":54.56086493,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":58.629741148,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":63.053834103,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stderr","time":67.212014785,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":67.21205273,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":68.711812783,"data":"E3s_tuning: 11290 tasks in shard 1/1, 80 done, 11210 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":194.837320891,"data":"  40/40  elapsed 2.1 min  eta 0.0 min\n"}
+,{"stream_name":"stderr","time":197.914365587,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":197.914400496,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":198.238207603,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":198.238238286,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":199.17628191,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":200.415501984,"data":"[NbConvertApp] Writing 289365 bytes to __results__.html\n"}
+]

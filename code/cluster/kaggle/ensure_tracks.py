@@ -8,6 +8,11 @@ Remove a track from TRACKS when it prints "nothing left — done".
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import quiet  # noqa: E402,F401  (no console windows for child processes)
+
 import subprocess
 import sys
 from pathlib import Path
@@ -18,16 +23,18 @@ ROOT = Path(__file__).resolve().parents[3]
 USER = "joshuadavidpoznanski"
 TRACKS = {
     # "main" (E3 minus SMT, 4 shards) finished 2026-10-10. Queue (5 Kaggle sessions each, one at a time):
-    # smt -> reinstated (E3 D-2) -> gprestarts (N-14 sensitivity) -> tuning (symmetric budget arm)
-    "smt": ["E3_learners", "--shards", "5", "--only-learners", "smt_krg,smt_kpls", "--tag", "smt", "--max-waves", "80"],
-    "reinstated": ["E3_learners", "--shards", "5", "--only-learners", "idw,knn,qrf,ngboost,mc_dropout,poly_ridge",
-                   "--tag", "re", "--max-waves", "10", "--start-after", "E3_learners:smt_krg,smt_kpls"],
-    "gprestarts": ["E3s_gp_restarts", "--shards", "5", "--max-waves", "10",
-                   "--start-after", "E3_learners:idw,knn,qrf,ngboost,mc_dropout,poly_ridge"],
-    "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E3s_gp_restarts:"],
-    # one-off: does a GPU session add capacity beyond the 5 batch sessions, and how fast are the nets on a T4?
-    "gputest": ["E3s_tuning", "--shards", "1", "--only-learners", "mlp_ens", "--tag", "gputest", "--gpu", "--limit",
-                "40", "--max-waves", "1"],
+    # smt -> reinstated (E3 D-2) -> gprestarts (N-14 sensitivity) -> e3x (D-9) -> fstar -> e12 -> tuning (symmetric budget arm)
+    # "smt" finished 2026-10-12 (42 460 fits); "reinstated" finished 2026-10-13 (146 780 fits)
+    # "gprestarts" finished 2026-10-15 (45 160 fits)
+    # E3x (D-9): the 89 problems E3's core set left out, full design; ahead of the tuning check (selection first)
+    "e3x": ["E3x_learners", "--shards", "5", "--max-waves", "30", "--start-after", "E3s_gp_restarts:"],
+    # f* refinement and E12 moved from the laptop (2026-10-17); each ends its laptop twin when it starts
+    "fstar": ["Efstar_refine", "--shards", "5", "--max-waves", "5", "--start-after", "E3x_learners:",
+              "--stop-local", "fstar_table.py --refine"],
+    "e12": ["E12_rational", "--shards", "5", "--max-waves", "20", "--start-after", "Efstar_refine:",
+            "--stop-local", "surr.runner E12_rational"],
+    "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E12_rational:"],
+    # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 
 
@@ -54,9 +61,12 @@ def main():
             # create through WMI so the driver is a child of the WMI service, not of whatever launched this script:
             # drivers started from an app's shell died with that app's job object (2026-10-07)
             line = f'cmd /c "{subprocess.list2cmdline(cmd)} >> "{log}" 2>&1"'
-            ps = ("$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments "
-                  f"@{{CommandLine='{line.replace(chr(39), chr(39) * 2)}'; CurrentDirectory='{ROOT}'}}; "
-                  "exit $r.ReturnValue")
+            # ShowWindow = 0 (SW_HIDE): the driver's console exists but is hidden, and its children inherit it, so
+            # nothing pops up over the user's work (2026-10-13)
+            ps = ("$si = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{ShowWindow=[uint16]0}; "
+                  "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments "
+                  f"@{{CommandLine='{line.replace(chr(39), chr(39) * 2)}'; CurrentDirectory='{ROOT}'; "
+                  "ProcessStartupInformation=$si}; exit $r.ReturnValue")
             rc = subprocess.run(["powershell", "-NoProfile", "-Command", ps]).returncode
             print(f"{name}: started" if rc == 0 else f"{name}: start FAILED (WMI code {rc})")
         else:

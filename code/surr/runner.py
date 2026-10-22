@@ -124,7 +124,17 @@ def task_thesis_canon(cfg):
     return dict(status="ok", fold_rmse_noisy=noisy, fold_rmse_clean=clean, fold_rmse_cleantest=big)
 
 
-KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon}
+def task_fstar_refine(cfg):
+    """Heavier second search for one unconfirmed reference optimum (code/analysis/fstar_table.py: refine); the
+    first-pass record comes from the results/fstar_table.json shipped with the code."""
+    sys.path.insert(0, str(ROOT / "code" / "analysis"))
+    import fstar_table as ft
+    k = cfg["name"] if cfg["seed"] is None else f"{cfg['name']}@s{cfg['seed']}"
+    prev = ft.load()[k]
+    return dict(status="ok", record=ft.refine(cfg["name"], cfg["seed"], prev))
+
+
+KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine}
 
 
 def _init_worker():
@@ -305,6 +315,55 @@ def exp_E3_learners(seeds=range(10)):
     return rows
 
 
+def exp_E3x_learners(seeds=range(10)):
+    """E3 extension (D-9, 2026-10-13): every registered single-fidelity problem that E3's core set left out — the
+    designed P-FEAT probes at d = 10, the remaining VLSE benchmark functions (2-D and scalable d = 3/5/8/10) and the
+    P-RAT problems — at the full E3 design, with the same learners. A separate experiment so E3's finished task list
+    (and the sensitivity runs derived from it) stay unchanged; the extra noise types go to every fourth extension
+    problem by name, as in E3. Analysis reads E3 and E3x together."""
+    from surr.problems import REGISTRY, core_set
+    core = {p.name for p in core_set()}
+    probs = [p for n, p in sorted(REGISTRY.items()) if "@s" not in n and n not in core and p.block != "P-MF"]
+    rows = [{**r, "exp": "E3x_learners"} for r in _e3_rows(probs, seeds)]
+    return rows
+
+
+def exp_Efstar_refine():
+    """The f* table's refinement pass as runner tasks (so it runs on Kaggle): one task per instance that the first
+    pass left unconfirmed and no refinement has covered yet. Keys depend only on (name, seed)."""
+    sys.path.insert(0, str(ROOT / "code" / "analysis"))
+    import fstar_table as ft
+    table = ft.load()
+    return [dict(kind="fstar_refine", exp="Efstar_refine", name=v["name"], seed=v["seed"])
+            for v in table.values() if "fstar" in v and not v.get("confirmed") and not v.get("refined")]
+
+
+def _e3_rows(probs, seeds):
+    short = json.loads((ROOT / "results" / "E2a_shortlist.json").read_text()) + E3_REINSTATED
+    configs = []
+    for k in short:
+        if "[" in k:
+            base, kv = k[:-1].split("[")
+            configs.append((base, dict(x.split("=") for x in kv.split(","))))
+        else:
+            configs.append((k, {}))
+    other = {p.name for i, p in enumerate(sorted(probs, key=lambda p: p.name)) if i % 4 == 0}
+    rows = []
+    for p in probs:
+        noises = [("none", 0.0), ("additive", 0.01), ("additive", 0.10)]
+        if p.name in other:
+            noises += [(k, lv) for k in ("multiplicative", "heteroscedastic", "heavytail", "numerical") for lv in (0.01, 0.10)]
+        for n in sorted({min(m * p.d, 2000) for m in (5, 10, 20, 50, 100, 300)}):
+            for L, kw in configs:
+                if L in CAP1000 and n > 1000 or L in CAP500 and n > 500:
+                    continue
+                for noise, lvl in noises:
+                    for sd in seeds:
+                        rows.append(dict(kind="learner", exp="E3_learners", problem=p.name, learner=L, kw=kw, n=n,
+                                         seed=sd, sampler="sobol", noise=noise, level=lvl, grad=True))
+    return rows
+
+
 def exp_E3s_gp_restarts():
     """E3 sensitivity (BUGS N-14): the four sklearn GP-family learners refit on the identical E3 grid (same designs,
     noise draws and test sets via the same seeds) with 5 ML-II restarts instead of the E3 cost setting. The 1-restart
@@ -333,7 +392,8 @@ def exp_E3s_tuning():
 
 EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learners": exp_E2a_learners,
                "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
-               "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational}
+               "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
+               "Efstar_refine": exp_Efstar_refine}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -350,9 +410,10 @@ def _done_keys(folder: Path):
     return keys
 
 
-# peak RSS per worker [GB], measured on the laptop (smt_krg d=10: 0.52 GB at n=200, 0.76 at n=500; n=1000 extrapolated);
-# learners not listed are well under 0.5 GB
-MEM_GB = {**{L: 2.0 for L in CAP1000}, "treed_gp": 2.0}
+# peak RSS per worker [GB], measured on the laptop. smt_krg d=10: 0.52 GB at n=200, 0.76 at n=500 (n=1000
+# extrapolated). At n=1000, d=10 (2026-10-13): gp 0.45, as_gp 0.45, gp_ratmean 0.46, mlp_ens 0.35, rat_ls/paaa/
+# additive_aaa 0.11-0.12. The old blanket 2 GB for CAP1000 held E12 to one worker. Learners not listed are < 0.5 GB.
+MEM_GB = {**{L: 0.6 for L in CAP1000}, "smt_krg": 2.0, "smt_kpls": 2.0, "treed_gp": 2.0}
 
 
 def _memory_capped_workers(workers, todo):

@@ -319,3 +319,49 @@ Kernel version 3 successfully pushed.  Please check progress at https://www.kagg
 Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5
 + kernels push -p C:\Users\satur\AppData\Local\Temp\tmptrsx2uyx\k5
 Kernel version 3 successfully pushed.  Please check progress at https://www.kaggle.com/code/joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-1of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 4797 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-2of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 5252 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-3of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 5508 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-4of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 4811 records
+joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 -> joshuadavidpoznanski/surrpaper-e3-learners-smt-shard-5of5 has status "KernelWorkerStatus.COMPLETE"
+  1 result file(s), 5419 records
+merged into C:\Users\satur\PycharmProjects\SurrogatePaper\results\raw\E3_learners
+backup: 19 file(s) copied to C:\Users\satur\OneDrive - University of Kansas\SurrogatePaper_backup\results
+[wave 2] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+  pull failed (attempt 1); retrying in 10 min
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3_learners: 42460 tasks in shard 1/1, 42460 done, 0 to run on 10 workers
+nothing left — done

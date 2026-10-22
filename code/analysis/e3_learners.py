@@ -17,6 +17,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "results" / "raw" / "E3_learners"
+RAW_X = ROOT / "results" / "raw" / "E3x_learners"        # D-9 extension: the problems E3's core set left out
 sys.path.insert(0, str(ROOT / "code"))
 
 FAMILY = {
@@ -37,10 +38,10 @@ def cfg_name(c):
 
 
 def load():
-    from surr.problems import core_set
-    P = {p.name: p for p in core_set()}
+    from surr.problems import REGISTRY
+    P = {n: p for n, p in REGISTRY.items() if "@s" not in n}       # E3 core + E3x extension problems
     rows, seen = [], set()
-    for f in sorted(RAW.glob("*.jsonl")):
+    for f in sorted(RAW.glob("*.jsonl")) + sorted(RAW_X.glob("*.jsonl")):
         for line in f.read_text(encoding="utf8").splitlines():
             try:
                 r = json.loads(line)

@@ -27,6 +27,32 @@ OUT = ROOT / "results" / "fstar_table.json"
 SEEDS = range(30)
 
 
+def save(table):
+    """Atomic save: write a temp file, keep the last good file as .bak, then swap the new one in. A process killed
+    mid-save leaves either the old or the new table, never an empty file (2026-10-12: a kill mid-write emptied the
+    table after 490 of 774 refinements, and the OneDrive mirror copied the empty file)."""
+    import os
+    tmp = OUT.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(table), encoding="utf8")
+    if OUT.exists() and OUT.stat().st_size > 0:
+        os.replace(OUT, OUT.with_suffix(".json.bak"))
+    os.replace(tmp, OUT)
+
+
+def load():
+    """The table, or {} only when no table has ever been written; an empty or unreadable file is an error, never a
+    silent fresh start (the .bak copy is tried first)."""
+    for f in (OUT, OUT.with_suffix(".json.bak")):
+        if f.exists() and f.stat().st_size > 0:
+            try:
+                return json.loads(f.read_text(encoding="utf8"))
+            except json.JSONDecodeError:
+                continue
+    if OUT.exists() or OUT.with_suffix(".json.bak").exists():
+        raise SystemExit(f"{OUT} and its .bak are empty or unreadable; refusing to start over silently")
+    return {}
+
+
 def _instances():
     sys.path.insert(0, str(ROOT / "code"))
     from surr.problems import REGISTRY
@@ -101,10 +127,33 @@ def refine(name, seed, prev):
             "confirmed": len(agree) >= 2, "refined": True}
 
 
+def merge_kaggle():
+    """Fold Kaggle refinement results (results/raw/Efstar_refine/*.jsonl) into the table: only instances not refined
+    yet are filled, so laptop and Kaggle refinements never overwrite each other. Atomic save."""
+    table = load(); n = 0
+    for f in sorted((ROOT / "results" / "raw" / "Efstar_refine").glob("*.jsonl")):
+        for line in f.read_text(encoding="utf8").splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            rec = r.get("record")
+            if r.get("status") != "ok" or not rec:
+                continue
+            k = rec["name"] if rec["seed"] is None else f"{rec['name']}@s{rec['seed']}"
+            if k in table and not table[k].get("refined"):
+                table[k] = rec; n += 1
+    save(table)
+    unc = [k for k, v in table.items() if not v.get("confirmed")]
+    print(f"merged {n} Kaggle refinements; {len(unc)} instances still unconfirmed", flush=True)
+
+
 def main():
+    if "--merge-kaggle" in sys.argv:
+        merge_kaggle(); return
     workers = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 2
     if "--refine" in sys.argv:
-        done = json.loads(OUT.read_text())
+        done = load()
         todo = [(k, v) for k, v in done.items() if "fstar" in v and not v.get("confirmed") and not v.get("refined")]
         print(f"refining {len(todo)} unconfirmed instances on {workers} workers", flush=True)
         with ProcessPoolExecutor(workers) as ex:
@@ -116,7 +165,7 @@ def main():
                 except Exception as e:
                     done[k]["refine_error"] = repr(e)[:300]
                 if i % 10 == 0 or i == len(todo):
-                    OUT.write_text(json.dumps(done)); print(f"  {i}/{len(todo)}", flush=True)
+                    save(done); print(f"  {i}/{len(todo)}", flush=True)
         unc = [k for k, v in done.items() if not v.get("confirmed")]
         print(f"after refinement: {len(unc)} unconfirmed", flush=True)
         (ROOT / "results" / "fstar_table.md").write_text(
@@ -125,7 +174,7 @@ def main():
             f"against the best known value and flagged).\n\nUnconfirmed: {', '.join(unc)}\n\nNote: mccorm's stored "
             f"literature f* (-1.9133) is the computed optimum (-1.913223) rounded to 4 decimals.\n", encoding="utf8")
         return
-    done = json.loads(OUT.read_text()) if OUT.exists() else {}
+    done = load()
     key = lambda n, s: n if s is None else f"{n}@s{s}"
     todo = [(n, s) for n, s in _instances() if key(n, s) not in done]
     print(f"{len(done)} done, {len(todo)} to solve on {workers} workers", flush=True)
@@ -138,7 +187,7 @@ def main():
             except Exception as e:
                 done[key(n, s)] = dict(name=n, seed=s, error=repr(e)[:300])
             if i % 20 == 0 or i == len(todo):
-                OUT.write_text(json.dumps(done))
+                save(done)
                 print(f"  {i}/{len(todo)}", flush=True)
     rows = [v for v in done.values() if "fstar" in v]
     unc = [k for k, v in done.items() if not v.get("confirmed")]

@@ -311,6 +311,26 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   families and have no polynomial, additive, low-rank or network-native case. No method is cut on E2a/E2b; every
   method goes to E3's 82-problem core set. Still planned, needing their own designs or data: Smolyak, TT-cross
   (sampling/upscaling studies), Sobolev MLP (gradient data; with gradient-enhanced kriging).
+- **D-8 · 2026-10-13 · headline analysis = selection, with data-driven groupings (author's direction).** The paper's
+  claim is that no surrogate wins everywhere but the winner is predictable: a guide to which method when and the
+  precursor to a feature-based selector (E10), uniting methods from different fields. Primary E3 results are now:
+  (1) the selection gap: single best method vs best per problem type vs best per problem vs the per-cell oracle,
+  with picks learned on seeds 0–4 and scored on seeds 5–9; (2) method groups and problem types learned from the
+  results (`code/analysis/e3_taxonomy.py`), not the a-priori families and categories. The E2a-champion family
+  comparison is demoted to a secondary result, and E2a/E2b are used only as screening, never for inference.
+  First numbers (n ≤ 1000, 2 229 cells): 38 of 39 methods win somewhere. Single best is 2.56× the oracle (geometric
+  mean), best per type 1.49×, best per problem 1.18×. Data-driven method groups agree only partly with the nominal
+  families (adjusted Rand 0.39): KAN, NGBoost and QRF behave like trees; SMT-KPLS and ordinary kriging behave like
+  the RBF/kernel interpolators, not the GP core; MARS pairs with PCE. Data-driven problem types barely follow the
+  nominal categories (adjusted Rand 0.08), yet at equal granularity (24) they select as well (1.49×) with
+  lighter tails (worst decile 1.9× vs 2.4×). E10's selector should therefore target the data-driven types or the
+  winners directly, from features measured on early samples.
+- **D-9 · 2026-10-13 · E3x: every problem E3's core set left out, at the full E3 design (author: "add them all
+  back in").** 89 problems: the 11 designed P-FEAT probes at d = 10 (nonstationary, regime, tree/nn draws, pole-knee,
+  plateau-bump, oblique-step, multiscale, low-rank product, monotone, quadratic), the 68 remaining VLSE benchmark
+  functions (20 2-D plus the scalable families at d = 3/5/8/10) and the 10 P-RAT problems. Same learners as E3;
+  1 057 520 fits (~2 000 CPU-h, ~5 days on Kaggle). A separate experiment, so E3's finished tasks and the sensitivity
+  runs derived from them are unchanged. The analysis reads E3 and E3x together. Queue: GP restarts → E3x → tuning.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee

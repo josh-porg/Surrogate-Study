@@ -1,0 +1,60 @@
+\contentsline {chapter}{\numberline {1}The surrogate problem and the toolkit}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}What a surrogate is}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Why the problem is hard: dimension and smoothness}{2}{section.1.2}%
+\contentsline {paragraph}{Grids explode.}{2}{section*.3}%
+\contentsline {paragraph}{Space becomes empty and corner-heavy.}{2}{section*.4}%
+\contentsline {paragraph}{Distances stop discriminating.}{2}{section*.5}%
+\contentsline {paragraph}{How fast can error fall?}{2}{section*.6}%
+\contentsline {section}{\numberline {1.3}Vectors, inner products and projection}{2}{section.1.3}%
+\contentsline {paragraph}{Vector spaces and bases.}{3}{section*.7}%
+\contentsline {paragraph}{Functions are vectors.}{3}{section*.8}%
+\contentsline {paragraph}{Orthogonality and Gram--Schmidt.}{4}{section*.9}%
+\contentsline {section}{\numberline {1.4}The matrices that matter}{4}{section.1.4}%
+\contentsline {paragraph}{Symmetric matrices.}{4}{section*.10}%
+\contentsline {section}{\numberline {1.5}Least squares}{5}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Numerical facts that decide what can be trusted}{6}{section.1.6}%
+\contentsline {paragraph}{Floating point.}{6}{section*.11}%
+\contentsline {paragraph}{Conditioning.}{6}{section*.12}%
+\contentsline {paragraph}{Stability.}{6}{section*.13}%
+\contentsline {paragraph}{Cholesky, and why we never invert.}{6}{section*.14}%
+\contentsline {paragraph}{Finite differences: the trade-off you asked about.}{7}{section*.15}%
+\contentsline {section}{\numberline {1.7}Regularisation: trading a little bias for stability}{7}{section.1.7}%
+\contentsline {section}{\numberline {1.8}Probability with integrals}{8}{section.1.8}%
+\contentsline {paragraph}{Expectation, mean, variance.}{8}{section*.16}%
+\contentsline {paragraph}{Several variables.}{8}{section*.17}%
+\contentsline {paragraph}{Independence and covariance.}{8}{section*.18}%
+\contentsline {section}{\numberline {1.9}The multivariate Gaussian}{9}{section.1.9}%
+\contentsline {paragraph}{Reading the formula.}{9}{section*.19}%
+\contentsline {section}{\numberline {1.10}Estimation and learning}{10}{section.1.10}%
+\contentsline {paragraph}{Estimators, bias and variance.}{10}{section*.20}%
+\contentsline {paragraph}{Maximum likelihood is least squares.}{10}{section*.21}%
+\contentsline {paragraph}{Maximum a posteriori is ridge.}{10}{section*.22}%
+\contentsline {paragraph}{Bayesian linear regression: the whole posterior.}{10}{section*.23}%
+\contentsline {section}{\numberline {1.11}Measuring a surrogate}{11}{section.1.11}%
+\contentsline {paragraph}{Cross-validation.}{11}{section*.24}%
+\contentsline {section}{\numberline {1.12}A map of what follows}{12}{section.1.12}%
+\contentsline {chapter}{\numberline {2}Gaussian processes and kernels}{14}{chapter.2}%
+\contentsline {section}{\numberline {2.1}From finitely many features to a Gaussian process}{14}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Kernels: what they encode}{15}{section.2.2}%
+\contentsline {paragraph}{What makes a kernel valid.}{15}{section*.27}%
+\contentsline {paragraph}{Stationary kernels.}{15}{section*.28}%
+\contentsline {paragraph}{Smoothness is the choice that matters.}{15}{section*.29}%
+\contentsline {paragraph}{The frequency view (Bochner's theorem).}{15}{section*.30}%
+\contentsline {section}{\numberline {2.3}Prediction: conditioning on the data}{16}{section.2.3}%
+\contentsline {paragraph}{Reading the mean.}{16}{section*.31}%
+\contentsline {paragraph}{Reading the variance.}{16}{section*.32}%
+\contentsline {paragraph}{Computing it.}{16}{section*.33}%
+\contentsline {section}{\numberline {2.4}Three names for one object}{17}{section.2.4}%
+\contentsline {paragraph}{Kernel ridge regression.}{17}{section*.34}%
+\contentsline {paragraph}{The space that makes it work.}{17}{section*.35}%
+\contentsline {paragraph}{Radial basis function interpolation.}{17}{section*.36}%
+\contentsline {paragraph}{Kriging.}{17}{section*.37}%
+\contentsline {section}{\numberline {2.5}What the error bar means}{18}{section.2.5}%
+\contentsline {paragraph}{Rates.}{18}{section*.38}%
+\contentsline {section}{\numberline {2.6}Choosing hyper-parameters: the marginal likelihood}{18}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Where ML-II goes wrong}{18}{subsection.2.6.1}%
+\contentsline {paragraph}{Several local optima.}{18}{section*.39}%
+\contentsline {paragraph}{Too few points: the length-scale collapses.}{19}{section*.40}%
+\contentsline {paragraph}{Ill-conditioning.}{19}{section*.41}%
+\contentsline {paragraph}{What the study found, and the remedies.}{19}{section*.42}%
+\contentsline {section}{\numberline {2.7}When a GP is the wrong model}{20}{section.2.7}%

@@ -10,6 +10,11 @@ pulled (retried until it succeeds), and every pull is mirrored to OneDrive (code
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import quiet  # noqa: E402,F401  (no console windows for child processes)
+
 import argparse
 import subprocess
 import sys
@@ -38,9 +43,16 @@ KAGGLE = __import__("shutil").which("kaggle", path=str(Path(sys.executable).pare
 
 def remaining(exp, skip, only=""):
     args = [PY, "-m", "surr.runner", exp, "--dry"] + (["--skip-learners", skip] if skip else []) +            (["--only-learners", only] if only else [])
-    out = subprocess.run(args, cwd=ROOT / "code", capture_output=True, text=True).stdout
-    # "<exp>: N tasks in shard 1/1, D done, R to run ..."
-    return int(out.split(" done, ")[1].split(" to run")[0]), out.strip()
+    # "<exp>: N tasks in shard 1/1, D done, R to run ..."; retried, because a dry run can fail transiently (e.g. while
+    # the code is being edited) and a crash here used to stop the driver (IndexError, 2026-10-13)
+    for attempt in range(12):
+        r = subprocess.run(args, cwd=ROOT / "code", capture_output=True, text=True)
+        try:
+            return int(r.stdout.split(" done, ")[1].split(" to run")[0]), r.stdout.strip()
+        except (IndexError, ValueError):
+            print(f"  dry run failed (attempt {attempt + 1}): {(r.stderr or r.stdout)[-200:]}", flush=True)
+            nap(300)
+    raise SystemExit("dry run keeps failing; check the runner")
 
 
 def shard_status(name):
@@ -83,6 +95,8 @@ def until_ok(cmd, what, wait=600):
 
 def collect(pull):
     until_ok(pull, "pull")
+    if "Efstar_refine" in pull:                       # fold refined optima into results/fstar_table.json (atomic)
+        subprocess.run([PY, str(ROOT / "code" / "analysis" / "fstar_table.py"), "--merge-kaggle"], check=False)
     subprocess.run([PY, str(HERE.parent / "backup_results.py")], check=False)   # off-laptop copy (OneDrive)
 
 
@@ -92,6 +106,8 @@ def main():
     ap.add_argument("--skip-learners", default=""); ap.add_argument("--max-waves", type=int, default=20)
     ap.add_argument("--only-learners", default=""); ap.add_argument("--tag", default="")
     ap.add_argument("--gpu", action="store_true"); ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--stop-local", default="", help="when this track starts, end laptop processes whose command line "
+                                                     "contains this text (the same work moving to Kaggle)")
     ap.add_argument("--grow-to", type=int, default=0, help="use this many shards once the track named by --after is done")
     ap.add_argument("--after", default="", help="--skip-learners list of the other track whose slots this one inherits")
     ap.add_argument("--start-after", default="", help="EXP:ONLY_LEARNERS — wait until that track has no tasks left "
@@ -102,6 +118,14 @@ def main():
         while (left := remaining(exp2, "", only2)[0]) > 0:
             print(f"[queued] waiting for {exp2} ({only2}): {left} tasks left", flush=True)
             nap(1800)
+    if a.stop_local:
+        import psutil
+        me = {psutil.Process().pid, psutil.Process().ppid()}
+        for pr in psutil.process_iter(["cmdline"]):
+            cl = " ".join(pr.info["cmdline"] or [])
+            if a.stop_local in cl and "waves.py" not in cl and "--dry" not in cl and pr.pid not in me:
+                print(f"[handover] ending laptop process {pr.pid}: {cl[:100]}", flush=True)
+                pr.terminate()
     slug = f"surrpaper-{a.exp.lower().replace('_', '-')}" + (f"-{a.tag}" if a.tag else "")
     def pull(k):
         return [PY, str(HERE / "pull_results.py"), a.exp, "--shards", str(k), "--user", a.user] + \

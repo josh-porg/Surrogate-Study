@@ -11,3 +11,116 @@
 [queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
 [queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
 [queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+Traceback (most recent call last):
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 140, in <module>
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 101, in main
+    exp2, only2 = a.start_after.split(":")
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\satur\PycharmProjects\SurrogatePaper\code\cluster\kaggle\waves.py", line 43, in remaining
+    return int(out.split(" done, ")[1].split(" to run")[0]), out.strip()
+               ~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 146780 tasks left
+[queued] waiting for E3_learners (idw,knn,qrf,ngboost,mc_dropout,poly_ridge): 790 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 0 done, 45160 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+  pull failed (attempt 1); retrying in 10 min
+  pull failed (attempt 2); retrying in 10 min
+[wave 2] E3s_gp_restarts: 45160 tasks in shard 1/1, 2106 done, 43054 to run on 10 workers
+[wave 2] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 3] E3s_gp_restarts: 45160 tasks in shard 1/1, 39526 done, 5634 to run on 10 workers
+[wave 3] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 4] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+  pull failed (attempt 1); retrying in 10 min
+^C[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3s_gp_restarts: 45160 tasks in shard 1/1, 45160 done, 0 to run on 10 workers
+nothing left — done

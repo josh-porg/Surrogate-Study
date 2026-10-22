@@ -1,0 +1,29 @@
+[{"stream_name":"stdout","time":7.7237571240000005,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":16.446959657,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":17.873060298,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":17.873098642,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":17.873104128,"data":"\n"}
+,{"stream_name":"stdout","time":37.815302183,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":41.768628132,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":45.98152936,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":49.713917693,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":53.572236458,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":57.815107162,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stderr","time":61.870677733,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":61.870742602,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":63.427769653,"data":"E3s_gp_restarts: 9056 tasks in shard 1/5, 0 done, 9056 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":6433.52864933,"data":"  50/9056  elapsed 106.2 min  eta 19123.0 min\n"}
+,{"stream_name":"stdout","time":12582.891140155,"data":"  100/9056  elapsed 208.7 min  eta 18687.3 min\n"}
+,{"stream_name":"stdout","time":18519.922301496,"data":"  150/9056  elapsed 307.6 min  eta 18263.7 min\n"}
+,{"stream_name":"stdout","time":24835.318334059,"data":"  200/9056  elapsed 412.9 min  eta 18281.6 min\n"}
+,{"stream_name":"stdout","time":30690.448184682,"data":"  250/9056  elapsed 510.4 min  eta 17980.1 min\n"}
+,{"stream_name":"stdout","time":34071.953472499,"data":"  300/9056  elapsed 566.8 min  eta 16543.2 min\n"}
+,{"stream_name":"stdout","time":36728.102592964,"data":"  350/9056  elapsed 611.1 min  eta 15200.1 min\n"}
+,{"stream_name":"stdout","time":37871.597972884,"data":"  max-hours 10.5 reached after 363 tasks; stopping (resume re-runs the rest)\n"}
+,{"stream_name":"stderr","time":37876.316466426,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":37876.316504519,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":37876.821672539,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":37876.821726338,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":37877.978092054,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":37879.271002608,"data":"[NbConvertApp] Writing 289146 bytes to __results__.html\n"}
+]

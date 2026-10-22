@@ -1,0 +1,43 @@
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 45160 tasks left
+[queued] waiting for E3s_gp_restarts (): 44349 tasks left
+[queued] waiting for E3s_gp_restarts (): 44349 tasks left
+[queued] waiting for E3s_gp_restarts (): 43054 tasks left
+[queued] waiting for E3s_gp_restarts (): 43054 tasks left
+[queued] waiting for E3s_gp_restarts (): 43054 tasks left
+[queued] waiting for E3s_gp_restarts (): 43054 tasks left
+[queued] waiting for E3s_gp_restarts (): 5634 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 0 done, 1057520 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] E3x_learners: 1057520 tasks in shard 1/1, 21368 done, 1036152 to run on 10 workers
+  push failed (attempt 1); retrying in 10 min
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 39857 done, 1017663 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] E3x_learners: 1057520 tasks in shard 1/1, 83213 done, 974307 to run on 10 workers
+[wave 2] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 3] E3x_learners: 1057520 tasks in shard 1/1, 161187 done, 896333 to run on 10 workers
+[wave 3] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 4] E3x_learners: 1057520 tasks in shard 1/1, 242955 done, 814565 to run on 10 workers
+[wave 4] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 5] E3x_learners: 1057520 tasks in shard 1/1, 298978 done, 758542 to run on 10 workers
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 323211 done, 734309 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] E3x_learners: 1057520 tasks in shard 1/1, 352475 done, 705045 to run on 10 workers
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 409206 done, 648314 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] E3x_learners: 1057520 tasks in shard 1/1, 444289 done, 613231 to run on 10 workers
+[wave 2] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 3] E3x_learners: 1057520 tasks in shard 1/1, 472312 done, 585208 to run on 10 workers

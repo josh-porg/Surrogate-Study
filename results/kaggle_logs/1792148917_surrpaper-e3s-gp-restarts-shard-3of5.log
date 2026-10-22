@@ -1,0 +1,21 @@
+[{"stream_name":"stdout","time":7.245529657,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":16.204320027,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":18.024141906,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":18.024182387,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":18.02419277,"data":"\n"}
+,{"stream_name":"stdout","time":37.041996918,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":41.121638124,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":45.491559347,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":49.365156737,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":53.332510018,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":57.898084651,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stderr","time":62.170182393,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":62.170221744,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":63.793917193,"data":"E3s_gp_restarts: 9013 tasks in shard 3/5, 9013 done, 0 to run on 4 workers\n"}
+,{"stream_name":"stderr","time":66.778992721,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":66.779033419,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":67.109565184,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":67.109595141,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":68.073811004,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":69.32649221,"data":"[NbConvertApp] Writing 289146 bytes to __results__.html\n"}
+]

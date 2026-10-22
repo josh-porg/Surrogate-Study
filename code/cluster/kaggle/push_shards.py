@@ -9,6 +9,11 @@ experiments are refused (STUDY_PLAN §4b data rule).
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import quiet  # noqa: E402,F401  (no console windows for child processes)
+
 import argparse
 import json
 import subprocess
@@ -26,6 +31,7 @@ NEEDS_COMPASS = ("E1",)
 # numpy/scipy/xgboost/lightgbm/catboost/torch come from the image (versions recorded per shard in env_shard*.json)
 PIP = "pebble scikit-learn==1.9.1 smt==2.15.0 cma==4.5.0 gpytorch==1.15.2 mf2==2022.6.0 pygam==0.12.0 ngboost==0.5.11"
 WHEELS_DS = "surrpaper-wheels-cp313"
+TIMEOUTS = {"Efstar_refine": 3600}       # per-task wall cap [s]; a 10-D IPOP-CMA refinement can exceed 15 min
 
 KERNEL = r'''
 import glob, json, os, platform, subprocess, sys, tarfile
@@ -69,7 +75,7 @@ try:
 except Exception as e:
     print("no torch/cuda:", e, flush=True)
 rc = subprocess.run([sys.executable, "-m", "surr.runner", "{exp}", "--shard", "{i}/{k}", "--workers", str(os.cpu_count()),
-                     "--timeout", "900", "--max-hours", "10.5", *({extra!r})]).returncode
+                     "--timeout", "{timeout}", "--max-hours", "10.5", *({extra!r})]).returncode
 if rc:                                         # make Kaggle report ERROR instead of COMPLETE so the wave driver stops
     raise SystemExit(f"runner exited with code {{rc}}")
 '''
@@ -84,7 +90,8 @@ def build_archive(exp: str, path: Path):
     with tarfile.open(path, "w:gz") as tf:
         skip = lambda ti: None if ("__pycache__" in ti.name or ti.name.endswith(".pyc") or "/cluster" in ti.name) else ti
         tf.add(ROOT / "code", arcname="proj/code", filter=skip)
-        for f in (ROOT / "results").glob("*_shortlist.json"):           # inputs later experiments read (E3 ← E2a)
+        for f in [*(ROOT / "results").glob("*_shortlist.json"),         # inputs later experiments read (E3 ← E2a,
+                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith("Efstar") else [])]:  # refine ← f*
             tf.add(f, arcname=f"proj/results/{f.name}")
         prev = ROOT / "results" / "raw" / exp
         if prev.exists():                                                # only the finished task keys, not records
@@ -134,7 +141,8 @@ def main():
             kd = Path(td) / f"k{i}"; kd.mkdir()
             name = f"{slug}-shard-{i}of{a.shards}"
             (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards,
-                                                     extra=extra, needs_smt=needs_smt))
+                                                     extra=extra, needs_smt=needs_smt,
+                                                     timeout=TIMEOUTS.get(a.exp, 900)))
             (kd / "kernel-metadata.json").write_text(json.dumps({
                 "id": f"{a.user}/{name}", "title": name, "code_file": "run.py", "language": "python",
                 "kernel_type": "script", "is_private": True, "enable_gpu": bool(a.gpu), "enable_internet": True,
