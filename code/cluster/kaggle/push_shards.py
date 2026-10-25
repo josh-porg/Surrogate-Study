@@ -29,9 +29,10 @@ NEEDS_COMPASS = ("E1",)
 # pinned to the laptop's versions so results are comparable; torch is left to Kaggle's (CPU use only)
 # packages missing from Kaggle's image (python 3.13), installed offline from the surrpaper-wheels-cp313 dataset;
 # numpy/scipy/xgboost/lightgbm/catboost/torch come from the image (versions recorded per shard in env_shard*.json)
-PIP = "pebble scikit-learn==1.9.1 smt==2.15.0 cma==4.5.0 gpytorch==1.15.2 mf2==2022.6.0 pygam==0.12.0 ngboost==0.5.11"
+PIP = ("pebble scikit-learn==1.9.1 smt==2.15.0 cma==4.5.0 gpytorch==1.15.2 mf2==2022.6.0 pygam==0.12.0 ngboost==0.5.11 "
+       "casadi==3.8.1")      # casadi (IPOPT, E9): not in the wheels dataset; installed online by the fallback below
 WHEELS_DS = "surrpaper-wheels-cp313"
-TIMEOUTS = {"Efstar_refine": 3600}       # per-task wall cap [s]; a 10-D IPOP-CMA refinement can exceed 15 min
+TIMEOUTS = {"Efstar_refine": 3600, "E9_optim": 3600}       # per-task wall cap [s]; a 10-D IPOP-CMA refinement can exceed 15 min
 
 KERNEL = r'''
 import glob, json, os, platform, subprocess, sys, tarfile
@@ -49,6 +50,8 @@ wh = sorted({{os.path.dirname(p) for p in glob.glob("/kaggle/input/**/*.whl", re
 for pkg in "{pip}".split():
     r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--no-index", *[f"--find-links={{d}}" for d in wh],
                         pkg], capture_output=True, text=True)
+    if r.returncode and not pkg.startswith("smt=="):          # not in the wheels dataset: try PyPI (internet is on)
+        r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", pkg], capture_output=True, text=True)
     print(pkg, "ok" if r.returncode == 0 else "FAILED " + r.stderr[-400:], flush=True)
     if r.returncode and pkg.startswith("smt=="):
         # every pydoe 1.x declares numpy>=2.2.6 (image: 2.1.3); pydoe is pure Python and smt only uses it for LHS, so
@@ -91,7 +94,7 @@ def build_archive(exp: str, path: Path):
         skip = lambda ti: None if ("__pycache__" in ti.name or ti.name.endswith(".pyc") or "/cluster" in ti.name) else ti
         tf.add(ROOT / "code", arcname="proj/code", filter=skip)
         for f in [*(ROOT / "results").glob("*_shortlist.json"),         # inputs later experiments read (E3 ← E2a,
-                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith("Efstar") else [])]:  # refine ← f*
+                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith(("Efstar", "E9")) else [])]:  # ← f*
             tf.add(f, arcname=f"proj/results/{f.name}")
         prev = ROOT / "results" / "raw" / exp
         if prev.exists():                                                # only the finished task keys, not records
@@ -113,7 +116,7 @@ def main():
     ap.add_argument("--tag", default="", help="slug suffix, so a second track (e.g. smt) never touches the main shards")
     ap.add_argument("--gpu", action="store_true", help="GPU session (Kaggle weekly GPU quota); nets train on cuda")
     a = ap.parse_args()
-    if a.exp.startswith("E11") or "fea" in a.exp.lower():
+    if a.exp.startswith("E11") or "fea" in a.exp.lower() or "rair" in a.exp.lower():
         sys.exit("refusing: real-data experiments stay on this machine (STUDY_PLAN §4b data rule)")
     slug = f"surrpaper-{a.exp.lower().replace('_', '-')}" + (f"-{a.tag}" if a.tag else "")
     extra = (["--skip-learners", a.skip_learners] if a.skip_learners else []) +             (["--only-learners", a.only_learners] if a.only_learners else []) + (["--limit", str(a.limit)] if a.limit else [])

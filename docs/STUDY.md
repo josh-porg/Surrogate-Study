@@ -357,6 +357,17 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   functions (20 2-D plus the scalable families at d = 3/5/8/10) and the 10 P-RAT problems. Same learners as E3;
   1 057 520 fits (~2 000 CPU-h, ~5 days on Kaggle). A separate experiment, so E3's finished tasks and the sensitivity
   runs derived from them are unchanged. The analysis reads E3 and E3x together. Queue: GP restarts → E3x → tuning.
+- **D-10 · 2026-10-25 · later studies coded; Kaggle stays serial (author's call).** E9 (`E9_optim`, 24 700 tasks):
+  16 surrogates spanning the E3 behaviour groups + the true function × 17 optimizers (9 gradient methods twice:
+  finite differences inside the budget, and the surrogate's own gradient) × 38 problems spanning the three
+  data-driven types × shifted instances 0-9 (the plan said 30; 10 for cost, ~400 CPU-h) × n ∈ {10d, 50d} × noise
+  {0, 1 %}. One budget of 500·d surrogate evaluations, with the incumbent scored on the true function at 10d … 500d
+  (anytime regret; a run that overshoots its budget is scored at the budget). 13 of the 380 instances have an
+  unconfirmed f* (michal_d5, griewank_d5, borehole, tree_draw_d5, pole_knee_d5 seeds); flagged per record. E4:
+  `E4_mechanisms` (30 400 fits; Grinsztajn smoothing / rotation / uninformative inputs + GP bound checks) and
+  `E4_rair` (7 380 fits; biased / inverse-frequency weighted bootstrap / engine-balanced, paired splits) run on the
+  laptop (R-AIR is real data and never leaves it). E10 prototype: `code/analysis/e10_selector.py`. Kaggle order:
+  E12 → E9 → tuning, one track at a time. Laptop order (`code/cluster/local_queue.py`): R-AIR → E10 features → E4.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee

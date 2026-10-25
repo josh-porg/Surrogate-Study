@@ -27,13 +27,13 @@ TRACKS = {
     # "smt" finished 2026-10-12 (42 460 fits); "reinstated" finished 2026-10-13 (146 780 fits)
     # "gprestarts" finished 2026-10-15 (45 160 fits)
     # E3x (D-9): the 89 problems E3's core set left out, full design; ahead of the tuning check (selection first)
-    "e3x": ["E3x_learners", "--shards", "5", "--max-waves", "30", "--start-after", "E3s_gp_restarts:"],
-    # f* refinement and E12 moved from the laptop (2026-10-17); each ends its laptop twin when it starts
-    "fstar": ["Efstar_refine", "--shards", "5", "--max-waves", "5", "--start-after", "E3x_learners:",
-              "--stop-local", "fstar_table.py --refine"],
+    # "e3x" finished 2026-10-24 (1 057 520 fits); "fstar" (refinement) finished 2026-10-25
     "e12": ["E12_rational", "--shards", "5", "--max-waves", "20", "--start-after", "Efstar_refine:",
             "--stop-local", "surr.runner E12_rational"],
-    "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E12_rational:"],
+    # E9 (optimization on the surrogate, 2026-10-25) ahead of the tuning check: it matters more for the paper.
+    # One track at a time on Kaggle (the author's call, 2026-10-25): splitting the 5 sessions adds no capacity.
+    "e9": ["E9_optim", "--shards", "5", "--max-waves", "10", "--start-after", "E12_rational:"],
+    "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E9_optim:"],
     # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 
@@ -75,8 +75,32 @@ def main():
             print(f"{name}: started")
 
 
+def ensure_local():
+    """The laptop job queue (code/cluster/local_queue.py: R-AIR, E10 features, E4 mechanisms), started hidden the
+    same way; it exits at once if already running or finished."""
+    if (ROOT / "results" / "STOP_DRIVERS").exists():
+        return
+    if any("local_queue.py" in " ".join(p.info["cmdline"] or []) and "python" in (p.info["name"] or "").lower()
+           for p in psutil.process_iter(["cmdline", "name"])):
+        print("local queue: running"); return
+    log = ROOT / "results" / "local_queue.log"
+    cmd = [sys.executable, "-u", str(Path(__file__).resolve().parents[1] / "local_queue.py")]
+    if sys.platform == "win32":
+        line = f'cmd /c "{subprocess.list2cmdline(cmd)} >> "{log}" 2>&1"'
+        ps = ("$si = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{ShowWindow=[uint16]0}; "
+              "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments "
+              f"@{{CommandLine='{line.replace(chr(39), chr(39) * 2)}'; CurrentDirectory='{ROOT}'; "
+              "ProcessStartupInformation=$si}; exit $r.ReturnValue")
+        rc = subprocess.run(["powershell", "-NoProfile", "-Command", ps]).returncode
+        print("local queue: started" if rc == 0 else f"local queue: start FAILED (WMI code {rc})")
+    else:
+        subprocess.Popen(cmd, cwd=ROOT, stdout=open(log, "a"), stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
+                         start_new_session=True)
+
+
 if __name__ == "__main__":
     main()
+    ensure_local()
     try:                                                   # status e-mail when due (no-op without email_config.json)
         subprocess.run([sys.executable, str(Path(__file__).parent / "email_report.py")], timeout=600)
     except Exception as e:

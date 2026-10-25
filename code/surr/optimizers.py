@@ -34,6 +34,8 @@ def _reg(fn):
 
 MEMO = True        # module switch so tests can compare memo on / off (results must be bit-identical)
 _SHARED = None     # memo dict shared across optimizer runs on the same surrogate (set by run(..., memo=...))
+CHECKPOINTS = ()   # evaluation counts at which the incumbent is recorded (E9 anytime curves; set by run(...))
+_LAST = None       # the counter of the most recent run (each optimizer creates exactly one)
 
 
 class _Counter:
@@ -49,6 +51,9 @@ class _Counter:
         # values; the values are identical either way, so results do not depend on sharing or on method order
         self._memo = (_SHARED if _SHARED is not None else {}) if MEMO else None
         self.hits = 0
+        self.trace = {}                    # checkpoint -> incumbent x after that many evaluations (read-only record)
+        global _LAST
+        _LAST = self
 
     def __call__(self, x):
         x = np.clip(np.asarray(x, float), 0, 1)
@@ -62,6 +67,8 @@ class _Counter:
                 self._memo[key] = v
         if v < self.best[0]:
             self.best = (v, x.copy())
+        if self.n in CHECKPOINTS and self.best[1] is not None:
+            self.trace[self.n] = self.best[1].copy()
         return v
 
 
@@ -338,11 +345,22 @@ def spsa(f, d, budget, seed=0, grad=None, stochastic_grad=None, a=0.1, c=0.05, A
     return dict(x=F.best[1], f=F.best[0], nfev=F.n)
 
 
-def run(name, f, d, budget=2000, seed=0, grad=None, memo=None):
-    """`memo`: a dict shared by every run on the same f (one E9 task = one fitted surrogate); None = per-run memo."""
-    global _SHARED
+def run(name, f, d, budget=2000, seed=0, grad=None, memo=None, checkpoints=()):
+    """`memo`: a dict shared by every run on the same f (one E9 task = one fitted surrogate); None = per-run memo.
+    `checkpoints`: evaluation counts at which to record the incumbent (returned as res["trace"]; a checkpoint the run
+    never reached gets the final incumbent). Recording only reads the counter, so results are unchanged."""
+    global _SHARED, CHECKPOINTS
     prev, _SHARED = _SHARED, memo
+    prev_c, CHECKPOINTS = CHECKPOINTS, frozenset(checkpoints)
     try:
-        return REGISTRY[name](f, d, budget, seed=seed, grad=grad)
+        res = REGISTRY[name](f, d, budget, seed=seed, grad=grad)
+        if checkpoints:
+            tr = dict(_LAST.trace)
+            for c in sorted(checkpoints):
+                if c not in tr:
+                    earlier = [k for k in tr if k < c]
+                    tr[c] = tr[max(earlier)] if (earlier and c <= _LAST.n) else res["x"]
+            res["trace"] = {c: tr[c] for c in sorted(checkpoints)}
+        return res
     finally:
-        _SHARED = prev
+        _SHARED, CHECKPOINTS = prev, prev_c

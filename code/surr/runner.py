@@ -54,18 +54,21 @@ def task_learner(cfg):
         return dict(status="infeasible")
     if hasattr(L, "feasible") and not L.feasible(n, d):                 # cost wall (bound by cost, not by failure)
         return dict(status="infeasible", error="cost wall")
-    U = S.make(cfg.get("sampler", "sobol"), n, d, seed=seed)
+    from surr import studies as ST
+    U, T, Ul, Tl = ST.designs(cfg, p, S)              # Ul/Tl: what the learner sees (= U/T unless E4 transforms)
     y_clean = p.f_unit(U)
-    T = S.sobol(cfg.get("n_test", 4096), d, seed=10_000 + seed)
     yt = p.f_unit(T)
     scale = float(yt.std())
     y = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), y_clean, U, scale, seed=20_000 + seed)
+    y = ST.smooth_targets(cfg, U, y)                  # E4 smoothing probe (no-op otherwise)
+    if L.max_d and Ul.shape[1] > L.max_d:
+        return dict(status="infeasible")
 
     t0 = time.perf_counter()
-    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(U, y)
+    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(Ul, y)
     t_fit = time.perf_counter() - t0
     t0 = time.perf_counter()
-    pred = m.predict(T)
+    pred = m.predict(Tl)
     t_pred = (time.perf_counter() - t0) / len(T)
     err = pred - yt
     out = dict(status="ok", nrmse=float(np.sqrt(np.mean(err**2)) / scale), max_err=float(np.max(np.abs(err)) / scale),
@@ -77,13 +80,15 @@ def task_learner(cfg):
     if cfg.get("noisy_cv"):                                              # practitioner's view (thesis B-01)
         yt_noisy = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), yt, T, scale, seed=30_000 + seed)
         out["nrmse_vs_noisy"] = float(np.sqrt(np.mean((pred - yt_noisy) ** 2)) / scale)
+    if cfg.get("diag"):
+        out.update(ST.gp_diag(m))
     if L.uq:
-        s = m.predict_std(T)
+        s = m.predict_std(Tl)
         if s is not None:
             s = np.maximum(s, 1e-12)
             out["nlpd"] = float(np.mean(0.5 * np.log(2 * np.pi * s**2) + 0.5 * (err / s) ** 2))
             out["cover95"] = float(np.mean(np.abs(err) <= 1.96 * s))
-    if cfg.get("grad"):                                                  # derivative accuracy (M.4), 256 points
+    if cfg.get("grad") and not cfg.get("transform"):                     # derivative accuracy (M.4), 256 points
         G = T[:256]
         gt = p.grad(p.from_unit(G)) * (p.bounds[:, 1] - p.bounds[:, 0])
         gm = m.grad(G)
@@ -134,7 +139,18 @@ def task_fstar_refine(cfg):
     return dict(status="ok", record=ft.refine(cfg["name"], cfg["seed"], prev))
 
 
-KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine}
+def task_rair(cfg):
+    from surr.studies import task_rair as t
+    return t(cfg)
+
+
+def task_e9(cfg):
+    from surr.studies import task_e9 as t
+    return t(cfg)
+
+
+KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
+         "rair": task_rair, "e9": task_e9}
 
 
 def _init_worker():
@@ -390,10 +406,87 @@ def exp_E3s_tuning():
     return rows
 
 
+# ── later studies (2026-10-25) ─────────────────────────────────────────────────────────────────────────────────
+E4_LEARNERS = [("gp", {}), ("hetgp", {}), ("smt_kpls", {}), ("catboost", {}), ("xgb", {}), ("rf", {}), ("extratrees", {}),
+               ("mlp_ens", {"opt": "lbfgs"}), ("rbf_tps", {}), ("pce_lars", {})]
+E4_TRANSFORMS = ["none", "smooth:0.05", "smooth:0.1", "smooth:0.2", "rotate", "uninf:2", "uninf:5", "uninf:15"]
+
+
+def exp_E4_mechanisms():
+    """E4 (H3): Grinsztajn mechanism probes, one factor at a time around the E3 baseline. The 19 P-FEAT probes at
+    d = 5 × n ∈ {20d, 100d} × noise {none, additive 3 %} × transform (none; target smoothing ℓ ∈ {0.05, 0.1, 0.2};
+    random rotation; 2 / 5 / 15 uninformative inputs) × 10 learners spanning the behaviour groups × 5 seeds, with
+    GP hyper-parameter bound checks. "none" reproduces the E3 design and noise draws exactly."""
+    from surr.problems import REGISTRY
+    probs = [n for n, q in sorted(REGISTRY.items()) if q.block == "P-FEAT" and n.endswith("_d5")]
+    rows = []
+    for pn in probs:
+        for n in (100, 500):
+            for noise, lvl in (("none", 0.0), ("additive", 0.03)):
+                for tr in E4_TRANSFORMS:
+                    for L, kw in E4_LEARNERS:
+                        for sd in range(5):
+                            rows.append(dict(kind="learner", exp="E4_mechanisms", problem=pn, learner=L, kw=kw, n=n,
+                                             seed=sd, sampler="sobol", noise=noise, level=lvl, transform=tr,
+                                             diag=True))
+    return rows
+
+
+def exp_E4_rair():
+    """E4 R-AIR bias arm (local only: real data). Every E3 learner config × 3 weight-fraction targets × setting
+    {biased, weighted (inverse-frequency strata, weighted bootstrap), balanced (equal engine-type counts)} × 20
+    random 80/20 splits; the test set depends only on the split seed, so settings are paired."""
+    short = json.loads((ROOT / "results" / "E2a_shortlist.json").read_text()) + E3_REINSTATED
+    configs = []
+    for k in short:
+        if "[" in k:
+            base, kv = k[:-1].split("[")
+            configs.append((base, dict(x.split("=") for x in kv.split(","))))
+        else:
+            configs.append((k, {}))
+    from surr.studies import RAIR_TARGETS
+    return [dict(kind="rair", exp="E4_rair", target=t, setting=st, learner=L, kw=kw, seed=sd)
+            for t in RAIR_TARGETS for st in ("biased", "weighted", "balanced") for L, kw in configs for sd in range(20)]
+
+
+E9_LEARNERS = [("gp", {}), ("hetgp", {}), ("as_gp", {}), ("smt_krg", {}), ("smt_kpls", {}), ("catboost", {}), ("lgbm", {}),
+               ("rf", {}), ("mlp_ens", {"opt": "lbfgs"}), ("rbf_tps", {}), ("krr", {}), ("pce_lars", {}), ("rsm2", {}),
+               ("ens_press", {}), ("mars", {}), ("idw", {})]
+# spans the three data-driven E3 types (rugged / polynomial-like / smooth-kinked) and d = 2-10
+E9_PROBLEMS = ["ackley_d5", "ackley_d10", "rastr", "rastr_d5", "levy_d5", "levy_d10", "michal_d5", "schaffer2",
+               "axis_step_d5", "plateau_bump_d5", "tree_draw_d5", "regime_d5", "oblique_step_d10", "composite_d5",
+               "sumsqu_d5", "trid_d5", "rothyp_d10", "quadratic_d5", "booth", "griewank_d5",
+               "branin", "goldpr", "camel6", "rosen_d5", "stybtang", "zakharov_d5", "dixonpr_d5", "smooth_trig_d5",
+               "smooth_trig_d10", "rotated_ridge_d5", "kink_floor_d5", "gp_draw_d2", "borehole", "wingweight", "piston",
+               "thesis_collapse_knee", "pole_knee_d5", "monotone_d5"]
+
+
+def exp_E9_optim():
+    """E9 (RQ5/RQ6, H6/H7): surrogate × every optimizer (17; the 9 gradient methods with finite-difference and with
+    surrogate gradients) on 38 problems × shifted instances 0-9 × n ∈ {10d, 50d} × noise {none, additive 1 %}, budget
+    500·d surrogate evaluations with the incumbent scored at 10d…500d; plus the optimizers on the true function. One
+    task = one fitted surrogate (shared memo). 10 instances, not the planned 30 (cost; STUDY D-10)."""
+    from surr.problems import get
+    rows = []
+    for pn in E9_PROBLEMS:
+        d = get(pn).d
+        for s in range(10):
+            rows.append(dict(kind="e9", exp="E9_optim", problem=pn, shift_seed=s, learner="truth", seed=s))
+            for mult in (10, 50):
+                for noise, lvl in (("none", 0.0), ("additive", 0.01)):
+                    for L, kw in E9_LEARNERS:
+                        if L == "smt_krg" and mult * d > 500:
+                            continue
+                        rows.append(dict(kind="e9", exp="E9_optim", problem=pn, shift_seed=s, learner=L, kw=kw,
+                                         n=mult * d, noise=noise, level=lvl, seed=s))
+    return rows
+
+
 EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learners": exp_E2a_learners,
                "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
                "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
-               "Efstar_refine": exp_Efstar_refine}
+               "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
+               "E9_optim": exp_E9_optim}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────

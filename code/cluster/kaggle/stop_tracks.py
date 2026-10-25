@@ -31,7 +31,21 @@ HERE = Path(__file__).resolve().parent
 
 
 def drivers():
-    return [p for p in psutil.process_iter(["cmdline"]) if "waves.py" in " ".join(p.info["cmdline"] or [])]
+    """Kaggle wave drivers and the laptop job queue, with the queue's runner and worker processes."""
+    out = []
+    for p in psutil.process_iter(["cmdline", "name"]):
+        cl = " ".join(p.info["cmdline"] or [])
+        # python processes only (and the hidden cmd wrapper), so shells whose command text mentions a script are spared
+        if not any(t in (p.info["name"] or "").lower() for t in ("python", "cmd.exe")):
+            continue
+        if "waves.py" in cl or "local_queue.py" in cl:
+            out.append(p)
+            if "local_queue.py" in cl:
+                try:
+                    out += p.children(recursive=True)
+                except psutil.NoSuchProcess:
+                    pass
+    return out
 
 
 def ps(cmd):
@@ -74,7 +88,14 @@ def status():
     print("auto-start task:", r.stdout.strip() or "not installed")
     print("kill switch    :", "ON (STOP_DRIVERS present)" if STOP.exists() else "off")
     for p in drivers():
-        print("driver         :", p.pid, " ".join(p.info["cmdline"]).split("waves.py")[-1].strip())
+        try:
+            cl = " ".join(p.cmdline())
+        except psutil.Error:
+            continue
+        if "waves.py" in cl:
+            print("driver         :", p.pid, cl.split("waves.py")[-1].strip())
+        elif "local_queue.py" in cl or "surr.runner" in cl or "e10_selector" in cl:
+            print("local          :", p.pid, cl.split("python.exe")[-1].strip()[:110])
 
 
 if __name__ == "__main__":

@@ -75,7 +75,28 @@ def test_shared_memo_across_methods(budget=300):
     return len(models) * len(names) * 2
 
 
+def test_checkpoints_do_not_change_results(budget=300):
+    """Recording the incumbent at checkpoints (E9 anytime curves) leaves every optimizer's result bit-identical, and
+    the checkpoint at the budget is the final incumbent when the run stops exactly there (DIRECT and others can
+    overshoot the budget; their trace then shows the incumbent at the budget, the fairer number for E9)."""
+    p = P.get("smooth_trig_d2")
+    U = S.make("sobol", 40, 2, seed=1); y = p.f_unit(U)
+    m = make("gp", seed=0).fit(U, y)
+    bad = []
+    for nm in sorted(O.REGISTRY):
+        a = O.run(nm, m.predict, 2, budget=budget, seed=5)
+        b = O.run(nm, m.predict, 2, budget=budget, seed=5, checkpoints=(20, 100, budget))
+        if not (a["nfev"] == b["nfev"] and a["f"] == b["f"] and np.array_equal(a["x"], b["x"])):
+            bad.append((nm, "changed"))
+        last = b["trace"][budget]
+        if b["nfev"] == budget and not np.array_equal(last, b["x"]) and float(m.predict(last[None])[0]) != b["f"]:
+            bad.append((nm, "trace end != final"))
+    assert not bad, bad
+    return len(O.REGISTRY)
+
+
 if __name__ == "__main__":
     test_prefix(); print("prefix property: ok")
     n = test_memo_identical(); print(f"memo on/off bit-identical: ok ({n} optimizer x surrogate pairs)")
+    n = test_checkpoints_do_not_change_results(); print(f"checkpoint trace leaves results bit-identical: ok ({n} optimizers)")
     n = test_shared_memo_across_methods(); print(f"shared memo across methods, both orders, bit-identical: ok ({n} runs)")
