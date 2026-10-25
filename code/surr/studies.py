@@ -262,3 +262,184 @@ def _fstar():
         import json
         _FSTAR.update(json.loads((ROOT / "results" / "fstar_table.json").read_text(encoding="utf8")))
     return _FSTAR
+
+
+# ── E13: gradient-enhanced surrogates ─────────────────────────────────────────────────────────────────────────
+def _unit_grad(p, U):
+    return p.grad(p.from_unit(U)) * (p.bounds[:, 1] - p.bounds[:, 0])
+
+
+def task_e13(cfg):
+    """One learner on one problem with or without gradient data. Values get additive noise `level` × std(f) (the E3
+    rule); gradients get independent noise `level` × std(∂_j f) per input (adjoint gradients are often less
+    accurate than values). Value-only rows use n = cost_mult × n_base samples (cost_mult = 1, 2 or d + 1: an
+    adjoint gradient costs ~1-5 evaluations, finite differences d). Scored on clean values and gradients."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import noise as N, problems as P, samplers as S
+    from surr.learners import REGISTRY, make
+    p = P.get(cfg["problem"]); d, seed = p.d, cfg["seed"]
+    n = min(int(cfg["n_base"] * cfg.get("cost_mult", 1)), 2000)
+    L = REGISTRY[cfg["learner"]]
+    if hasattr(L, "feasible") and cfg.get("use_grad") and not L.feasible(n, d):
+        return dict(status="infeasible", error="cost wall")
+    U = S.make("sobol", n, d, seed=seed)
+    T = S.sobol(4096, d, seed=10_000 + seed)
+    yt = p.f_unit(T); scale = float(yt.std())
+    lvl = cfg.get("level", 0.0)
+    y = N.apply("additive" if lvl else "none", lvl, p.f_unit(U), U, scale, seed=20_000 + seed)
+    Gt = _unit_grad(p, T[:256])
+    t0 = time.perf_counter()
+    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {}))
+    if cfg.get("use_grad"):
+        G = _unit_grad(p, U)
+        gs = _unit_grad(p, T[:1024]).std(axis=0) + 1e-12
+        G = G + lvl * gs * np.random.default_rng(60_000 + seed).normal(size=G.shape)
+        m.fit(U, y, G)
+    else:
+        m.fit(U, y)
+    t_fit = time.perf_counter() - t0
+    err = m.predict(T) - yt
+    out = dict(status="ok", n=n, nrmse=float(np.sqrt(np.mean(err ** 2)) / scale), t_fit=t_fit)
+    gm = m.grad(T[:256])
+    out["grad_nrmse"] = float(np.sqrt(np.mean((gm - Gt) ** 2)) / (np.std(Gt) + 1e-12))
+    return out
+
+
+# ── E6: multi-fidelity ────────────────────────────────────────────────────────────────────────────────────────
+def task_e6(cfg):
+    """One MF method on one bi-fidelity pair. Nested Sobol' designs: the n_H high-fidelity points are the first n_H of
+    the n_L = ratio × n_H low-fidelity points. hf_only with matched=True spends the low-fidelity budget on extra
+    high-fidelity points instead (n_H + n_L / κ, κ = the pair's nominal cost ratio)."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import multifidelity as M, samplers as S
+    from surr.problems.mf import MF_REGISTRY
+    p = MF_REGISTRY[cfg["mfproblem"]]; d, seed = p.d, cfg["seed"]
+    nH, nL = cfg["nH"], cfg["nH"] * cfg["ratio"]
+    if cfg.get("matched"):
+        nH = int(round(nH + nL / p.cost_ratio))
+    UL = S.sobol(max(nL, nH), d, seed=seed); UH = UL[:nH]
+    T = S.sobol(4096, d, seed=10_000 + seed); yt = p.high(T); scale = float(yt.std())
+    t0 = time.perf_counter()
+    m = M.make_mf(cfg["method"], base=cfg.get("base", "gp"), seed=seed).fit(UL[:nL], p.low(UL[:nL]), UH, p.high(UH))
+    t_fit = time.perf_counter() - t0
+    err = m.predict(T) - yt
+    return dict(status="ok", nrmse=float(np.sqrt(np.mean(err ** 2)) / scale), t_fit=t_fit, r=float(p.r),
+                cost=float(nH + (0 if cfg.get("matched") or cfg["method"] == "hf_only" else nL / p.cost_ratio)))
+
+
+# ── E8: upscaling ─────────────────────────────────────────────────────────────────────────────────────────────
+E8_UPSCALERS = [("none", {}), ("tensor_spline", {"m": 12}), ("tensor_spline", {"m": 24}), ("smoothing_spline", {"m": 24}),
+                ("pspline_direct", {})]
+E8_OPTS = (("lbfgsb", "fd"), ("lbfgsb", "model"), ("slsqp", "model"), ("nelder_mead", "none"),
+           ("differential_evolution", "none"), ("cmaes", "none"))
+
+
+def task_e8(cfg):
+    """Fit the intermediate learner once (E3 design and noise), then every upscaler on it: value and gradient error
+    added by upscaling (vs the truth and vs the intermediate), build and evaluation cost, and the optimizer-facing
+    result: regret of six optimizers at 20d / 50d / 200d surrogate evaluations on a shifted instance (f* table)."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import noise as N, optimizers as O, problems as P, samplers as S, upscalers as UP
+    from surr.learners import make
+    from surr.problems.base import shifted
+    p = shifted(P.get(cfg["problem"]), cfg["shift_seed"]); d, seed = p.d, cfg["seed"]
+    ref = _fstar().get(p.name, {})
+    U = S.make("sobol", cfg["n"], d, seed=seed)
+    T = S.sobol(4096, d, seed=10_000 + seed); yt = p.f_unit(T); scale = float(yt.std())
+    y = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), p.f_unit(U), U, scale, seed=20_000 + seed)
+    t0 = time.perf_counter()
+    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(U, y)
+    out = dict(status="ok", t_fit=time.perf_counter() - t0, scale=scale, fstar_confirmed=bool(ref.get("confirmed")))
+    pm = m.predict(T)
+    Gt = _unit_grad(p, T[:256])
+    cps = (20 * d, 50 * d, 200 * d)
+    ups = {}
+    for name, kw in E8_UPSCALERS:
+        tag = name + (f"[m={kw['m']}]" if "m" in kw else "")
+        t0 = time.perf_counter()
+        try:
+            s = UP.build(name, m, d, U=U, y=y, **kw)
+        except MemoryError as ex:
+            ups[tag] = dict(infeasible=str(ex)[:120]); continue
+        except Exception as ex:
+            ups[tag] = dict(error=f"{type(ex).__name__}: {ex}"[:160]); continue
+        t_build = time.perf_counter() - t0
+        t0 = time.perf_counter(); ps = s.predict(T); t_eval = (time.perf_counter() - t0) / len(T)
+        gs = s.grad(T[:256])
+        rec = dict(nrmse=float(np.sqrt(np.mean((ps - yt) ** 2)) / scale),
+                   added=float(np.sqrt(np.mean((ps - pm) ** 2)) / scale),
+                   grad_nrmse=float(np.sqrt(np.mean((gs - Gt) ** 2)) / (np.std(Gt) + 1e-12)),
+                   t_build=t_build, t_eval_us=1e6 * t_eval, regret={})
+        if "fstar" in ref:
+            memo = {}
+            for opt, gsrc in E8_OPTS:
+                try:
+                    r = O.run(opt, s.predict, d, budget=cps[-1], seed=seed, memo=memo, checkpoints=cps,
+                              grad=(s.grad if gsrc == "model" else None))
+                    X = np.array([r["trace"][c] for c in cps])
+                    rec["regret"][f"{opt}|{gsrc}"] = [float((v - ref["fstar"]) / scale) for v in p.f_unit(X)]
+                except Exception as ex:
+                    rec["regret"][f"{opt}|{gsrc}"] = f"{type(ex).__name__}: {ex}"[:120]
+        ups[tag] = rec
+    out["intermediate_nrmse"] = float(np.sqrt(np.mean((pm - yt) ** 2)) / scale)
+    out["upscalers"] = ups
+    return out
+
+
+# ── E5: sampling (scout × deliverable) ────────────────────────────────────────────────────────────────────────
+E5_DELIVERABLES = [("gp", {}), ("catboost", {}), ("rf", {}), ("mlp_ens", {"opt": "lbfgs"}), ("rbf_tps", {}),
+                   ("pce_lars", {})]
+
+
+def task_e5(cfg):
+    """One sequential design: start from n0 = 2d + 2 Sobol' points, then repeatedly fit the scout learner and add a
+    batch of d points chosen by the acquisition rule from a fixed 4000-point Sobol' candidate pool (batch members
+    picked one at a time without refitting, kriging-believer fill, never repeating), up to 50·d points.
+    rule = "sobol" is the non-sequential Sobol' prefix (control). At 10d, 20d and 50d every deliverable learner is
+    fitted on the design so far and scored on the clean truth; native vs cross pairs are separated in analysis."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import acquisitions as A, noise as N, problems as P, samplers as S
+    from surr.learners import make
+    p = P.get(cfg["problem"]); d, seed = p.d, cfg["seed"]
+    T = S.sobol(4096, d, seed=10_000 + seed); yt = p.f_unit(T); scale = float(yt.std())
+    lvl = cfg.get("level", 0.0)
+    noisy = lambda U, s: N.apply("additive" if lvl else "none", lvl, p.f_unit(U), U, scale, seed=s)
+    nmax = 50 * d; cps = (10 * d, 20 * d, 50 * d)
+    rule, scout = cfg["rule"], cfg["scout"]
+    t0 = time.perf_counter()
+    if rule == "sobol":
+        U = S.sobol(nmax, d, seed=seed)
+    else:
+        pool = S.sobol(4000, d, seed=50_000 + seed)
+        U = S.sobol(2 * d + 2, d, seed=seed)
+        rng = np.random.default_rng(seed)
+        used = []
+        while len(U) < nmax:
+            y = noisy(U, 20_000 + seed)[: len(U)]
+            model = None if scout == "none" else make(scout, seed=seed, **cfg.get("scout_kw", {})).fit(U, y)
+            batch = []
+            for _ in range(min(d, nmax - len(U))):
+                if batch:
+                    Ub = np.vstack([U, pool[batch]])
+                    yb = np.r_[y, model.predict(pool[batch]) if model is not None else np.full(len(batch), y.mean())]
+                else:
+                    Ub, yb = U, y
+                batch.append(A.acquire(rule, model, Ub, yb, pool, rng, exclude=np.array(used + batch, int)))
+            used += batch
+            U = np.vstack([U, pool[batch]])
+    t_design = time.perf_counter() - t0
+    out = dict(status="ok", t_design=t_design, fits={})
+    y_all = noisy(U, 20_000 + seed)
+    for c in cps:
+        for L, kw in E5_DELIVERABLES:
+            tag = L + ("[lbfgs]" if kw else "")
+            try:
+                m = make(L, seed=seed, **kw).fit(U[:c], y_all[:c])
+                out["fits"][f"{tag}@{c // d}d"] = float(np.sqrt(np.mean((m.predict(T) - yt) ** 2)) / scale)
+            except Exception as ex:
+                out["fits"][f"{tag}@{c // d}d"] = f"{type(ex).__name__}: {ex}"[:100]
+    return out

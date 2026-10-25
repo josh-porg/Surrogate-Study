@@ -149,8 +149,28 @@ def task_e9(cfg):
     return t(cfg)
 
 
+def task_e13(cfg):
+    from surr.studies import task_e13 as t
+    return t(cfg)
+
+
+def task_e6(cfg):
+    from surr.studies import task_e6 as t
+    return t(cfg)
+
+
+def task_e8(cfg):
+    from surr.studies import task_e8 as t
+    return t(cfg)
+
+
+def task_e5(cfg):
+    from surr.studies import task_e5 as t
+    return t(cfg)
+
+
 KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
-         "rair": task_rair, "e9": task_e9}
+         "rair": task_rair, "e9": task_e9, "e13": task_e13, "e6": task_e6, "e8": task_e8, "e5": task_e5}
 
 
 def _init_worker():
@@ -482,11 +502,110 @@ def exp_E9_optim():
     return rows
 
 
+E13_PROBLEMS = ["ackley_d5", "rastr_d5", "levy_d5", "michal_d5", "schaffer2", "sumsqu_d5", "trid_d5", "rothyp_d10",
+                "quadratic_d5", "griewank_d5", "branin", "goldpr", "camel6", "rosen_d5", "stybtang", "zakharov_d5",
+                "dixonpr_d5", "smooth_trig_d5", "smooth_trig_d10", "rotated_ridge_d5", "kink_floor_d5", "borehole",
+                "wingweight", "piston"]
+E13_WITH_GRAD = [("gek", {}), ("hermite_rbf", {}), ("ge_pce", {}), ("sobolev_mlp", {})]
+E13_VALUE_ONLY = [("gek", {"use_grad": False}), ("hermite_rbf", {"use_grad": False}), ("ge_pce", {"use_grad": False}),
+                  ("sobolev_mlp", {"lam": 0}), ("gp", {}), ("pce_lars", {})]
+
+
+def exp_E13_gradient():
+    """E13: gradient-enhanced surrogates vs value-only ones at matched cost. 24 problems with smooth-enough gradients
+    (step functions excluded) × n_base ∈ {5d, 10d, 20d} × noise level ∈ {0, 1 %, 10 %} on values and gradients × 5
+    seeds. Gradient learners use n_base points with gradients; value-only learners (the same methods without the
+    derivative data, plus gp and pce_lars) use cost_mult × n_base points, cost_mult ∈ {1, 2, d + 1} (an adjoint
+    gradient ≈ 1 extra evaluation; finite differences d), capped at 2000."""
+    from surr.problems import get
+    rows = []
+    for pn in E13_PROBLEMS:
+        d = get(pn).d
+        for mult in (5, 10, 20):
+            for lvl in (0.0, 0.01, 0.10):
+                for sd in range(5):
+                    base = dict(kind="e13", exp="E13_gradient", problem=pn, n_base=mult * d, level=lvl, seed=sd)
+                    rows += [{**base, "learner": L, "kw": kw, "use_grad": True, "cost_mult": 1} for L, kw in E13_WITH_GRAD]
+                    rows += [{**base, "learner": L, "kw": kw, "use_grad": False, "cost_mult": c}
+                             for L, kw in E13_VALUE_ONLY for c in sorted({1, 2, d + 1})]
+    return rows
+
+
+E6_METHODS = ["hf_only", "bridge_mult", "bridge_add", "ar1_cokriging", "hierarchical_kriging", "nargp", "feature_aug",
+              "space_mapping"]
+
+
+def exp_E6_mf():
+    """E6 (RQ3, H4): every MF method on every bi-fidelity pair in P-MF (constructed linear / weak / nonlinear /
+    shifted pairs on four bases, and the mf2 collection) × n_H ∈ {3d, 10d, 30d} × n_L / n_H ∈ {4, 16} × 10 seeds,
+    plus HF-only at matched cost (the low-fidelity budget spent on extra HF points, κ = 10)."""
+    from surr.problems.mf import MF_REGISTRY
+    rows = []
+    for pn, p in sorted(MF_REGISTRY.items()):
+        for mult in (3, 10, 30):
+            for ratio in (4, 16):
+                for sd in range(10):
+                    base = dict(kind="e6", exp="E6_mf", mfproblem=pn, nH=mult * p.d, ratio=ratio, seed=sd)
+                    rows += [{**base, "method": m} for m in E6_METHODS]
+                    rows.append({**base, "method": "hf_only", "matched": True})
+    return rows
+
+
+E8_LEARNERS = [("gp", {}), ("catboost", {}), ("xgb", {}), ("rf", {}), ("mlp_ens", {"opt": "lbfgs"}), ("rbf_tps", {}),
+               ("pce_lars", {})]
+E8_PROBLEMS = ["rastr", "schaffer2", "booth", "branin", "goldpr", "camel6", "stybtang", "gp_draw_d2",
+               "thesis_collapse_knee", "ackley_d5", "levy_d5", "michal_d5", "axis_step_d5", "plateau_bump_d5",
+               "tree_draw_d5", "regime_d5", "composite_d5", "sumsqu_d5", "trid_d5", "quadratic_d5", "rosen_d5",
+               "zakharov_d5", "smooth_trig_d5", "rotated_ridge_d5", "kink_floor_d5", "pole_knee_d5", "monotone_d5"]
+
+
+def exp_E8_upscale():
+    """E8 (RQ4, H5): intermediate learner × every upscaler (none; tensor cubic grid m = 12 / 24; separable smoothing
+    spline m = 24; P-spline direct) on 27 problems at d = 2 and 5 (grids are infeasible above; recorded) × n ∈ {20d,
+    100d} × noise {0, 1 %} × shifted instances 0-9. One task = one fitted intermediate + all upscalers + six
+    optimizers on each (the key question: does smoothing turn GBT into a good optimizer-facing surrogate?)."""
+    from surr.problems import get
+    rows = []
+    for pn in E8_PROBLEMS:
+        d = get(pn).d
+        for mult in (20, 100):
+            for noise, lvl in (("none", 0.0), ("additive", 0.01)):
+                for L, kw in E8_LEARNERS:
+                    for s in range(10):
+                        rows.append(dict(kind="e8", exp="E8_upscale", problem=pn, shift_seed=s, learner=L, kw=kw,
+                                         n=mult * d, noise=noise, level=lvl, seed=s))
+    return rows
+
+
+E5_SCOUTS = [("gp", "max_variance"), ("gp", "imse_alc"), ("gp", "eigf"), ("gp", "mepe"), ("gbt_committee", "max_variance"),
+             ("qrf", "max_variance"), ("ngboost", "max_variance"), ("mlp_ens", "max_variance"), ("rf", "max_variance"),
+             ("none", "lola_voronoi"), ("none", "seq_maximin"), ("none", "random"), ("none", "sobol")]
+E5_PROBLEMS = ["thesis_smooth", "thesis_collapse_knee", "thesis_clamp_floor", "thesis_anisotropic", "thesis_oscillatory",
+               "thesis_cliff", "smooth_trig_d5", "axis_step_d5", "kink_floor_d2", "nonstationary_d2", "plateau_bump_d2",
+               "multiscale_d2", "regime_d5", "rotated_ridge_d5", "branin", "goldpr", "camel6", "rosen_d5", "ackley_d5",
+               "levy_d5", "michal_d5", "stybtang_d5"]
+
+
+def exp_E5_sampling():
+    """E5 (RQ2, H2): scout (13: GP variance / IMSE / EIGF / MEPE, committee and ensemble variances, LOLA-Voronoi,
+    sequential maximin, random, Sobol' control) × 22 problems (P-THESIS, P-FEAT probes, VLSE) × noise {0, 1 %} × 10
+    seeds (the plan said 30; cost); every deliverable fitted at 10d / 20d / 50d inside each task."""
+    rows = []
+    for pn in E5_PROBLEMS:
+        for scout, rule in E5_SCOUTS:
+            for lvl in (0.0, 0.01):
+                for sd in range(10):
+                    rows.append(dict(kind="e5", exp="E5_sampling", problem=pn, scout=scout, rule=rule,
+                                     scout_kw={"opt": "lbfgs"} if scout == "mlp_ens" else {}, level=lvl, seed=sd))
+    return rows
+
+
 EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learners": exp_E2a_learners,
                "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
                "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
                "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
-               "E9_optim": exp_E9_optim}
+               "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
+               "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
