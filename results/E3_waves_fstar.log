@@ -58,3 +58,51 @@
 [queued] waiting for E3x_learners (): 585208 tasks left
 [queued] waiting for E3x_learners (): 585208 tasks left
 [queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 585208 tasks left
+[queued] waiting for E3x_learners (): 521286 tasks left
+[queued] waiting for E3x_learners (): 521286 tasks left
+[queued] waiting for E3x_learners (): 489756 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 404663 tasks left
+[queued] waiting for E3x_learners (): 379258 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 253937 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[queued] waiting for E3x_learners (): 29740 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] Efstar_refine: 314 tasks in shard 1/1, 0 done, 314 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] Efstar_refine: 16 tasks in shard 1/1, 16 done, 0 to run on 10 workers
+nothing left — done

@@ -41,3 +41,27 @@
 [wave 2] E3x_learners: 1057520 tasks in shard 1/1, 444289 done, 613231 to run on 10 workers
 [wave 2] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
 [wave 3] E3x_learners: 1057520 tasks in shard 1/1, 472312 done, 585208 to run on 10 workers
+[wave 3] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 4] E3x_learners: 1057520 tasks in shard 1/1, 536234 done, 521286 to run on 10 workers
+[wave 4] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 5] E3x_learners: 1057520 tasks in shard 1/1, 652857 done, 404663 to run on 10 workers
+[wave 5] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 6] E3x_learners: 1057520 tasks in shard 1/1, 803583 done, 253937 to run on 10 workers
+[wave 6] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 7] E3x_learners: 1057520 tasks in shard 1/1, 1027780 done, 29740 to run on 10 workers
+[wave 7] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 8] E3x_learners: 1057520 tasks in shard 1/1, 1057520 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 1057520 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+  pull failed (attempt 1); retrying in 10 min
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 1057520 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 1057520 done, 0 to run on 10 workers
+nothing left — done
+[resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 1] E3x_learners: 1057520 tasks in shard 1/1, 1057520 done, 0 to run on 10 workers
+nothing left — done

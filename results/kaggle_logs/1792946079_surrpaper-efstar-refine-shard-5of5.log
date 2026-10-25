@@ -1,0 +1,21 @@
+[{"stream_name":"stdout","time":15.405935445,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":22.033008906,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":23.498641609,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":23.498680415,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":23.49868677,"data":"\n"}
+,{"stream_name":"stdout","time":40.115313401,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":42.545857233,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":45.347649967,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":47.351808805,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":49.510969565,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":52.385624632,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stdout","time":55.194609977,"data":"Efstar_refine: 67 tasks in shard 5/5, 0 done, 67 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":1492.042386351,"data":"  50/67  elapsed 23.9 min  eta 8.1 min\n"}
+,{"stream_name":"stdout","time":3658.258669771,"data":"  67/67  elapsed 60.1 min  eta 0.0 min\n"}
+,{"stream_name":"stderr","time":3662.401381005,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":3662.401415912,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":3662.795715314,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":3662.795742701,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":3663.780492856,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":3665.135329974,"data":"[NbConvertApp] Writing 289141 bytes to __results__.html\n"}
+]
