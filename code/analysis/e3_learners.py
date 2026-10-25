@@ -42,6 +42,7 @@ def load():
     P = {n: p for n, p in REGISTRY.items() if "@s" not in n}       # E3 core + E3x extension problems
     rows, seen = [], set()
     for f in sorted(RAW.glob("*.jsonl")) + sorted(RAW_X.glob("*.jsonl")):
+        src = "E3x" if f.parent == RAW_X else "E3"
         for line in f.read_text(encoding="utf8").splitlines():
             try:
                 r = json.loads(line)
@@ -50,7 +51,7 @@ def load():
             if r["key"] in seen or r["status"] != "ok":
                 seen.add(r["key"]); continue
             seen.add(r["key"]); c = r["cfg"]; p = P[c["problem"]]
-            rows.append(dict(problem=c["problem"], cat=p.category, d=p.d, n=c["n"], m=round(c["n"] / p.d),
+            rows.append(dict(problem=c["problem"], src=src, cat=p.category, d=p.d, n=c["n"], m=round(c["n"] / p.d),
                              noise=c["noise"], level=c["level"], seed=c["seed"], cfg=cfg_name(c),
                              fam=FAM.get(c["learner"], "other"), learner=c["learner"],
                              **{k: r.get(k, np.nan) for k in ("nrmse", "grad_nrmse", "cover95", "nlpd", "t_fit")}))

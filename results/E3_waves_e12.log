@@ -117,3 +117,5 @@
 [queued] waiting for Efstar_refine (): 314 tasks left
 [queued] waiting for Efstar_refine (): 314 tasks left
 [queued] waiting for Efstar_refine (): 314 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E12_rational: 80640 tasks in shard 1/1, 5275 done, 75365 to run on 10 workers

@@ -267,6 +267,32 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   (N-14), so these margins are conservative. · `results/E3_stats_report.md`,
   `results/figures/E3_performance_profiles.png`
 
+- 2026-10-25 · **E3 + E3x complete (D-9; 169 problems, 4 647 complete cells at n ≤ 1000, 38 methods)** · No
+  universal winner: 37 of 38 methods are best in some cell. Held-out selection (picked on seeds 0-4, scored on 5-9),
+  geometric mean × per-cell oracle / within 2× / worst decile: single best (pce_lars) 2.79 / 65 % / 12.1×; best per
+  nominal category (26) 1.65 / 86 % / 2.8×; best per data-driven type (26) 1.42 / 91 % / 1.9×; best per problem
+  1.19 / 95 % / 1.5×. Three coarse data-driven types (ARI vs categories 0.08): rugged/discontinuous/multimodal (71
+  problems, boosted trees: catboost 1.25×), polynomial-like (24, pce_lars 1.67×, rsm2 2.09×), smooth/kinked/ridge (74,
+  smt_kpls 1.91×, hetgp/gp 1.97×); every type spans d = 2-10. Method groups (11, ARI vs families 0.47) cut across
+  families: ok_variogram with idw/knn/lipschitz, smt_kpls with the RBF/MLS interpolators, pce_lars with krr/svr.
+  At n ≤ 500 with smt_krg (3 956 cells): wins pce_lars 705, smt_krg 512, as_gp 293, rsm2 276, catboost 224; smt_krg
+  has the best worst decile (4.5× vs pce_lars 11.1×). The top of the table depends on the suite (E3 core: GP/kriging;
+  E3x classic functions: PCE/RSM), but see the next entry: the overall ordering is stable (ρ = 0.89).
+  The selection numbers here are in-sample over problems; the LOPO versions are in the next entry.
+  · `results/E3_taxonomy.md`
+- 2026-10-25 · **E3 + E3x selection inference** (`code/analysis/e3_selection_stats.py`; unit = problem, 169;
+  leave-one-problem-out picks on seeds 0-4, scored on seeds 5-9). (1) Kendall's W of method rankings across
+  problems 0.37 (CI 0.34–0.42): rankings agree only weakly. Within data-driven types: polynomial-like 0.82,
+  smooth/kinked 0.64, rugged 0.39 (no more concordant than overall). (2) Geometric mean × oracle (cell-weighted) /
+  worst problem decile: single best 2.79 / 15.5×; nominal category 2.07 / 9.6×; 3 data-driven types 2.36 / 33×;
+  26 data-driven types 1.61 / 3.0×; per problem 1.19 / 1.5×. With Holm, every policy beats the single best
+  (p ≤ 4e-6). 26 types beat nominal categories (×1.41, CI 1.11–1.88, p_Holm 0.004). 3 types do not beat nominal
+  categories (p 0.40), and their misassigned problems are costly. (3) Permutation test, 3 types vs 500 equal-size
+  random partitions: gain ×1.06 vs 95th percentile ×1.03, p = 0.012: the structure is real but coarse types give
+  little. (4) E3 vs E3x rankings: Spearman 0.89 (0.81–0.95), so the ordering is stable but the winner moves.
+  pce_lars goes 10th → 1st (p_Holm 6e-4); hetgp and gp do worse on E3x (p_Holm 0.005, 0.025). At n ≤ 500, smt_krg
+  is 1st on E3 and 2nd on E3x. E2a-champion tests on all problems: the GP champion (now smt_krg) beats every other
+  champion (ratio 0.37–0.61, p_Holm ≤ 2e-19). · `results/E3_selection_stats.md`, `results/E3_stats_report.md`
 ### Deviations from the pre-registered design (STUDY_PLAN principle 5)
 - **D-1 · 2026-10-09 · E3 · `smt_krg` capped at n ≤ 500** (the other O(n³) learners keep n ≤ 1000, CAP1000). On
   Kaggle every `smt_krg` fit at n = 1000 hit the 900 s per-task cap (131/131, SMT track wave 1), so the 2 700

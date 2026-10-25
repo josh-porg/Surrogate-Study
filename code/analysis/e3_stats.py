@@ -163,6 +163,7 @@ def _all_methods(df, key, meta):
         la, lb = np.log(A.loc[idx]), np.log(B.loc[idx])
         sa, sb = la.mean(), lb.mean()                                    # mean log NRMSE per config in the category
         sa, sb = sa[la.notna().mean() > 0.9], sb[lb.notna().mean() > 0.9]  # configs present in (almost) every cell
+        both = sa.index.intersection(sb.index); sa, sb = sa[both], sb[both]   # ... in both seed halves
         best_b = sb.idxmin()
         row = {"category": c, "cells": len(idx)}
         for label, members in [("overall", None), ("GP", "GP family"), ("tree", "tree ensembles"),

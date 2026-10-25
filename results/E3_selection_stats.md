@@ -1,0 +1,177 @@
+# n ≤ 1000 (all methods except smt_krg, which stops at n = 500): 4647 cells, 169 problems, 38 methods
+
+## 1. Is there a universal ranking? Kendall's W across problems
+
+W = 1: every problem ranks the methods identically; W = 0: no agreement. Friedman p tests W = 0. Types = the 3 data-driven problem types (seeds 0-4 profiles).
+
+| group | problems | W | ci_lo | ci_hi | friedman_p | top_method |
+|---|---|---|---|---|---|---|
+| all problems | 169 | 0.372 | 0.34 | 0.419 | 0 | pce_lars |
+| type 1 | 71 | 0.39 | 0.343 | 0.46 | 4.07e-191 | catboost |
+| type 2 | 24 | 0.824 | 0.802 | 0.871 | 7.8e-130 | pce_lars |
+| type 3 | 74 | 0.641 | 0.586 | 0.699 | 0 | pce_lars |
+
+## 2. Selection policies (leave-one-problem-out picks on seeds 0-4; scored on held-out seeds 5-9)
+
+× oracle = geometric-mean NRMSE over the per-cell best on seeds 5-9.
+
+|  | geo × oracle (cell-weighted) | geo × oracle (per problem) | problems within 2× | worst problem decile × |
+|---|---|---|---|---|
+| single best | 2.79 | 3.02 | 0.533 | 15.5 |
+| nominal category | 2.07 | 2.35 | 0.71 | 9.57 |
+| data-driven (3 types) | 2.36 | 2.84 | 0.663 | 33.4 |
+| data-driven (26 types) | 1.61 | 1.67 | 0.834 | 2.95 |
+| best per problem | 1.19 | 1.21 | 0.959 | 1.46 |
+
+Pairwise (ratio = row / column, < 1 means the row policy is closer to the oracle; Wilcoxon over problems with Holm; problem-bootstrap 95 % CI; Bayesian signed-rank, ROPE ±10 %):
+
+|  | ratio | ci_lo | ci_hi | P_row_better | P_equiv | P_col_better | p_holm |
+|---|---|---|---|---|---|---|---|
+| ('single best', 'nominal category') | 1.28 | 0.952 | 1.59 | 0 | 0.0892 | 0.911 | 3.43e-08 |
+| ('single best', 'data-driven (3 types)') | 1.07 | 0.819 | 1.41 | 0 | 0 | 1 | 4.18e-06 |
+| ('single best', 'data-driven (26 types)') | 1.81 | 1.48 | 2.21 | 0 | 0 | 1 | 2.53e-12 |
+| ('single best', 'best per problem') | 2.5 | 2.12 | 3.02 | 0 | 0 | 1 | 1.42e-21 |
+| ('nominal category', 'data-driven (3 types)') | 0.83 | 0.609 | 1.15 | 0.794 | 0.0103 | 0.196 | 0.401 |
+| ('nominal category', 'data-driven (26 types)') | 1.41 | 1.11 | 1.88 | 0 | 0.151 | 0.849 | 0.00423 |
+| ('nominal category', 'best per problem') | 1.95 | 1.55 | 2.64 | 0 | 0 | 1 | 5e-20 |
+| ('data-driven (3 types)', 'data-driven (26 types)') | 1.7 | 1.33 | 2.2 | 0 | 0.45 | 0.55 | 8.33e-06 |
+| ('data-driven (3 types)', 'best per problem') | 2.35 | 1.87 | 3.02 | 0 | 0 | 1 | 5e-20 |
+| ('data-driven (26 types)', 'best per problem') | 1.38 | 1.23 | 1.57 | 0 | 0.282 | 0.718 | 2.05e-17 |
+
+## 3. Are the data-driven types real structure? Permutation test (3 types, 500 random partitions of equal sizes, LOPO)
+
+Held-out gain of per-type picks over the single best: ×1.06 (log 0.059); random groupings: median ×1.00, 95th percentile ×1.03; permutation p = 0.012.
+
+## 4. Does the benchmark suite decide the winner? Original E3 problems (80) vs E3x additions (89)
+
+Spearman correlation of the two method rankings: 0.89 (bootstrap 95 % CI 0.81–0.95). × best = geometric-mean NRMSE over the per-cell best (capped at 10×); Mann-Whitney over problems, Holm.
+
+| method | rank_E3 | rank_E3x | x_best_E3 | x_best_E3x | p_holm | better on |
+|---|---|---|---|---|---|---|
+| hetgp | 1 | 3 | 1.64 | 2.22 | 0.00511 | E3 |
+| smt_kpls | 2 | 2 | 1.66 | 1.96 | 1 | — |
+| gp | 3 | 4 | 1.71 | 2.25 | 0.0249 | E3 |
+| gp_se | 4 | 6 | 1.86 | 2.38 | 0.119 | — |
+| local_gp | 5 | 9 | 1.97 | 2.6 | 0.24 | — |
+| as_gp | 6 | 7 | 1.98 | 2.53 | 1 | — |
+| ens_press | 7 | 5 | 2.13 | 2.36 | 1 | — |
+| treed_gp | 8 | 18 | 2.27 | 3.01 | 0.349 | — |
+| mlp_ens[opt=lbfgs] | 9 | 13 | 2.35 | 2.72 | 1 | — |
+| pce_lars | 10 | 1 | 2.45 | 1.71 | 0.000588 | E3x |
+| mlp_ens[opt=adam] | 11 | 10 | 2.46 | 2.66 | 1 | — |
+| dkl | 12 | 19 | 2.54 | 3.05 | 1 | — |
+| krr | 13 | 11 | 2.58 | 2.67 | 1 | — |
+| rbf_mq | 14 | 14 | 2.68 | 2.78 | 1 | — |
+| rbf_tps | 15 | 12 | 2.68 | 2.71 | 1 | — |
+| mc_dropout | 16 | 23 | 2.72 | 3.22 | 1 | — |
+| svr | 17 | 15 | 2.74 | 2.79 | 1 | — |
+| catboost | 18 | 17 | 2.74 | 2.98 | 1 | — |
+| ppr | 19 | 20 | 2.76 | 3.1 | 1 | — |
+| extratrees | 20 | 24 | 2.97 | 3.24 | 1 | — |
+| cs_cosine | 21 | 25 | 3.03 | 3.25 | 1 | — |
+| xgb | 22 | 26 | 3.07 | 3.25 | 1 | — |
+| lgbm | 23 | 22 | 3.07 | 3.2 | 1 | — |
+| mls | 24 | 16 | 3.09 | 2.94 | 1 | — |
+| ngboost | 25 | 27 | 3.12 | 3.3 | 1 | — |
+| ok_variogram | 26 | 21 | 3.17 | 3.19 | 1 | — |
+| rf | 27 | 28 | 3.22 | 3.43 | 1 | — |
+| mars | 28 | 30 | 3.3 | 3.55 | 1 | — |
+| gbt_committee | 29 | 29 | 3.33 | 3.46 | 1 | — |
+| rsm2 | 30 | 8 | 3.38 | 2.56 | 0.126 | — |
+| qrf | 31 | 31 | 3.47 | 3.66 | 1 | — |
+| poly_ridge | 32 | 32 | 3.69 | 3.71 | 1 | — |
+| cart | 33 | 36 | 3.9 | 3.99 | 1 | — |
+| knn | 34 | 33 | 3.97 | 3.79 | 1 | — |
+| lipschitz | 35 | 35 | 4.01 | 3.9 | 1 | — |
+| cs_fourier | 36 | 34 | 4.39 | 3.88 | 1 | — |
+| idw | 37 | 37 | 4.52 | 4.04 | 1 | — |
+| gmdh | 38 | 38 | 5.68 | 5.65 | 1 | — |
+
+
+---
+
+# n ≤ 500 (with smt_krg): 3915 cells, 169 problems, 39 methods
+
+## 1. Is there a universal ranking? Kendall's W across problems
+
+W = 1: every problem ranks the methods identically; W = 0: no agreement. Friedman p tests W = 0. Types = the 3 data-driven problem types (seeds 0-4 profiles).
+
+| group | problems | W | ci_lo | ci_hi | friedman_p | top_method |
+|---|---|---|---|---|---|---|
+| all problems | 169 | 0.362 | 0.328 | 0.406 | 0 | pce_lars |
+| type 1 | 62 | 0.398 | 0.352 | 0.476 | 5.77e-172 | catboost |
+| type 2 | 45 | 0.502 | 0.445 | 0.584 | 1.69e-155 | smt_krg |
+| type 3 | 62 | 0.681 | 0.639 | 0.734 | 0 | pce_lars |
+
+## 2. Selection policies (leave-one-problem-out picks on seeds 0-4; scored on held-out seeds 5-9)
+
+× oracle = geometric-mean NRMSE over the per-cell best on seeds 5-9.
+
+|  | geo × oracle (cell-weighted) | geo × oracle (per problem) | problems within 2× | worst problem decile × |
+|---|---|---|---|---|
+| single best | 2.71 | 2.96 | 0.497 | 15.5 |
+| nominal category | 2.05 | 2.3 | 0.71 | 7.42 |
+| data-driven (3 types) | 2.22 | 2.7 | 0.675 | 21.4 |
+| data-driven (26 types) | 1.48 | 1.47 | 0.87 | 2.5 |
+| best per problem | 1.2 | 1.21 | 0.947 | 1.44 |
+
+Pairwise (ratio = row / column, < 1 means the row policy is closer to the oracle; Wilcoxon over problems with Holm; problem-bootstrap 95 % CI; Bayesian signed-rank, ROPE ±10 %):
+
+|  | ratio | ci_lo | ci_hi | P_row_better | P_equiv | P_col_better | p_holm |
+|---|---|---|---|---|---|---|---|
+| ('single best', 'nominal category') | 1.29 | 0.972 | 1.56 | 0 | 0.144 | 0.856 | 1.77e-08 |
+| ('single best', 'data-driven (3 types)') | 1.1 | 0.902 | 1.31 | 0 | 0.0522 | 0.948 | 2.68e-06 |
+| ('single best', 'data-driven (26 types)') | 2.01 | 1.68 | 2.41 | 0 | 0 | 1 | 1.2e-15 |
+| ('single best', 'best per problem') | 2.46 | 2.05 | 3 | 0 | 0 | 1 | 6.51e-22 |
+| ('nominal category', 'data-driven (3 types)') | 0.852 | 0.659 | 1.15 | 0.0793 | 0.908 | 0.0127 | 0.415 |
+| ('nominal category', 'data-driven (26 types)') | 1.56 | 1.25 | 2.07 | 0 | 0.297 | 0.703 | 2.69e-05 |
+| ('nominal category', 'best per problem') | 1.91 | 1.53 | 2.58 | 0 | 0 | 1 | 2.47e-19 |
+| ('data-driven (3 types)', 'data-driven (26 types)') | 1.83 | 1.48 | 2.34 | 0 | 0.282 | 0.718 | 2.68e-06 |
+| ('data-driven (3 types)', 'best per problem') | 2.24 | 1.79 | 2.83 | 0 | 0 | 1 | 5.62e-20 |
+| ('data-driven (26 types)', 'best per problem') | 1.22 | 1.15 | 1.31 | 0 | 0.808 | 0.192 | 1.13e-15 |
+
+## 4. Does the benchmark suite decide the winner? Original E3 problems (80) vs E3x additions (89)
+
+Spearman correlation of the two method rankings: 0.92 (bootstrap 95 % CI 0.82–0.95). × best = geometric-mean NRMSE over the per-cell best (capped at 10×); Mann-Whitney over problems, Holm.
+
+| method | rank_E3 | rank_E3x | x_best_E3 | x_best_E3x | p_holm | better on |
+|---|---|---|---|---|---|---|
+| smt_krg | 1 | 2 | 1.47 | 2 | 0.00105 | E3 |
+| hetgp | 2 | 5 | 1.7 | 2.26 | 0.0314 | E3 |
+| smt_kpls | 3 | 3 | 1.73 | 2.03 | 1 | — |
+| gp | 4 | 4 | 1.73 | 2.25 | 0.0897 | — |
+| local_gp | 5 | 9 | 1.89 | 2.49 | 0.219 | — |
+| as_gp | 6 | 8 | 1.94 | 2.48 | 0.899 | — |
+| gp_se | 7 | 7 | 1.95 | 2.44 | 0.43 | — |
+| ens_press | 8 | 6 | 2.11 | 2.37 | 1 | — |
+| treed_gp | 9 | 18 | 2.24 | 2.97 | 0.468 | — |
+| pce_lars | 10 | 1 | 2.38 | 1.72 | 0.00156 | E3x |
+| mlp_ens[opt=adam] | 11 | 13 | 2.51 | 2.7 | 1 | — |
+| mlp_ens[opt=lbfgs] | 12 | 16 | 2.51 | 2.86 | 1 | — |
+| dkl | 13 | 19 | 2.52 | 3.03 | 1 | — |
+| krr | 14 | 11 | 2.56 | 2.67 | 1 | — |
+| rbf_mq | 15 | 14 | 2.63 | 2.71 | 1 | — |
+| rbf_tps | 16 | 12 | 2.65 | 2.67 | 1 | — |
+| mc_dropout | 17 | 25 | 2.67 | 3.2 | 1 | — |
+| svr | 18 | 15 | 2.69 | 2.76 | 1 | — |
+| ppr | 19 | 21 | 2.7 | 3.09 | 1 | — |
+| catboost | 20 | 20 | 2.76 | 3.06 | 1 | — |
+| extratrees | 21 | 24 | 2.89 | 3.18 | 1 | — |
+| cs_cosine | 22 | 23 | 2.92 | 3.17 | 1 | — |
+| mls | 23 | 17 | 3 | 2.87 | 1 | — |
+| xgb | 24 | 27 | 3.05 | 3.28 | 1 | — |
+| ok_variogram | 25 | 22 | 3.07 | 3.14 | 1 | — |
+| lgbm | 26 | 26 | 3.08 | 3.25 | 1 | — |
+| ngboost | 27 | 28 | 3.08 | 3.31 | 1 | — |
+| rf | 28 | 29 | 3.15 | 3.38 | 1 | — |
+| rsm2 | 29 | 10 | 3.26 | 2.55 | 0.266 | — |
+| mars | 30 | 32 | 3.3 | 3.59 | 1 | — |
+| gbt_committee | 31 | 30 | 3.32 | 3.49 | 1 | — |
+| qrf | 32 | 33 | 3.4 | 3.62 | 1 | — |
+| poly_ridge | 33 | 31 | 3.43 | 3.57 | 1 | — |
+| cart | 34 | 38 | 3.79 | 3.91 | 1 | — |
+| knn | 35 | 34 | 3.84 | 3.68 | 1 | — |
+| lipschitz | 36 | 35 | 3.85 | 3.75 | 1 | — |
+| idw | 37 | 37 | 4.31 | 3.88 | 1 | — |
+| cs_fourier | 38 | 36 | 4.33 | 3.84 | 1 | — |
+| gmdh | 39 | 39 | 5.66 | 5.92 | 1 | — |
