@@ -39,6 +39,7 @@ TRACKS = {
     "e6": ["E6_mf", "--shards", "5", "--max-waves", "10", "--start-after", "E13_gradient:"],
     "e8": ["E8_upscale", "--shards", "5", "--max-waves", "10", "--start-after", "E6_mf:"],
     "e5": ["E5_sampling", "--shards", "5", "--max-waves", "10", "--start-after", "E8_upscale:"],
+    "e14": ["E14_selfdesign", "--shards", "5", "--max-waves", "5", "--start-after", "E5_sampling:"],
     # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 

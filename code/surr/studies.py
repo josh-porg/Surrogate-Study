@@ -386,6 +386,37 @@ def task_rfea_al(cfg):
     return out
 
 
+# ── E14: self-designing surrogates (Smolyak, TT-cross) vs learners on a Sobol' design of the same size ──────────
+def task_e14(cfg):
+    """method ∈ surr.selfdesign (chooses its own ≤ budget points of the noisy function) or a learner name (fitted on
+    `budget` Sobol' points, the E3 design). Noise as E3 (additive, level × std f). Scored on the clean truth."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import noise as N, problems as P, samplers as S, selfdesign as SD
+    from surr.learners import REGISTRY, make
+    p = P.get(cfg["problem"]); d, seed, n = p.d, cfg["seed"], cfg["budget"]
+    T = S.sobol(4096, d, seed=10_000 + seed); yt = p.f_unit(T); scale = float(yt.std())
+    lvl = cfg.get("level", 0.0)
+    rng = np.random.default_rng(20_000 + seed)
+    noisy = lambda U: p.f_unit(U) + (lvl * scale * rng.normal(size=len(U)) if lvl else 0.0)
+    t0 = time.perf_counter()
+    if cfg["method"] in SD.REGISTRY:
+        m = SD.make(cfg["method"]).fit(noisy, d, n, seed=seed)
+        used = m.n
+        extra = dict(level_q=getattr(m, "q", None), tt_m=getattr(m, "m", None))
+    else:
+        L = REGISTRY[cfg["method"]]
+        if (L.max_n and n > L.max_n) or (cfg["method"] in ("gp", "rbf_tps") and n > 1000):
+            return dict(status="infeasible")
+        U = S.make("sobol", n, d, seed=seed)
+        y = N.apply("additive" if lvl else "none", lvl, p.f_unit(U), U, scale, seed=20_000 + seed)
+        m = make(cfg["method"], seed=seed).fit(U, y); used = n; extra = {}
+    t_fit = time.perf_counter() - t0
+    err = m.predict(T) - yt
+    return dict(status="ok", n_used=int(used), nrmse=float(np.sqrt(np.mean(err ** 2)) / scale), t_fit=t_fit,
+                **{k: v for k, v in extra.items() if v is not None})
+
+
 # ── E13: gradient-enhanced surrogates ─────────────────────────────────────────────────────────────────────────
 def _unit_grad(p, U):
     return p.grad(p.from_unit(U)) * (p.bounds[:, 1] - p.bounds[:, 0])

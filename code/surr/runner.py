@@ -159,6 +159,11 @@ def task_rfea(cfg):
     return t(cfg)
 
 
+def task_e14(cfg):
+    from surr.studies import task_e14 as t
+    return t(cfg)
+
+
 def task_rfea_al(cfg):
     from surr.studies import task_rfea_al as t
     return t(cfg)
@@ -180,7 +185,7 @@ def task_e5(cfg):
 
 
 KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
-         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e6": task_e6, "e8": task_e8, "e5": task_e5}
+         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e14": task_e14, "e6": task_e6, "e8": task_e8, "e5": task_e5}
 
 
 def _init_worker():
@@ -534,6 +539,31 @@ def exp_E11_al():
     return [dict(kind="rfea_al", exp="E11_al", scout=s, rule=r, seed=sd) for s, r in E11_AL_SCOUTS for sd in range(20)]
 
 
+E14_PROBLEMS = ["smooth_trig_d2", "additive_d2", "lowrank_product_d2", "rotated_ridge_d2", "axis_step_d2", "kink_floor_d2",
+                "branin", "goldpr", "camel6", "rastr", "smooth_trig_d5", "additive_d5", "lowrank_product_d5",
+                "rotated_ridge_d5", "axis_step_d5", "quadratic_d5", "rosen_d5", "ackley_d5", "borehole", "wingweight",
+                "piston", "smooth_trig_d10", "additive_d10", "lowrank_product_d10", "rotated_ridge_d10", "sumsqu_d10",
+                "ackley_d10", "otlcircuit"]
+
+
+def exp_E14_selfdesign():
+    """E14 (added 2026-10-26; the coverage matrix's last planned methods): self-designing surrogates (Smolyak sparse
+    grid, TT-cross) against gp, pce_lars, catboost and rbf_tps on a Sobol' design of the same size. 28 problems
+    (favoured: additive, low-rank product, smooth; hurt: rotated ridge, steps) × budget {50, 200, 1000} × noise
+    {0, 1 %} × 5 seeds (Smolyak's design is deterministic: seeds vary only its noise draws)."""
+    rows = []
+    for pn in E14_PROBLEMS:
+        for b in (50, 200, 1000):
+            for lvl in (0.0, 0.01):
+                for sd in range(5):
+                    for meth in ("smolyak", "tt_cross", "gp", "pce_lars", "catboost", "rbf_tps"):
+                        if meth == "smolyak" and lvl == 0.0 and sd > 0:
+                            continue                                     # identical runs
+                        rows.append(dict(kind="e14", exp="E14_selfdesign", problem=pn, method=meth, budget=b,
+                                         level=lvl, seed=sd))
+    return rows
+
+
 E13_PROBLEMS = ["ackley_d5", "rastr_d5", "levy_d5", "michal_d5", "schaffer2", "sumsqu_d5", "trid_d5", "rothyp_d10",
                 "quadratic_d5", "griewank_d5", "branin", "goldpr", "camel6", "rosen_d5", "stybtang", "zakharov_d5",
                 "dixonpr_d5", "smooth_trig_d5", "smooth_trig_d10", "rotated_ridge_d5", "kink_floor_d5", "borehole",
@@ -638,7 +668,7 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
                "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
-               "E11_al": exp_E11_al}
+               "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────

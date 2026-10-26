@@ -5,5 +5,6 @@ from . import classical, kernels, trees, nets, basis, meta, survey, rational, la
 
 # Declared, not yet implemented (each will move to a module above) -------------------------------------------
 planned("smolyak", year=1963, field="numerical analysis (USSR)", ref="smolyak1963quadrature",
-        note="design + interpolant; lives in upscale/ and samplers/")
-planned("tt_cross", year=2010, field="numerical linear algebra", ref="oseledets2010tt", note="chooses its own samples")
+        note="design + interpolant; implemented in surr/selfdesign.py (E14), not a scattered-data learner")
+planned("tt_cross", year=2010, field="numerical linear algebra", ref="oseledets2010tt",
+        note="chooses its own samples; implemented in surr/selfdesign.py (E14), not a scattered-data learner")

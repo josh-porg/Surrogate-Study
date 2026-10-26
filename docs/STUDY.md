@@ -400,6 +400,16 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   learning on the cache and the optimizer proxy (rank of the chosen design among held-out runs). Laptop order: R-AIR
   → E11 → E10 features → E4 mechanisms. The local queue now has a 70-min watchdog: a runner stalled at start under
   memory pressure for 21 h on 2026-10-25 (it checks --max-hours only when a task finishes).
+  Added the same day: the optimizer proxy for real data (Kendall τ on held-out runs, true percentile of the run the
+  surrogate would pick, top-10 % overlap) in every E11 record, and `E11_al` (180 local tasks): retrospective active
+  learning with the cache's training part as the pool, 9 scouts × 20 splits, 5 deliverables at 30 / 60 / 140 runs.
+- **D-13 · 2026-10-26 · E14 added: self-designing surrogates (the coverage matrix's last planned methods).**
+  Smolyak (combination technique, nested Clenshaw–Curtis, barycentric interpolation) and TT-cross (alternating
+  maxvol cross on a Chebyshev grid, rank and grid sized to the budget) in `code/surr/selfdesign.py`, tested in
+  `code/tests/test_selfdesign.py` (Smolyak exact on low-degree polynomials and convergent; TT-cross recovers a rank-3
+  function to 1e-15). They choose their own points, so `E14_selfdesign` (4 704 tasks) compares them with gp,
+  pce_lars, catboost and rbf_tps on a Sobol' design of the same budget {50, 200, 1000}. Smolyak uses only the
+  largest level that fits (200 → 61 points at d = 5); records keep the points used. Kaggle, after E5.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee
