@@ -6,3 +6,7 @@
 [queued] waiting for E12_rational (): 75365 tasks left
 [queued] waiting for E12_rational (): 75365 tasks left
 [queued] waiting for E12_rational (): 75365 tasks left
+[queued] waiting for E12_rational (): 75365 tasks left
+[queued] waiting for E12_rational (): 75365 tasks left
+[resume] 5-shard statuses: ['missing', 'missing', 'missing', 'missing', 'missing']
+[wave 1] E9_optim: 24700 tasks in shard 1/1, 2 done, 24698 to run on 10 workers

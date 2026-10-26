@@ -264,6 +264,61 @@ def _fstar():
     return _FSTAR
 
 
+# ── E11: real-data transfer, R-FEA (the thesis FEA cache; read in place, read-only, never leaves this machine) ──
+RFEA = ROOT.parent / "COMPASS" / "results" / "tmf_cache" / "tmf_bbd96c4b56.csv"
+_RFEA = {}
+
+
+def rfea_data():
+    """The 623 physical runs (converged, not floor-bound) of the thesis cache, as the thesis study uses them
+    (compass.surrogate.study, physical_only). Inputs: duct radius, log10 pressure, wall temperature, min-max scaled
+    over these runs. t_scalar is the free low-fidelity model."""
+    if not _RFEA:
+        import pandas as pd
+        d = pd.read_csv(RFEA)
+        d = d[d.fem_converged & ~d.floor_bound & (d.t_fem_raw_m > 0) & (d.t_scalar_m > 0) & (d.TMF_raw > 0)]
+        X = np.column_stack([d.R_duct_m, np.log10(d.p_pa), d.T_wall_K])
+        X = (X - X.min(0)) / (X.max(0) - X.min(0))
+        _RFEA.update(X=X, tfem=d.t_fem_raw_m.values, tsc=d.t_scalar_m.values)
+    return _RFEA["X"], _RFEA["tfem"], _RFEA["tsc"]
+
+
+def task_rfea(cfg):
+    """One learner on the real FEA data: random 80/20 split by seed (the test set depends only on the seed, so targets
+    and training sizes are paired), training set subsampled to n_train (or all). How the free scalar model is used:
+      direct  learn log t_fem from the 3 inputs
+      tmf     learn log TMF = log t_fem − log t_scalar, rebuild t_fem = TMF · t_scalar (the thesis' multiplicative
+              bridge with a free low fidelity)
+      aug     learn log t_fem from the 3 inputs + scaled log t_scalar (feature augmentation)
+    Scored on the sized wall: relative RMSE of t_fem (the thesis metric) and NRMSE of log t_fem."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr.learners import REGISTRY, make
+    X, tfem, tsc = rfea_data()
+    L = REGISTRY[cfg["learner"]]
+    rng = np.random.default_rng(cfg["seed"])
+    perm = rng.permutation(len(X)); cut = int(0.8 * len(X))
+    tr, te = perm[:cut], perm[cut:]
+    if cfg.get("n_train") and cfg["n_train"] < len(tr):
+        tr = np.random.default_rng(1000 + cfg["seed"]).choice(tr, cfg["n_train"], replace=False)
+    ls = np.log(tsc); lsc = (ls - ls.min()) / (ls.max() - ls.min())
+    use = cfg["use_lf"]
+    Xin = np.column_stack([X, lsc]) if use == "aug" else X
+    if L.max_d and Xin.shape[1] > L.max_d:
+        return dict(status="infeasible")
+    y = np.log(tfem) - (ls if use == "tmf" else 0.0)
+    t0 = time.perf_counter()
+    m = make(cfg["learner"], seed=cfg["seed"], **cfg.get("kw", {})).fit(Xin[tr], y[tr])
+    t_fit = time.perf_counter() - t0
+    lp = m.predict(Xin[te]) + (ls[te] if use == "tmf" else 0.0)       # predicted log t_fem
+    pred, true = np.exp(lp), tfem[te]
+    out = dict(status="ok", n_train=len(tr), t_fit=t_fit,
+               rel_rmse=float(np.sqrt(np.mean(((pred - true) / true) ** 2))),
+               nrmse_log=float(np.sqrt(np.mean((lp - np.log(true)) ** 2)) / np.log(true).std()))
+    out["rel_rmse_scalar_only"] = float(np.sqrt(np.mean(((tsc[te] - true) / true) ** 2)))   # the free model alone
+    return out
+
+
 # ── E13: gradient-enhanced surrogates ─────────────────────────────────────────────────────────────────────────
 def _unit_grad(p, U):
     return p.grad(p.from_unit(U)) * (p.bounds[:, 1] - p.bounds[:, 0])

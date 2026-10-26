@@ -45,7 +45,8 @@ approval.
 Stopping loses nothing. Kernels already on Kaggle finish by themselves, and their output is pulled on the next start.
 
 **Laptop job queue (2026-10-25).** The same task also starts `code/cluster/local_queue.py`, which runs the
-local-only studies one after another at below-normal priority: R-AIR bias arm → E10 features → E4 mechanisms
+local-only studies one after another at below-normal priority: R-AIR bias arm → E11 (thesis FEA, read-only) →
+E10 features → E4 mechanisms; a watchdog restarts a stalled runner step after 70 min (resumable)
 (log: `results/local_queue.log`; finished steps: `results/local_queue_done.txt`). The same kill switch stops it
 within 30 s, together with its worker processes. Every step resumes where it stopped.
 

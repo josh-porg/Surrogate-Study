@@ -30,7 +30,10 @@ STEPS = [
     # RAM free at start, so hourly restarts let it grow when the author frees memory (2.3 GB free on 2026-10-25 -> 1)
     ("E4_rair", [PY, "-u", "-m", "surr.runner", "E4_rair", "--workers", "8", "--timeout", "900", "--max-hours", "1"],
      ROOT / "code"),
-    ("E10_features", [PY, "-u", str(ROOT / "code" / "analysis" / "e10_selector.py"), "--features", "--workers", "8"], ROOT),
+    # E11 on the thesis FEA cache (read in place, read-only; real data, never leaves this machine)
+    ("E11_fea", [PY, "-u", "-m", "surr.runner", "E11_fea", "--workers", "8", "--timeout", "900", "--max-hours", "1"],
+     ROOT / "code"),
+    ("E10_features",[PY, "-u", str(ROOT / "code" / "analysis" / "e10_selector.py"), "--features", "--workers", "8"], ROOT),
     ("E4_mechanisms", [PY, "-u", "-m", "surr.runner", "E4_mechanisms", "--workers", "8", "--timeout", "900",
                        "--max-hours", "1"], ROOT / "code"),
 ]
@@ -77,16 +80,26 @@ def main():
                 psutil.Process(proc.pid).nice(psutil.BELOW_NORMAL_PRIORITY_CLASS if sys.platform == "win32" else 10)
             except Exception:
                 pass
+            t_start, watchdog = time.time(), False
             while proc.poll() is None:
                 if STOP.exists():
                     print(f"[stop] STOP_DRIVERS present - ending {name} (resumes on the next start)", flush=True)
                     _kill(proc); return
+                # watchdog: the runner checks --max-hours only when a task finishes, so a stalled start (2026-10-25:
+                # 21 h with 2.5 s of CPU under memory pressure) never ended; the queue enforces 70 min itself
+                if name.startswith(("E4", "E11")) and time.time() - t_start > 70 * 60:
+                    print(f"[{time.strftime('%Y-%m-%d %H:%M')}] {name}: watchdog - ending the runner after 70 min "
+                          "(resumable)", flush=True)
+                    _kill(proc); watchdog = True
+                    break
                 time.sleep(30)
+            if watchdog:
+                time.sleep(5); continue
             if proc.returncode != 0:
                 print(f"[{time.strftime('%Y-%m-%d %H:%M')}] {name}: exited {proc.returncode}; will retry on next start",
                       flush=True)
                 return
-            if not name.startswith("E4"):
+            if not name.startswith(("E4", "E11")):
                 break
             # runner steps: a clean exit is also the hourly stop or the disk guard; done only when nothing is left
             r = subprocess.run([PY, "-m", "surr.runner", name, "--dry"], cwd=ROOT / "code", capture_output=True, text=True)

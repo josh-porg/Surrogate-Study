@@ -293,6 +293,18 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   pce_lars goes 10th → 1st (p_Holm 6e-4); hetgp and gp do worse on E3x (p_Holm 0.005, 0.025). At n ≤ 500, smt_krg
   is 1st on E3 and 2nd on E3x. E2a-champion tests on all problems: the GP champion (now smt_krg) beats every other
   champion (ratio 0.37–0.61, p_Holm ≤ 2e-19). · `results/E3_selection_stats.md`, `results/E3_stats_report.md`
+- 2026-10-26 · **E12 complete (H9; 80 640 tasks, 69 049 ok fits, 252 cells)** · Non-ok: 11 520 by design
+  (univariate AAA on d > 1) + 71 timeouts/crashes (0.1 %). Best rational config vs best reference learner per cell
+  (share won / geometric-mean ratio): rational-structure problems at noise 0, 0.1 %, 1 %, 10 %: 88 % / ≈0
+  (machine precision), 81 % / 0.16, 83 % / 0.43, 67 % / 0.85; controls without rational structure: 52 % / 0.05
+  (clean only), then 38 % / 1.21, 19 % / 1.28, 5 % / 1.25. So rational surrogates win where the structure exists
+  and keep part of the margin up to 10 % noise; on other functions they help only on clean data. Workhorse:
+  least-squares rational `rat_ls` (most wins, 53 cells); Tikhonov-regularised `rat_ls[reg=tik]` is the most
+  noise-robust on rational problems (3.2–3.4× the per-cell best at 0.1–1 % noise vs gp 10.8 / 4.0). Univariate
+  AAA collapses with noise (18× → 164× the best), but the robust profiles recover most of it (continuum AAA 1.5×,
+  Floater–Hormann 3.2× at 10 %). The novel pairings track their parents: additive-AAA ≈ GAM, GP with an AAA mean
+  ≈ GP (2.5× vs 2.1× at 10 %), ridge-AAA worse. H9 supported for the established methods, not for the pairings.
+  · `results/E12_report.md`
 ### Deviations from the pre-registered design (STUDY_PLAN principle 5)
 - **D-1 · 2026-10-09 · E3 · `smt_krg` capped at n ≤ 500** (the other O(n³) learners keep n ≤ 1000, CAP1000). On
   Kaggle every `smt_krg` fit at n = 1000 hit the 900 s per-task cap (131/131, SMT track wave 1), so the 2 700
@@ -380,6 +392,14 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   5 720): 13 scouts × 22 problems × noise {0, 1 %} × 10 seeds (plan: 30), batch of d points per scout refit
   (kriging-believer fill), deliverables fitted at 10d / 20d / 50d. Estimated ~300 CPU-h in total (~1.5 waves).
   Analyses ready: `code/analysis/e9_analysis.py`, `e12_analysis.py`.
+- **D-12 · 2026-10-26 · E11 on R-FEA coded (`E11_fea`, 11 070 local fits).** The thesis cache's 623 physical runs
+  (converged, not floor-bound; read in place from COMPASS, read-only). Every E3 learner config × use of the free
+  scalar model {direct: log t_fem; tmf: log TMF, rebuilt as TMF·t_scalar (the thesis bridge); aug: t_scalar as a
+  4th input} × n_train {60, 140, all ≈ 498} × 30 paired 80/20 splits; metric = relative RMSE of t_fem (thesis
+  metric). Replaces the plan's nested CV (the learners tune internally). Not yet coded for E11: retrospective active
+  learning on the cache and the optimizer proxy (rank of the chosen design among held-out runs). Laptop order: R-AIR
+  → E11 → E10 features → E4 mechanisms. The local queue now has a 70-min watchdog: a runner stalled at start under
+  memory pressure for 21 h on 2026-10-25 (it checks --max-hours only when a task finishes).
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee
