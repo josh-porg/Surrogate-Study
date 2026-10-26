@@ -4,3 +4,11 @@ local queue already running
 [2026-10-25 10:58] E4_rair: start
   E4_rair: E4_rair: 7380 tasks in shard 1/1, 39 done, 7341 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
 [2026-10-25 12:01] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 159 done, 7221 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-25 12:44] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 179 done, 7201 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-25 12:46] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 219 done, 7161 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-25 12:55] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 239 done, 7141 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-25 13:49] E4_rair: start

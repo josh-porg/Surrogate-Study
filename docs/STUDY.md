@@ -368,6 +368,18 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   `E4_rair` (7 380 fits; biased / inverse-frequency weighted bootstrap / engine-balanced, paired splits) run on the
   laptop (R-AIR is real data and never leaves it). E10 prototype: `code/analysis/e10_selector.py`. Kaggle order:
   E12 → E9 → tuning, one track at a time. Laptop order (`code/cluster/local_queue.py`): R-AIR → E10 features → E4.
+- **D-11 · 2026-10-25 · E13, E6, E8, E5 coded and queued (Kaggle, after the tuning check, serially).**
+  E13 (`E13_gradient`, 23 760 tasks): new learners `gek`, `hermite_rbf`, `ge_pce`, `sobolev_mlp`
+  (`code/surr/learners/gradient.py`; analytic gradients and derivative covariances checked against finite
+  differences in `code/tests/test_gradient_learners.py`) vs the same methods without derivatives + gp + pce_lars at
+  cost_mult ∈ {1, 2, d + 1}; 24 problems, 5 seeds (plan: 10; cost). Gradient noise is independent of value noise at
+  the same relative level. E6 (`E6_mf`, 14 580): 8 MF methods + HF-only at matched cost on all 27 P-MF pairs, nested
+  Sobol' designs; the plan's r × κ × φ grid is represented by the constructed linear (r 0.95) / weak (0.5) /
+  nonlinear / shifted pairs rather than a continuous sweep. E8 (`E8_upscale`, 7 560 tasks; one intermediate fit +
+  5 upscalers + 6 optimizers each) on d = 2 and 5 (tensor grids are infeasible above; recorded). E5 (`E5_sampling`,
+  5 720): 13 scouts × 22 problems × noise {0, 1 %} × 10 seeds (plan: 30), batch of d points per scout refit
+  (kriging-believer fill), deliverables fitted at 10d / 20d / 50d. Estimated ~300 CPU-h in total (~1.5 waves).
+  Analyses ready: `code/analysis/e9_analysis.py`, `e12_analysis.py`.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee

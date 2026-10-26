@@ -97,6 +97,9 @@ learners:
   smolyak:         {favored_by: [additive, smooth_trig], hurt_by: [axis_step, rotated_ridge], why: "sparse grid; mixed smoothness"}
   tt_cross:        {favored_by: [lowrank_product, additive, d_high], hurt_by: [rotated_ridge, axis_step], why: "low tensor rank in the given axes"}
   sobolev_mlp:     {favored_by: [smooth_trig, n_small], hurt_by: [axis_step], why: "fits values and gradients"}
+  gek:             {favored_by: [smooth_trig, gp_draw, n_small], hurt_by: [axis_step, d_high], why: "GP on values and derivatives; n(d+1) system"}
+  hermite_rbf:     {favored_by: [smooth_trig, n_small], hurt_by: [axis_step, multiscale], why: "interpolates values and derivatives; one shape parameter"}
+  ge_pce:          {favored_by: [quadratic, additive, n_small], hurt_by: [axis_step, kink_floor], why: "derivative rows multiply the data for a polynomial basis"}
 samplers:          # initial designs
   random:          {favored_by: [fourier_sparse], hurt_by: [plateau_bump, n_tiny], why: "i.i.d.; needed for compressed-sensing guarantees, poor fill"}
   lhs:             {favored_by: [additive], hurt_by: [plateau_bump], why: "stratified margins"}

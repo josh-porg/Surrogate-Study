@@ -49,7 +49,8 @@ local-only studies one after another at below-normal priority: R-AIR bias arm �
 (log: `results/local_queue.log`; finished steps: `results/local_queue_done.txt`). The same kill switch stops it
 within 30 s, together with its worker processes. Every step resumes where it stopped.
 
-**Kaggle order:** E12 → E9 → tuning check, one track at a time (`TRACKS` in `ensure_tracks.py`).
+**Kaggle order:** E12 → E9 → tuning check → E13 → E6 → E8 → E5, one track at a time (`TRACKS` in
+`ensure_tracks.py`). Each waiting driver only checks every 30 min whether its predecessor has finished.
 
 ## Status e-mails
 

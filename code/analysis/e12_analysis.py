@@ -53,12 +53,12 @@ def main():
     key = ["problem", "n", "level"]
     g = df.groupby(key + ["cfg"])
     cm = np.log(g.nrmse.mean()[g.size() >= 3]).unstack("cfg")
-    R = cm.sub(cm.min(axis=1), axis=0)
+    R = cm.sub(cm.min(axis=1), axis=0).clip(upper=np.log(1000))      # capped at 1000x: spurious poles reach 1e14x
     grp = df.drop_duplicates("problem").set_index("problem").group
     lv = cm.index.get_level_values("level")
     gi = grp.reindex(cm.index.get_level_values("problem")).values
     out = [f"# E12 — rational surrogates ({n_rec} task records, {len(df)} ok fits, {len(cm)} cells)\n",
-           "× best = geometric-mean NRMSE over the per-cell best config (1 = best everywhere).\n"]
+           "× best = geometric-mean NRMSE over the per-cell best config (1 = best everywhere); each cell capped at 1000×.\n"]
     cols = {}
     for G in ("rational structure", "control"):
         for L in sorted(set(lv)):

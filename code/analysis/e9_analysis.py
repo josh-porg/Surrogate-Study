@@ -78,8 +78,6 @@ def main():
            f"Regret normalised by std(f); success = regret < {OK:g}. Instances with an unconfirmed f* are excluded.\n"]
 
     # 1. per surrogate
-    g = full.groupby(["surr", "opt"]).regret
-    per = pd.DataFrame({"success": g.apply(lambda s: (s < OK).mean()), "geo_regret": np.exp(np.log(g.apply(list).apply(np.array).apply(np.mean) * 0 + 1)) })
     s1 = full.assign(succ=full.regret < OK, lr=np.log(full.regret)).groupby(["surr", "opt"]).agg(
         success=("succ", "mean"), lr=("lr", "mean")).reset_index()
     best = s1.sort_values("success", ascending=False).groupby("surr").head(1).set_index("surr")

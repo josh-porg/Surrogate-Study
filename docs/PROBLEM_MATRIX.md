@@ -76,7 +76,10 @@ and contradictions are findings.
 | `ft_als` | implemented | lowrank_product, additive, d_high | rotated_ridge, axis_step | functional tensor train; ranks bound the interactions |
 | `smolyak` | planned | additive, smooth_trig | axis_step, rotated_ridge | sparse grid; mixed smoothness |
 | `tt_cross` | planned | lowrank_product, additive, d_high | rotated_ridge, axis_step | low tensor rank in the given axes |
-| `sobolev_mlp` | planned | smooth_trig, n_small | axis_step | fits values and gradients |
+| `sobolev_mlp` | implemented | smooth_trig, n_small | axis_step | fits values and gradients |
+| `gek` | implemented | smooth_trig, gp_draw, n_small | axis_step, d_high | GP on values and derivatives; n(d+1) system |
+| `hermite_rbf` | implemented | smooth_trig, n_small | axis_step, multiscale | interpolates values and derivatives; one shape parameter |
+| `ge_pce` | implemented | quadratic, additive, n_small | axis_step, kink_floor | derivative rows multiply the data for a polynomial basis |
 
 ### Samplers
 
@@ -163,15 +166,15 @@ and contradictions are findings.
 
 | Problem / condition | Kind | Expected winners | Expected losers |
 |---|---|---|---|
-| `additive` | probe family | additive_aaa, cs_cosine, ft_als, gam, kan, lhs, mars, pce_lars, ppr, pspline_direct, rbf_tps, smolyak, smolyak_grid, symreg, tt_cross | as_gp, poly_ridge, rat_ls, ridge_aaa |
-| `axis_step` | probe family | cart, differential_evolution, extratrees, gbt_committee, lola_voronoi, qbc_committee, qrf, rf, u_function | aaa_rational, as_gp, bnn_laplace, cs_cosine, cs_fourier, ft_als, gmdh, gp, gp_ratmean, gp_se, ipopt_multistart, krr, lbfgsb, mls, none, paaa, pce_lars, ppr, pspline_direct, pspline_te, rat_ls, rbf_mq, rbf_tps, rsm2, smolyak, smolyak_grid, smoothing_spline, smt_kpls, smt_krg, sobolev_mlp, sparse_gp, symreg, tensor_spline, tr_model_mgmt, trust_constr, tt_cross, warped_gp |
+| `additive` | probe family | additive_aaa, cs_cosine, ft_als, gam, ge_pce, kan, lhs, mars, pce_lars, ppr, pspline_direct, rbf_tps, smolyak, smolyak_grid, symreg, tt_cross | as_gp, poly_ridge, rat_ls, ridge_aaa |
+| `axis_step` | probe family | cart, differential_evolution, extratrees, gbt_committee, lola_voronoi, qbc_committee, qrf, rf, u_function | aaa_rational, as_gp, bnn_laplace, cs_cosine, cs_fourier, ft_als, ge_pce, gek, gmdh, gp, gp_ratmean, gp_se, hermite_rbf, ipopt_multistart, krr, lbfgsb, mls, none, paaa, pce_lars, ppr, pspline_direct, pspline_te, rat_ls, rbf_mq, rbf_tps, rsm2, smolyak, smolyak_grid, smoothing_spline, smt_kpls, smt_krg, sobolev_mlp, sparse_gp, symreg, tensor_spline, tr_model_mgmt, trust_constr, tt_cross, warped_gp |
 | `borehole` | **blind** | — | — |
 | `bowl_shaped` | VLSE category | basin_hopping, bb_gd, ego, ei, ipopt_multistart, lbfgsb, lcb, rsm2, sgd_momentum, slsqp, trust_constr | — |
 | `composite` | **blind** | — | — |
-| `d_high` | condition | as_gp, dycors, ft_als, smolyak_grid, smt_kpls, spsa, tt_cross, tt_grid, turbo | aaa_rational, cobyla, cvt, delaunay_linear, direct, ego, halton, idw, kan, kiefer_wolfowitz, knn, lipschitz, lola_voronoi, mba, mls, moe, natural_neighbor, nelder_mead, paaa, pspline_direct, pspline_te, robbins_monro, tabpfn, tensor_grid, tensor_spline, thb |
+| `d_high` | condition | as_gp, dycors, ft_als, smolyak_grid, smt_kpls, spsa, tt_cross, tt_grid, turbo | aaa_rational, cobyla, cvt, delaunay_linear, direct, ego, gek, halton, idw, kan, kiefer_wolfowitz, knn, lipschitz, lola_voronoi, mba, mls, moe, natural_neighbor, nelder_mead, paaa, pspline_direct, pspline_te, robbins_monro, tabpfn, tensor_grid, tensor_spline, thb |
 | `fourier_sparse` | probe family | cs_fourier, random, seq_maximin | cs_cosine, ei, mars, maximin_lhs, mc_dropout, mlp_ens, rsm2 |
-| `gp_draw` | probe family | cvt, gp, krr, max_variance, maximin_lhs, ok_variogram, rbf_mq, smt_krg | rf |
-| `kink_floor` | probe family | cobyla, delaunay_linear, ens_press, kiefer_wolfowitz, mars, natural_neighbor, nelder_mead, pspline_te | gp_se, pce_lars |
+| `gp_draw` | probe family | cvt, gek, gp, krr, max_variance, maximin_lhs, ok_variogram, rbf_mq, smt_krg | rf |
+| `kink_floor` | probe family | cobyla, delaunay_linear, ens_press, kiefer_wolfowitz, mars, natural_neighbor, nelder_mead, pspline_te | ge_pce, gp_se, pce_lars |
 | `lowrank_product` | probe family | ft_als, lowrank_cp, tensor_grid, tt_cross, tt_grid | additive_aaa, gam, poly_ridge, ppr, ridge_aaa |
 | `many_local_minima` | VLSE category | basin_hopping, differential_evolution, direct, dycors, pso | adam, bb_gd, ego, ei, ipopt_multistart, lbfgsb, rsm2, slsqp, trust_constr |
 | `mf_linear` | condition | ar1_cokriging, bridge_add, bridge_mult, hierarchical_kriging, tr_model_mgmt | feature_aug, hf_only |
@@ -179,9 +182,9 @@ and contradictions are findings.
 | `mf_shifted` | condition | bridge_add, space_mapping | bridge_mult |
 | `mf_weak` | condition | hf_only | ar1_cokriging, bridge_add, nargp |
 | `monotone` | probe family | gam, idw, lipschitz | cs_fourier |
-| `multiscale` | probe family | eigf, lola_voronoi, mba, mepe, thb | random, seq_maximin |
+| `multiscale` | probe family | eigf, lola_voronoi, mba, mepe, thb | hermite_rbf, random, seq_maximin |
 | `n_large` | condition | bnn_laplace, bnn_vi, delaunay_linear, dkl, knn, lgbm, local_gp, mc_dropout, mf_nn, mlp_ens, sindy_ae_static, sobol, sparse_gp | gp, rbf_mq, rbf_tps, smt_krg, tabpfn |
-| `n_small` | condition | kernel_flow_gp, natural_neighbor, sobolev_mlp, tabpfn | dkl |
+| `n_small` | condition | ge_pce, gek, hermite_rbf, kernel_flow_gp, natural_neighbor, sobolev_mlp, tabpfn | dkl |
 | `n_tiny` | condition | idw, lipschitz, rsm2 | bnn_laplace, bnn_vi, deep_gp, dkl, ens_press, extratrees, gmdh, gp_ratmean, hetgp, kan, kernel_flow_gp, lgbm, local_gp, mc_dropout, mf_nn, mlp_ens, nargp, ngboost, qrf, random, rf, sindy_ae_static, sobol, sparse_gp, svr, treed_gp, turbo, xgb |
 | `near_pole` | problem | paaa | — |
 | `nn_draw` | probe family | kan, mc_dropout, mlp_ens | cart |
@@ -198,7 +201,7 @@ and contradictions are findings.
 | `plate_shaped` | VLSE category | nelder_mead, slsqp | — |
 | `plateau_bump` | probe family | eigf, thb | basin_hopping, cmaes, dycors, imse_alc, lcb, lhs, max_variance, random, seq_maximin, sgd_momentum, spsa |
 | `pole_knee` | probe family | aaa_rational, additive_aaa, gp_ratmean, paaa, rat_ls, warped_gp | pce_lars |
-| `quadratic` | probe family | gmdh, gp_se, mls, pce_lars, rsm2, symreg | idw |
+| `quadratic` | probe family | ge_pce, gmdh, gp_se, mls, pce_lars, rsm2, symreg | idw |
 | `ratio2d` | problem | paaa, rat_ls | — |
 | `real_air` | **blind** | — | — |
 | `real_fea` | **blind** | — | — |
@@ -206,7 +209,7 @@ and contradictions are findings.
 | `resonance2d` | problem | rat_ls | — |
 | `ridge_pole_d5` | problem | gp_ratmean, ridge_aaa | — |
 | `rotated_ridge` | probe family | as_gp, cmaes, dkl, gp_ratmean, mlp_ens, poly_ridge, ppr, ridge_aaa, sindy_ae_static, smt_kpls | additive_aaa, cart, catboost, extratrees, ft_als, gam, idw, lowrank_cp, ok_variogram, rf, smolyak, smolyak_grid, treed_gp, tt_cross, tt_grid, xgb |
-| `smooth_trig` | probe family | adam, bb_gd, bnn_laplace, cs_cosine, cvt, ego, gmdh, gp, gp_se, halton, imse_alc, ipopt_multistart, krr, max_variance, maximin_lhs, mba, mls, none, ok_variogram, pce_lars, pspline_te, rbf_mq, rbf_tps, seq_maximin, smolyak, smt_krg, sobol, sobolev_mlp, sparse_gp, svr, tensor_spline, tr_model_mgmt, trust_constr | bart, bnn_vi, cart, catboost, cs_fourier, deep_gp, delaunay_linear, feature_aug, gam, gbt_committee, knn, lgbm, lipschitz, local_gp, moe, ngboost, qbc_committee, qrf, rf, u_function, xgb |
+| `smooth_trig` | probe family | adam, bb_gd, bnn_laplace, cs_cosine, cvt, ego, gek, gmdh, gp, gp_se, halton, hermite_rbf, imse_alc, ipopt_multistart, krr, max_variance, maximin_lhs, mba, mls, none, ok_variogram, pce_lars, pspline_te, rbf_mq, rbf_tps, seq_maximin, smolyak, smt_krg, sobol, sobolev_mlp, sparse_gp, svr, tensor_spline, tr_model_mgmt, trust_constr | bart, bnn_vi, cart, catboost, cs_fourier, deep_gp, delaunay_linear, feature_aug, gam, gbt_committee, knn, lgbm, lipschitz, local_gp, moe, ngboost, qbc_committee, qrf, rf, u_function, xgb |
 | `steep_ridges_and_drops` | VLSE category | direct | — |
 | `thesis_anisotropic` | problem | gp | — |
 | `thesis_clamp_floor` | problem | mars, treed_gp | — |

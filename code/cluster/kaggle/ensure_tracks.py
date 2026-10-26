@@ -34,6 +34,11 @@ TRACKS = {
     # One track at a time on Kaggle (the author's call, 2026-10-25): splitting the 5 sessions adds no capacity.
     "e9": ["E9_optim", "--shards", "5", "--max-waves", "10", "--start-after", "E12_rational:"],
     "tuning": ["E3s_tuning", "--shards", "5", "--max-waves", "10", "--start-after", "E9_optim:"],
+    # coded 2026-10-25, still one at a time: gradient-enhanced (E13) -> multi-fidelity (E6) -> upscaling (E8) -> sampling (E5)
+    "e13": ["E13_gradient", "--shards", "5", "--max-waves", "10", "--start-after", "E3s_tuning:"],
+    "e6": ["E6_mf", "--shards", "5", "--max-waves", "10", "--start-after", "E13_gradient:"],
+    "e8": ["E8_upscale", "--shards", "5", "--max-waves", "10", "--start-after", "E6_mf:"],
+    "e5": ["E5_sampling", "--shards", "5", "--max-waves", "10", "--start-after", "E8_upscale:"],
     # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 
