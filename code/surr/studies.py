@@ -316,6 +316,73 @@ def task_rfea(cfg):
                rel_rmse=float(np.sqrt(np.mean(((pred - true) / true) ** 2))),
                nrmse_log=float(np.sqrt(np.mean((lp - np.log(true)) ** 2)) / np.log(true).std()))
     out["rel_rmse_scalar_only"] = float(np.sqrt(np.mean(((tsc[te] - true) / true) ** 2)))   # the free model alone
+    out.update(_rank_proxy(lp, np.log(true)))
+    return out
+
+
+def _rank_proxy(pred, true):
+    """Optimizer proxy on real data, where there is no analytic optimum: how well the surrogate orders the held-out
+    runs (Kendall τ), and where the run it would pick (its predicted minimum) truly ranks among them (percentile,
+    0 = the true best), plus the overlap of its predicted best 10 % with the true best 10 %."""
+    from scipy.stats import kendalltau
+    k = max(1, len(true) // 10)
+    pick = int(np.argmin(pred))
+    return dict(tau=float(kendalltau(pred, true)[0]),
+                pick_pctile=float((true < true[pick]).mean()),
+                top10_overlap=float(len(set(np.argsort(pred)[:k]) & set(np.argsort(true)[:k])) / k))
+
+
+E11_AL_SCOUTS = [("gp", "max_variance"), ("gp", "imse_alc"), ("gp", "eigf"), ("gp", "mepe"), ("qrf", "max_variance"),
+                 ("gbt_committee", "max_variance"), ("none", "lola_voronoi"), ("none", "seq_maximin"), ("none", "random")]
+E11_AL_DELIVERABLES = [("gp", {}), ("catboost", {}), ("rf", {}), ("pce_lars", {}), ("mlp_ens", {"opt": "lbfgs"})]
+
+
+def task_rfea_al(cfg):
+    """Retrospective active learning on R-FEA (STUDY_PLAN E11: E5 grid on the cache). The 80 % training part of the
+    seed's split is the candidate pool (each FEA run already computed, ~1 CPU-h each in the thesis); start from
+    2d + 2 = 8 random pool runs, add batches of d = 3 chosen by the scout from the remaining pool, up to 140 runs.
+    At 30, 60 and 140 runs every deliverable is fitted (target log t_fem from the 3 inputs) and scored on the
+    untouched 20 % (relative RMSE of t_fem and the optimizer proxy). The random scout is the control."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import acquisitions as A
+    from surr.learners import make
+    X, tfem, _ = rfea_data()
+    d = X.shape[1]
+    rng = np.random.default_rng(cfg["seed"])
+    perm = rng.permutation(len(X)); cut = int(0.8 * len(X))
+    pool, te = perm[:cut], perm[cut:]
+    y = np.log(tfem)
+    r2 = np.random.default_rng(2000 + cfg["seed"])
+    chosen = list(r2.choice(len(pool), 2 * d + 2, replace=False))
+    scout, rule = cfg["scout"], cfg["rule"]
+    cps, nmax = (30, 60, 140), 140
+    t0 = time.perf_counter()
+    while len(chosen) < nmax:
+        U, yy = X[pool[chosen]], y[pool[chosen]]
+        model = None if scout == "none" else make(scout, seed=cfg["seed"]).fit(U, yy)
+        batch = []
+        for _ in range(min(d, nmax - len(chosen))):
+            if batch:
+                Ub = np.vstack([U, X[pool[batch]]])
+                yb = np.r_[yy, model.predict(X[pool[batch]]) if model is not None else np.full(len(batch), yy.mean())]
+            else:
+                Ub, yb = U, yy
+            batch.append(A.acquire(rule, model, Ub, yb, X[pool], r2, exclude=np.array(chosen + batch, int)))
+        chosen += batch
+    out = dict(status="ok", t_design=time.perf_counter() - t0, fits={})
+    for c in cps:
+        idx = pool[chosen[:c]]
+        for L, kw in E11_AL_DELIVERABLES:
+            tag = L + ("[lbfgs]" if kw else "")
+            try:
+                m = make(L, seed=cfg["seed"], **kw).fit(X[idx], y[idx])
+                lp = m.predict(X[te])
+                rec = dict(rel_rmse=float(np.sqrt(np.mean(((np.exp(lp) - tfem[te]) / tfem[te]) ** 2))))
+                rec.update(_rank_proxy(lp, y[te]))
+                out["fits"][f"{tag}@{c}"] = rec
+            except Exception as ex:
+                out["fits"][f"{tag}@{c}"] = f"{type(ex).__name__}: {ex}"[:100]
     return out
 
 

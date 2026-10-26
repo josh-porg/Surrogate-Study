@@ -42,6 +42,37 @@ def load():
     return pd.DataFrame(rows)
 
 
+def active_learning():
+    """E11_al: relative RMSE and optimizer proxy per scout × deliverable × design size, against the random scout."""
+    rows, seen = [], set()
+    for f in sorted((ROOT / "results" / "raw" / "E11_al").glob("*.jsonl")):
+        for line in f.read_text(encoding="utf8").splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if r["key"] in seen or r.get("status") != "ok":
+                continue
+            seen.add(r["key"])
+            for k, v in r["fits"].items():
+                if isinstance(v, dict):
+                    deliv, n = k.split("@")
+                    rows.append(dict(scout=f"{r['cfg']['scout']}:{r['cfg']['rule']}", deliv=deliv, n=int(n),
+                                     seed=r["cfg"]["seed"], **v))
+    if not rows:
+        return ["## Retrospective active learning: no records yet\n"]
+    D = pd.DataFrame(rows)
+    rnd = D[D.scout == "none:random"].set_index(["deliv", "n", "seed"]).rel_rmse
+    D["vs_random"] = np.log(D.rel_rmse.values / rnd.reindex(pd.MultiIndex.from_frame(D[["deliv", "n", "seed"]])).values)
+    T = np.exp(D.groupby(["scout", "n"]).vs_random.mean()).unstack("n")
+    out = ["## Retrospective active learning on the FEA cache (relative RMSE vs the random scout, geometric mean over "
+           "deliverables and splits; < 1 = better than random)\n", md(T, ".2f"), ""]
+    P = D.groupby(["scout", "deliv"]).pick_pctile.mean().unstack("deliv")
+    out += ["Optimizer proxy at all design sizes: mean true percentile of the run the surrogate would pick (0 = best):\n",
+            md(P, ".3f"), ""]
+    return out
+
+
 def main():
     df = load()
     if df.empty:
@@ -82,6 +113,7 @@ def main():
                 f"Spearman ρ = {rho:.2f} over {len(j)} learners.\n"]
     except Exception as ex:                                              # E3 raw data may be absent on other machines
         out += [f"(transfer section skipped: {ex})\n"]
+    out += active_learning()
     (ROOT / "results" / "E11_report.md").write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))
 

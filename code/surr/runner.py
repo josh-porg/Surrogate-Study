@@ -159,6 +159,11 @@ def task_rfea(cfg):
     return t(cfg)
 
 
+def task_rfea_al(cfg):
+    from surr.studies import task_rfea_al as t
+    return t(cfg)
+
+
 def task_e6(cfg):
     from surr.studies import task_e6 as t
     return t(cfg)
@@ -175,7 +180,7 @@ def task_e5(cfg):
 
 
 KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
-         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "e6": task_e6, "e8": task_e8, "e5": task_e5}
+         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e6": task_e6, "e8": task_e8, "e5": task_e5}
 
 
 def _init_worker():
@@ -522,6 +527,13 @@ def exp_E11_fea():
             for L, kw in configs for u in ("direct", "tmf", "aug") for nt in (60, 140, 0) for sd in range(30)]
 
 
+def exp_E11_al():
+    """E11 retrospective active learning on R-FEA (local only): 9 scouts (GP variance / IMSE / EIGF / MEPE, QRF and
+    GBT-committee variance, LOLA-Voronoi, maximin, random control) × 20 splits; deliverables at 30 / 60 / 140 runs."""
+    from surr.studies import E11_AL_SCOUTS
+    return [dict(kind="rfea_al", exp="E11_al", scout=s, rule=r, seed=sd) for s, r in E11_AL_SCOUTS for sd in range(20)]
+
+
 E13_PROBLEMS = ["ackley_d5", "rastr_d5", "levy_d5", "michal_d5", "schaffer2", "sumsqu_d5", "trid_d5", "rothyp_d10",
                 "quadratic_d5", "griewank_d5", "branin", "goldpr", "camel6", "rosen_d5", "stybtang", "zakharov_d5",
                 "dixonpr_d5", "smooth_trig_d5", "smooth_trig_d10", "rotated_ridge_d5", "kink_floor_d5", "borehole",
@@ -625,7 +637,8 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
                "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
                "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
-               "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea}
+               "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
+               "E11_al": exp_E11_al}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -33,7 +33,9 @@ STEPS = [
     # E11 on the thesis FEA cache (read in place, read-only; real data, never leaves this machine)
     ("E11_fea", [PY, "-u", "-m", "surr.runner", "E11_fea", "--workers", "8", "--timeout", "900", "--max-hours", "1"],
      ROOT / "code"),
-    ("E10_features",[PY, "-u", str(ROOT / "code" / "analysis" / "e10_selector.py"), "--features", "--workers", "8"], ROOT),
+    ("E11_al", [PY, "-u", "-m", "surr.runner", "E11_al", "--workers", "8", "--timeout", "3600", "--max-hours", "1"],
+     ROOT / "code"),
+    ("E10_features", [PY, "-u", str(ROOT / "code" / "analysis" / "e10_selector.py"), "--features", "--workers", "8"], ROOT),
     ("E4_mechanisms", [PY, "-u", "-m", "surr.runner", "E4_mechanisms", "--workers", "8", "--timeout", "900",
                        "--max-hours", "1"], ROOT / "code"),
 ]
