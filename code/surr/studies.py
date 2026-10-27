@@ -386,6 +386,47 @@ def task_rfea_al(cfg):
     return out
 
 
+# ── E9b: surrogate-managed loops on the true function ─────────────────────────────────────────────────────────
+E9B_MULTS = (10, 20, 50)
+
+
+def task_e9b(cfg):
+    """One managed loop (surr.managed) or a baseline on a shifted instance, with a budget of 50·d TRUE evaluations
+    (observed with additive noise `level` × std f). After 10d / 20d / 50d evaluations the incumbent is the point
+    with the best OBSERVED value so far (what a practitioner would report); it is scored on the true function
+    (normalised regret, as E9). Baselines: random = uniform points; sobol = Sobol' points (no model)."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from surr import managed as MG, problems as P, samplers as S
+    from surr.problems.base import shifted
+    p = shifted(P.get(cfg["problem"]), cfg["shift_seed"]); d, seed = p.d, cfg["seed"]
+    ref = _fstar().get(p.name, {})
+    if "fstar" not in ref:
+        return dict(status="error", error=f"no f* for {p.name}")
+    T = S.sobol(4096, d, seed=10_000 + seed); scale = float(p.f_unit(T).std())
+    lvl = cfg.get("level", 0.0)
+    rng = np.random.default_rng(30_000 + seed)
+    f = lambda U: p.f_unit(U) + (lvl * scale * rng.normal(size=len(U)) if lvl else 0.0)
+    budget = E9B_MULTS[-1] * d
+    t0 = time.perf_counter()
+    m = cfg["method"]
+    if m == "random":
+        X = np.random.default_rng(seed).random((budget, d)); y = f(X)
+    elif m == "sobol":
+        X = S.sobol(budget, d, seed=seed); y = f(X)
+    else:
+        r = MG.run(m, f, d, budget, seed=seed); X, y = r["X"], r["y"]
+    wall = time.perf_counter() - t0
+    reg, dist = [], []
+    for k in E9B_MULTS:
+        kk = min(k * d, len(y))
+        x = X[np.argmin(y[:kk])]
+        reg.append(float((p.f_unit(x[None])[0] - ref["fstar"]) / scale))
+        dist.append(float(np.linalg.norm(x - np.asarray(ref["xstar"])) / np.sqrt(d)))
+    return dict(status="ok", checkpoints=list(E9B_MULTS), regret=reg, dist=dist, n_evals=int(len(y)), t_loop=wall,
+                fstar_confirmed=bool(ref.get("confirmed")))
+
+
 # ── E14: self-designing surrogates (Smolyak, TT-cross) vs learners on a Sobol' design of the same size ──────────
 def task_e14(cfg):
     """method ∈ surr.selfdesign (chooses its own ≤ budget points of the noisy function) or a learner name (fitted on
@@ -484,7 +525,7 @@ def task_e6(cfg):
 
 # ── E8: upscaling ─────────────────────────────────────────────────────────────────────────────────────────────
 E8_UPSCALERS = [("none", {}), ("tensor_spline", {"m": 12}), ("tensor_spline", {"m": 24}), ("smoothing_spline", {"m": 24}),
-                ("pspline_direct", {})]
+                ("pspline_direct", {}), ("smolyak_grid", {}), ("tt_grid", {})]
 E8_OPTS = (("lbfgsb", "fd"), ("lbfgsb", "model"), ("slsqp", "model"), ("nelder_mead", "none"),
            ("differential_evolution", "none"), ("cmaes", "none"))
 
@@ -512,6 +553,7 @@ def task_e8(cfg):
     ups = {}
     for name, kw in E8_UPSCALERS:
         tag = name + (f"[m={kw['m']}]" if "m" in kw else "")
+        kw = {**kw, **({"seed": seed} if name == "tt_grid" else {})}
         t0 = time.perf_counter()
         try:
             s = UP.build(name, m, d, U=U, y=y, **kw)

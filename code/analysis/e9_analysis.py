@@ -68,6 +68,59 @@ def load():
     return pd.DataFrame(rows), pd.DataFrame(tasks)
 
 
+def load_e9b():
+    rows, seen = [], set()
+    for f in sorted((ROOT / "results" / "raw" / "E9b_managed").glob("*.jsonl")):
+        for line in f.read_text(encoding="utf8").splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if r["key"] in seen or r.get("status") != "ok" or not r.get("fstar_confirmed", True):
+                seen.add(r["key"]); continue
+            seen.add(r["key"]); c = r["cfg"]
+            for k, reg in zip(r["checkpoints"], r["regret"]):
+                rows.append(dict(problem=c["problem"], inst=c["shift_seed"], noise=c["level"], method=c["method"],
+                                 true_evals=k, regret=max(reg, FLOOR)))
+    return pd.DataFrame(rows)
+
+
+def crossover(df, T):
+    """H7 at matched TRUE-evaluation cost (×d): managed loops (E9b), fit once then optimize the surrogate (E9: cost =
+    design size n; the best fixed optimizer per surrogate, scored at 500d surrogate evaluations), optimizers run on
+    the true function (E9 truth rows at 10d/20d/50d), and the model-free baselines."""
+    B = load_e9b()
+    if B.empty:
+        return ["## 7. H7 cost crossover: no E9b records yet\n"]
+    rows = []
+    for (m, k), g in B.groupby(["method", "true_evals"]):
+        rows.append(dict(approach=f"managed: {m}" if m not in ("random", "sobol") else f"baseline: {m}", cost=k,
+                         success=(g.regret < OK).mean(), geo_regret=np.exp(np.log(g.regret).mean())))
+    tr = df[(df.surr == "truth") & df.cp.isin([10, 20, 50])]
+    if len(tr):
+        best = tr.assign(lr=np.log(tr.regret)).groupby("opt").lr.mean().idxmin()
+        for k, g in tr[tr.opt == best].groupby("cp"):
+            rows.append(dict(approach=f"optimizer on f: {best}", cost=k, success=(g.regret < OK).mean(),
+                             geo_regret=np.exp(np.log(g.regret).mean())))
+    full = df[(df.cp == df.cp.max()) & (df.surr != "truth")]
+    if len(full):
+        d_of = full.groupby("problem").n.min() / 10                       # E9 designs are n = 10d and 50d
+        full = full.assign(cost=(full.n / full.problem.map(d_of)).round().astype(int))
+        fo = full.assign(lr=np.log(full.regret)).groupby(["surr", "opt", "cost"]).lr.mean().reset_index()
+        for (s, k), g in fo.groupby(["surr", "cost"]):
+            opt = g.sort_values("lr").opt.iloc[0]
+            sel = full[(full.surr == s) & (full.opt == opt) & (full.cost == k)]
+            rows.append(dict(approach=f"fit once: {s} + {opt}", cost=k, success=(sel.regret < OK).mean(),
+                             geo_regret=np.exp(np.log(sel.regret).mean())))
+    R = pd.DataFrame(rows).pivot_table(index="approach", columns="cost", values="success")
+    G = pd.DataFrame(rows).pivot_table(index="approach", columns="cost", values="geo_regret")
+    return ["## 7. H7: success rate at matched true-evaluation cost (columns: true evaluations ÷ d)\n",
+            "Fit-once rows use the best fixed optimizer per surrogate (chosen on all problems: optimistic).\n",
+            md(R.sort_values(R.columns[-1], ascending=False).head(25), ".2f"), "",
+            "Geometric-mean regret:\n", md(G.loc[R.sort_values(R.columns[-1], ascending=False).head(25).index], ".3g"),
+            ""]
+
+
 def main():
     df, T = load()
     if df.empty:
@@ -132,6 +185,7 @@ def main():
     wins = pr.groupby(level="problem").idxmin().apply(lambda t: f"{t[1]} + {t[2]}")
     out += [f"## 6. Best surrogate + optimizer per problem ({wins.nunique()} distinct pairs over {len(wins)} problems)\n",
             md(wins.to_frame("best pair (geo-mean regret)"), ""), ""]
+    out += crossover(df, T)
     (ROOT / "results" / "E9_report.md").write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))
 

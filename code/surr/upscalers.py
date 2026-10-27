@@ -8,7 +8,9 @@ with predict(U) and grad(U).
                     a low-pass filter over a rough intermediate model (e.g. trees)
   pspline_direct    P-spline / GAM fitted to the *scattered training data* directly (skips the intermediate);
                     tensor-product terms for d <= 3, additive terms above                Eilers & Marx 1996; Wood 2003
-Planned: mba, thb, smolyak_grid, tt_grid (see coverage.yaml).
+  smolyak_grid      Smolyak sparse grid of model predictions (feasible in high d)       Smolyak 1963
+  tt_grid           tensor-train cross of model predictions on a Chebyshev grid        Oseledets & Tyrtyshnikov 2010
+Planned: mba, thb (see coverage.yaml).
 """
 from __future__ import annotations
 
@@ -86,6 +88,34 @@ def pspline_direct(model, d, U=None, y=None, n_splines=10, **kw):
             return gam.predict(np.clip(np.atleast_2d(V), 0, 1))
         grad = _Grid.grad
     return _G()
+
+
+class _SelfDesigned:
+    """Wraps a fitted surr.selfdesign interpolant built on the intermediate model's predictions."""
+
+    def __init__(self, sd):
+        self.sd = sd
+
+    def predict(self, U):
+        return self.sd.predict(np.clip(np.atleast_2d(U), 0, 1))
+
+    grad = _Grid.grad
+
+
+@_reg
+def smolyak_grid(model, d, max_points=20_000, **kw):
+    """Smolyak sparse grid (Clenshaw–Curtis, combination technique) of the intermediate model's predictions: the
+    upscaling grid that stays feasible in high d (mixed smoothness)."""
+    from .selfdesign import make
+    return _SelfDesigned(make("smolyak").fit(model.predict, d, max_points))
+
+
+@_reg
+def tt_grid(model, d, max_points=20_000, seed=0, **kw):
+    """Tensor-train cross approximation of the intermediate model on a Chebyshev grid (compressed full grid; exact
+    when the model is low-rank in the given axes)."""
+    from .selfdesign import make
+    return _SelfDesigned(make("tt_cross").fit(model.predict, d, max_points, seed=seed))
 
 
 def build(name, model, d, **kw):

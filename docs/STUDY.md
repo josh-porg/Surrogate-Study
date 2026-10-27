@@ -410,6 +410,18 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   function to 1e-15). They choose their own points, so `E14_selfdesign` (4 704 tasks) compares them with gp,
   pce_lars, catboost and rbf_tps on a Sobol' design of the same budget {50, 200, 1000}. Smolyak uses only the
   largest level that fits (200 → 61 points at d = 5); records keep the points used. Kaggle, after E5.
+- **D-14 · 2026-10-26 · the coverage matrix's remaining planned methods.** (a) Upscalers `smolyak_grid` and
+  `tt_grid` (the self-designing interpolants applied to the intermediate model, ≤ 20 000 model evaluations): the
+  first upscalers feasible above d = 5, so E8 gains 4 problems at d = 10 (now 31 problems, 8 680 tasks). (b) E9b
+  (`E9b_managed`, 4 560 tasks, `code/surr/managed.py`, tests `code/tests/test_managed.py`): EGO, TuRBO-1, DYCORS and
+  trust-region model management query the TRUE function, budget 50·d, plus random and Sobol' baselines, on the E9
+  problems × 10 instances × noise {0, 1 %}; the incumbent is the best OBSERVED point. GP hyper-parameters are
+  re-optimised every 10 evaluations (cost control; the acquisition rules are unchanged). The E9 report's new section
+  7 compares managed loops, fit-once-then-optimize and optimizers on f at matched true-evaluation cost (H7).
+  (c) `mf_nn` (Meng & Karniadakis 2020) joins E6 (now 16 200 tasks); its L2 weight on the nonlinear map is chosen by
+  5-fold CV on the HF points (a fixed 1e-2 forced a linear map and underfit the training data, 29 % NRMSE).
+  Still planned, not coded: upscalers MBA and THB (multilevel / truncated hierarchical B-splines).
+  Kaggle order: E9 → tuning → E13 → E6 → E8 → E5 → E14 → E9b.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee

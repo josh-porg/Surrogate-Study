@@ -10,6 +10,8 @@
                         (sklearn lacks active-dims product kernels; documented)      approximation)
   feature_aug           any learner on (x, f̂_L(x)) — default XGBoost                 (rarely benchmarked; see SOURCES §5)
   space_mapping         f_H(x) ≈ s·f̂_L(Ax + b) + c, then GP on the residual          Bandler et al. 1994
+  mf_nn                 composite MF network: linear + L2-penalised nonlinear map of  Meng & Karniadakis 2020
+                        (x, NN_L(x))
 """
 from __future__ import annotations
 
@@ -180,6 +182,82 @@ class SpaceMapping(MFMethod):
 
     def predict(self, U):
         return self._mapped(U) + self.corr.predict(U)
+
+
+@_reg
+class MFNN(MFMethod):
+    """Composite multi-fidelity network (Meng & Karniadakis 2020, J. Comput. Phys. 401): a low-fidelity network
+    NN_L(x) on the LF data, then f_H(x) = F_lin(x, NN_L(x)) + F_nl(x, NN_L(x)) with F_lin linear and F_nl a small
+    tanh network penalised by L2 (so the correlation is linear unless the data demand otherwise). Both stages are
+    full-batch Adam with cosine decay; an ensemble of 3 seeds is averaged."""
+    name = "mf_nn"
+
+    def fit(self, UL, yL, UH, yH):
+        import torch
+        self._ym, self._ys = yH.mean(), yH.std() or 1.0
+        self._lm, self._ls = yL.mean(), yL.std() or 1.0
+        d = UH.shape[1]
+        T = lambda a: torch.tensor(np.asarray(a), dtype=torch.float64)
+        XL, ZL, XH, ZH = T(UL), T((yL - self._lm) / self._ls), T(UH), T((yH - self._ym) / self._ys)
+        self.models = []
+        for k in range(3):
+            torch.manual_seed(self.seed * 10 + k)
+            low = torch.nn.Sequential(torch.nn.Linear(d, 64), torch.nn.Tanh(), torch.nn.Linear(64, 64), torch.nn.Tanh(),
+                                      torch.nn.Linear(64, 1)).double()
+            self._train(low, lambda: ((low(XL).squeeze(-1) - ZL) ** 2).mean(), 3000)
+            with torch.no_grad():
+                fl = low(XH)
+            A = torch.cat([XH, fl], 1)
+            if k == 0:                                                   # λ by 5-fold CV on the HF data (once)
+                self.lam = self._cv_lambda(A, ZH, d)
+            lin, nl = self._hf_stage(A, ZH, d, self.lam, 3000)
+            self.models.append((low.eval(), lin.eval(), nl.eval()))
+        return self
+
+    def _hf_stage(self, A, Z, d, lam, epochs):
+        import torch
+        lin = torch.nn.Linear(d + 1, 1).double()
+        nl = torch.nn.Sequential(torch.nn.Linear(d + 1, 16), torch.nn.Tanh(), torch.nn.Linear(16, 1)).double()
+        self._train(None, lambda: ((lin(A) + nl(A)).squeeze(-1) - Z).pow(2).mean()
+                    + lam * sum((p ** 2).sum() for p in nl.parameters()), epochs,
+                    params=list(lin.parameters()) + list(nl.parameters()))
+        return lin, nl
+
+    def _cv_lambda(self, A, Z, d):
+        """The L2 weight on the nonlinear part decides how far the map departs from linear; Meng & Karniadakis tune
+        it. Chosen from {1e-6, 1e-4, 1e-2} by 5-fold CV on the high-fidelity points (shorter training)."""
+        import torch
+        from sklearn.model_selection import KFold
+        n = len(Z)
+        best = (np.inf, 1e-4)
+        for lam in (1e-6, 1e-4, 1e-2):
+            err = 0.0
+            for tr, te in KFold(min(5, n), shuffle=True, random_state=self.seed).split(np.arange(n)):
+                tr, te = torch.tensor(tr), torch.tensor(te)
+                lin, nl = self._hf_stage(A[tr], Z[tr], d, lam, 1000)
+                with torch.no_grad():
+                    err += float(((lin(A[te]) + nl(A[te])).squeeze(-1) - Z[te]).pow(2).sum())
+            if err < best[0]:
+                best = (err, lam)
+        return best[1]
+
+    @staticmethod
+    def _train(net, loss_fn, epochs, params=None):
+        import torch
+        opt = torch.optim.Adam(params if params is not None else net.parameters(), lr=3e-3)
+        sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs)
+        for _ in range(epochs):
+            opt.zero_grad(); loss = loss_fn(); loss.backward(); opt.step(); sched.step()
+
+    def predict(self, U):
+        import torch
+        X = torch.tensor(np.asarray(U), dtype=torch.float64)
+        outs = []
+        with torch.no_grad():
+            for low, lin, nl in self.models:
+                A = torch.cat([X, low(X)], 1)
+                outs.append((lin(A) + nl(A)).squeeze(-1).numpy())
+        return np.mean(outs, 0) * self._ys + self._ym
 
 
 def make_mf(name, **kw):

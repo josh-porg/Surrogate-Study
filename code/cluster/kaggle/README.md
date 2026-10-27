@@ -50,7 +50,7 @@ E10 features → E4 mechanisms; a watchdog restarts a stalled runner step after 
 (log: `results/local_queue.log`; finished steps: `results/local_queue_done.txt`). The same kill switch stops it
 within 30 s, together with its worker processes. Every step resumes where it stopped.
 
-**Kaggle order:** E12 (done) → E9 → tuning check → E13 → E6 → E8 → E5 → E14, one track at a time (`TRACKS` in
+**Kaggle order:** E12 (done) → E9 → tuning check → E13 → E6 → E8 → E5 → E14 → E9b, one track at a time (`TRACKS` in
 `ensure_tracks.py`). Each waiting driver only checks every 30 min whether its predecessor has finished.
 
 ## Status e-mails

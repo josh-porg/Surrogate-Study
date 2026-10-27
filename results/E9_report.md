@@ -42,3 +42,5 @@ Best optimizer on the surrogate beats the best training point in nan% of tasks; 
 
 | problem | best pair (geo-mean regret) |
 |---|---|
+
+## 7. H7 cost crossover: no E9b records yet

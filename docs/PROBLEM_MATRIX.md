@@ -119,7 +119,7 @@ and contradictions are findings.
 | `ar1_cokriging` | implemented | mf_linear | mf_nonlinear, mf_weak | Kennedy-O'Hagan linear autoregression |
 | `hierarchical_kriging` | implemented | mf_linear | mf_nonlinear | LF predictor as trend |
 | `nargp` | implemented | mf_nonlinear | mf_weak, n_tiny | GP over (x, f_L(x)) |
-| `mf_nn` | planned | mf_nonlinear, n_large | n_tiny | composite linear + nonlinear networks |
+| `mf_nn` | implemented | mf_nonlinear, n_large | n_tiny | composite linear + nonlinear networks |
 | `feature_aug` | implemented | mf_nonlinear | mf_linear, smooth_trig | trees split on the LF prediction |
 | `space_mapping` | implemented | mf_shifted | mf_nonlinear | input alignment |
 
@@ -133,8 +133,8 @@ and contradictions are findings.
 | `pspline_direct` | implemented | additive, noise_additive | d_high, axis_step | skips the intermediate model |
 | `mba` | planned | smooth_trig, multiscale | d_high | multilevel lattices |
 | `thb` | planned | multiscale, plateau_bump | d_high | local refinement |
-| `smolyak_grid` | planned | additive, d_high | axis_step, rotated_ridge | mixed smoothness |
-| `tt_grid` | planned | lowrank_product, d_high | rotated_ridge | compressed grid, rank in given axes |
+| `smolyak_grid` | implemented | additive, d_high | axis_step, rotated_ridge | mixed smoothness |
+| `tt_grid` | implemented | lowrank_product, d_high | rotated_ridge | compressed grid, rank in given axes |
 
 ### Optimizers
 

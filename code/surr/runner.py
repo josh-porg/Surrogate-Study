@@ -159,6 +159,11 @@ def task_rfea(cfg):
     return t(cfg)
 
 
+def task_e9b(cfg):
+    from surr.studies import task_e9b as t
+    return t(cfg)
+
+
 def task_e14(cfg):
     from surr.studies import task_e14 as t
     return t(cfg)
@@ -185,7 +190,7 @@ def task_e5(cfg):
 
 
 KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
-         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e14": task_e14, "e6": task_e6, "e8": task_e8, "e5": task_e5}
+         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e14": task_e14, "e9b": task_e9b, "e6": task_e6, "e8": task_e8, "e5": task_e5}
 
 
 def _init_worker():
@@ -539,6 +544,21 @@ def exp_E11_al():
     return [dict(kind="rfea_al", exp="E11_al", scout=s, rule=r, seed=sd) for s, r in E11_AL_SCOUTS for sd in range(20)]
 
 
+def exp_E9b_managed():
+    """E9b (H7, the cost-crossover arm): surrogate-managed loops that query the true function (EGO, TuRBO, DYCORS,
+    trust-region model management) and model-free baselines (random, Sobol') on the E9 problems × shifted instances
+    0-9 × noise {0, 1 %}, budget 50·d true evaluations, incumbent scored at 10d / 20d / 50d. Compared in analysis
+    with E9's fit-once-then-optimize rows (n = 10d, 50d) and the optimizers on the true function."""
+    rows = []
+    for pn in E9_PROBLEMS:
+        for s in range(10):
+            for lvl in (0.0, 0.01):
+                for m in ("ego", "turbo", "dycors", "tr_model_mgmt", "random", "sobol"):
+                    rows.append(dict(kind="e9b", exp="E9b_managed", problem=pn, shift_seed=s, method=m, level=lvl,
+                                     seed=s))
+    return rows
+
+
 E14_PROBLEMS = ["smooth_trig_d2", "additive_d2", "lowrank_product_d2", "rotated_ridge_d2", "axis_step_d2", "kink_floor_d2",
                 "branin", "goldpr", "camel6", "rastr", "smooth_trig_d5", "additive_d5", "lowrank_product_d5",
                 "rotated_ridge_d5", "axis_step_d5", "quadratic_d5", "rosen_d5", "ackley_d5", "borehole", "wingweight",
@@ -594,7 +614,7 @@ def exp_E13_gradient():
 
 
 E6_METHODS = ["hf_only", "bridge_mult", "bridge_add", "ar1_cokriging", "hierarchical_kriging", "nargp", "feature_aug",
-              "space_mapping"]
+              "space_mapping", "mf_nn"]
 
 
 def exp_E6_mf():
@@ -618,12 +638,15 @@ E8_LEARNERS = [("gp", {}), ("catboost", {}), ("xgb", {}), ("rf", {}), ("mlp_ens"
 E8_PROBLEMS = ["rastr", "schaffer2", "booth", "branin", "goldpr", "camel6", "stybtang", "gp_draw_d2",
                "thesis_collapse_knee", "ackley_d5", "levy_d5", "michal_d5", "axis_step_d5", "plateau_bump_d5",
                "tree_draw_d5", "regime_d5", "composite_d5", "sumsqu_d5", "trid_d5", "quadratic_d5", "rosen_d5",
-               "zakharov_d5", "smooth_trig_d5", "rotated_ridge_d5", "kink_floor_d5", "pole_knee_d5", "monotone_d5"]
+               "zakharov_d5", "smooth_trig_d5", "rotated_ridge_d5", "kink_floor_d5", "pole_knee_d5", "monotone_d5",
+               # d = 10 (2026-10-26): only the sparse-grid and TT upscalers are feasible here; the others are recorded
+               "smooth_trig_d10", "additive_d10", "lowrank_product_d10", "ackley_d10"]
 
 
 def exp_E8_upscale():
     """E8 (RQ4, H5): intermediate learner × every upscaler (none; tensor cubic grid m = 12 / 24; separable smoothing
-    spline m = 24; P-spline direct) on 27 problems at d = 2 and 5 (grids are infeasible above; recorded) × n ∈ {20d,
+    spline m = 24; P-spline direct; Smolyak sparse grid; TT-cross grid, both ≤ 20 000 model evaluations) on 27
+    problems at d = 2 and 5 plus 4 at d = 10 (full grids infeasible there; recorded) × n ∈ {20d,
     100d} × noise {0, 1 %} × shifted instances 0-9. One task = one fitted intermediate + all upscalers + six
     optimizers on each (the key question: does smoothing turn GBT into a good optimizer-facing surrogate?)."""
     from surr.problems import get
@@ -668,7 +691,8 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
                "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
-               "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign}
+               "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
+               "E9b_managed": exp_E9b_managed}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
