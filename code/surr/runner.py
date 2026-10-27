@@ -653,10 +653,11 @@ def exp_E8_upscale():
     rows = []
     for pn in E8_PROBLEMS:
         d = get(pn).d
-        for mult in (20, 100):
+        # d = 10 tasks cost ~45 min each (laptop, 2026-10-26): bounded to n = 20d and 5 instances (280 tasks)
+        for mult in ((20,) if d >= 10 else (20, 100)):
             for noise, lvl in (("none", 0.0), ("additive", 0.01)):
                 for L, kw in E8_LEARNERS:
-                    for s in range(10):
+                    for s in range(5 if d >= 10 else 10):
                         rows.append(dict(kind="e8", exp="E8_upscale", problem=pn, shift_seed=s, learner=L, kw=kw,
                                          n=mult * d, noise=noise, level=lvl, seed=s))
     return rows

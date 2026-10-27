@@ -412,7 +412,8 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   largest level that fits (200 → 61 points at d = 5); records keep the points used. Kaggle, after E5.
 - **D-14 · 2026-10-26 · the coverage matrix's remaining planned methods.** (a) Upscalers `smolyak_grid` and
   `tt_grid` (the self-designing interpolants applied to the intermediate model, ≤ 20 000 model evaluations): the
-  first upscalers feasible above d = 5, so E8 gains 4 problems at d = 10 (now 31 problems, 8 680 tasks). (b) E9b
+  first upscalers feasible above d = 5, so E8 gains 4 problems at d = 10 (n = 20d, 5 instances: one d = 10 task
+  took 45 min on the laptop; 7 840 tasks in all, 2 h per-task cap). (b) E9b
   (`E9b_managed`, 4 560 tasks, `code/surr/managed.py`, tests `code/tests/test_managed.py`): EGO, TuRBO-1, DYCORS and
   trust-region model management query the TRUE function, budget 50·d, plus random and Sobol' baselines, on the E9
   problems × 10 instances × noise {0, 1 %}; the incumbent is the best OBSERVED point. GP hyper-parameters are
