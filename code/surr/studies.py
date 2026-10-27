@@ -241,7 +241,12 @@ def task_e9(cfg):
                           checkpoints=cps)
             except Exception as ex:
                 runs[f"{name}|{gsrc}"] = dict(error=f"{type(ex).__name__}: {ex}"[:200]); continue
-            X = np.array([r["trace"][c] for c in cps])
+            if any(r["trace"][c] is None for c in cps):
+                # the surrogate never returned a finite value (e.g. a diverged network predicting NaN): every
+                # comparison fails and there is no incumbent. Recorded per run; it used to crash the whole task.
+                runs[f"{name}|{gsrc}"] = dict(error="no incumbent: surrogate values not finite", nfev=int(r["nfev"]))
+                continue
+            X = np.array([r["trace"][c] for c in cps], dtype=float)
             ft = p.f_unit(X)
             runs[f"{name}|{gsrc}"] = dict(
                 nfev=int(r["nfev"]), wall=time.perf_counter() - t0,

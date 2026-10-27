@@ -108,4 +108,5 @@ def main():
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")         # reports use Greek letters; the Windows console is cp1252
     main()

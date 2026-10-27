@@ -200,6 +200,7 @@ def evaluate():
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")         # reports use Greek letters; the Windows console is cp1252
     if "--features" in sys.argv:
         w = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 8
         build(w)
