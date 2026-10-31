@@ -50,3 +50,123 @@ local queue already running
 [2026-10-27 07:34] E4_rair: start
   E4_rair: E4_rair: 7380 tasks in shard 1/1, 557 done, 6823 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
 [2026-10-27 07:42] E4_rair: start
+[2026-10-27 08:59] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 08:59] E4_rair: start
+[2026-10-27 10:45] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 10:45] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 638 done, 6742 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 11:47] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 725 done, 6655 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 12:55] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 827 done, 6553 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 13:56] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 882 done, 6498 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 14:57] E4_rair: start
+[2026-10-27 16:17] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 16:17] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1039 done, 6341 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 17:17] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1222 done, 6158 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-27 18:21] E4_rair: start
+[2026-10-27 19:31] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 19:31] E4_rair: start
+[2026-10-27 21:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 21:28] E4_rair: start
+[2026-10-27 23:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-27 23:28] E4_rair: start
+[2026-10-28 01:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 01:28] E4_rair: start
+[2026-10-28 02:53] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 02:53] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1523 done, 5857 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 03:54] E4_rair: start
+[2026-10-28 05:09] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 05:09] E4_rair: start
+[2026-10-28 06:47] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 06:47] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1815 done, 5565 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 07:47] E4_rair: start
+[2026-10-28 09:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 09:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1866 done, 5514 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 10:29] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1870 done, 5510 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 11:29] E4_rair: start
+[2026-10-28 13:22] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 13:22] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1877 done, 5503 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 15:24] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1881 done, 5499 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 16:24] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1882 done, 5498 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 17:29] E4_rair: start
+[2026-10-28 19:23] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 19:23] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1889 done, 5491 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 20:23] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1890 done, 5490 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 21:29] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1894 done, 5486 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-28 22:29] E4_rair: start
+[2026-10-28 23:40] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-28 23:40] E4_rair: start
+[2026-10-29 01:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 01:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1974 done, 5406 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 02:29] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 1979 done, 5401 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 03:33] E4_rair: start
+[2026-10-29 05:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 05:28] E4_rair: start
+[2026-10-29 07:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 07:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2019 done, 5361 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 08:35] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2142 done, 5238 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 09:44] E4_rair: start
+[2026-10-29 11:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 11:28] E4_rair: start
+[2026-10-29 13:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 13:28] E4_rair: start
+[2026-10-29 15:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 15:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2155 done, 5225 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 16:29] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2159 done, 5221 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-29 17:29] E4_rair: start
+[2026-10-29 19:20] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 19:20] E4_rair: start
+[2026-10-29 20:44] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 21:28] E4_rair: start
+[2026-10-29 23:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-29 23:28] E4_rair: start
+[2026-10-30 01:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 01:28] E4_rair: start
+[2026-10-30 03:07] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 03:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2487 done, 4893 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 04:29] E4_rair: start
+[2026-10-30 05:39] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 05:39] E4_rair: start
+[2026-10-30 07:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 07:28] E4_rair: start
+[2026-10-30 09:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 09:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2498 done, 4882 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 10:29] E4_rair: start
+[2026-10-30 11:39] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 11:39] E4_rair: start
+[2026-10-30 13:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 13:28] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2506 done, 4874 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 14:29] E4_rair: start
+[2026-10-30 15:39] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 15:39] E4_rair: start
+[2026-10-30 17:21] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 17:21] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2514 done, 4866 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 18:22] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2518 done, 4862 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 19:22] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2598 done, 4782 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 20:23] E4_rair: start

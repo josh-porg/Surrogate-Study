@@ -544,6 +544,26 @@ def exp_E11_al():
     return [dict(kind="rfea_al", exp="E11_al", scout=s, rule=r, seed=sd) for s, r in E11_AL_SCOUTS for sd in range(20)]
 
 
+def exp_E9_ipopt():
+    """IPOPT for the E9 tasks that ran without it (casadi was missing from the offline Kaggle wheels in waves 1-2;
+    added 2026-10-30). One task per E9 task whose stored IPOPT runs are errors: same surrogate fit (same seeds), only
+    ipopt_multistart with both gradient sources. Defined from the E9 records, so run it after E9 finishes."""
+    want = set()
+    for f in sorted((RAW / "E9_optim").glob("*.jsonl")):
+        for line in f.read_text(encoding="utf8").splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if r.get("status") == "ok" and "error" in r.get("runs", {}).get("ipopt_multistart|fd", {}):
+                want.add(r["key"])
+    rows = []
+    for c in exp_E9_optim():
+        if key_of(c) in want:
+            rows.append({**c, "exp": "E9_ipopt", "only_opts": ["ipopt_multistart"]})
+    return rows
+
+
 def exp_E9b_managed():
     """E9b (H7, the cost-crossover arm): surrogate-managed loops that query the true function (EGO, TuRBO, DYCORS,
     trust-region model management) and model-free baselines (random, Sobol') on the E9 problems × shifted instances
@@ -693,7 +713,7 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
                "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
-               "E9b_managed": exp_E9b_managed}
+               "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -233,7 +233,7 @@ def task_e9(cfg):
     cps = tuple(k * d for k in E9_MULTS)
     memo = {}
     runs = {}
-    for name in sorted(O.REGISTRY):
+    for name in sorted(cfg.get("only_opts") or O.REGISTRY):            # only_opts: the E9_ipopt follow-up arm
         for gsrc in (("fd", "model") if name in GRAD_OPTS else ("none",)):
             t0 = time.perf_counter()
             try:

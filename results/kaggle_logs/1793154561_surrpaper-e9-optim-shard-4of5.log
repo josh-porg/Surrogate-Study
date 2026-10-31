@@ -1,0 +1,32 @@
+[{"stream_name":"stdout","time":5.851035404,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":12.643934461,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":13.704070942,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":13.704127654,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":13.704134156,"data":"\n"}
+,{"stream_name":"stdout","time":30.184987128,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":32.47833236,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":34.937786648,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":36.928314595,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":38.964915776,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":41.340139512,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stdout","time":242.179606417,"data":"casadi==3.8.1 FAILED onnect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/casadi/\n"}
+,{"stream_name":"stdout","time":242.179692988,"data":"ERROR: Could not find a version that satisfies the requirement casadi==3.8.1 (from versions: none)\n"}
+,{"stream_name":"stdout","time":242.179703224,"data":"ERROR: No matching distribution found for casadi==3.8.1\n"}
+,{"stream_name":"stdout","time":242.179709291,"data":"\n"}
+,{"stream_name":"stderr","time":245.253416593,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":245.253460969,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":245.737038899,"data":"E9_optim: 4945 tasks in shard 4/5, 410 done, 4535 to run on 4 workers\n"}
+,{"stream_name":"stdout","time":3146.561611765,"data":"  50/4535  elapsed 48.3 min  eta 4336.7 min\n"}
+,{"stream_name":"stdout","time":6088.111688905,"data":"  100/4535  elapsed 97.4 min  eta 4318.5 min\n"}
+,{"stream_name":"stdout","time":8021.566703665,"data":"  150/4535  elapsed 129.6 min  eta 3788.5 min\n"}
+,{"stream_name":"stdout","time":8755.03110379,"data":"  200/4535  elapsed 141.8 min  eta 3074.0 min\n"}
+,{"stream_name":"stdout","time":21784.04330586,"data":"  250/4535  elapsed 359.0 min  eta 6152.8 min\n"}
+,{"stream_name":"stdout","time":31578.424175186,"data":"  300/4535  elapsed 522.2 min  eta 7371.9 min\n"}
+,{"stream_name":"stdout","time":38314.736073824,"data":"  max-hours 10.5 reached after 323 tasks; stopping (resume re-runs the rest)\n"}
+,{"stream_name":"stderr","time":38318.619799666,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":38318.619890003,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":38319.005363196,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":38319.005395341,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":38320.156333047,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":38320.827734664,"data":"[NbConvertApp] Writing 290322 bytes to __results__.html\n"}
+]
