@@ -345,15 +345,20 @@ def spsa(f, d, budget, seed=0, grad=None, stochastic_grad=None, a=0.1, c=0.05, A
     return dict(x=F.best[1], f=F.best[0], nfev=F.n)
 
 
-def run(name, f, d, budget=2000, seed=0, grad=None, memo=None, checkpoints=()):
+def run(name, f, d, budget=2000, seed=0, grad=None, memo=None, checkpoints=(), stochastic_grad=None):
     """`memo`: a dict shared by every run on the same f (one E9 task = one fitted surrogate); None = per-run memo.
     `checkpoints`: evaluation counts at which to record the incumbent (returned as res["trace"]; a checkpoint the run
-    never reached gets the final incumbent). Recording only reads the counter, so results are unchanged."""
+    never reached gets the final incumbent). Recording only reads the counter, so results are unchanged.
+    `stochastic_grad(U, rng)`: a random gradient estimate (one ensemble member / one local piece of a stochastic
+    upscaler); passed only to the first-order family, which then runs as genuine SGD (E8 stochastic arm)."""
     global _SHARED, CHECKPOINTS
     prev, _SHARED = _SHARED, memo
     prev_c, CHECKPOINTS = CHECKPOINTS, frozenset(checkpoints)
     try:
-        res = REGISTRY[name](f, d, budget, seed=seed, grad=grad)
+        if stochastic_grad is not None:
+            res = REGISTRY[name](f, d, budget, seed=seed, grad=grad, stochastic_grad=stochastic_grad)
+        else:
+            res = REGISTRY[name](f, d, budget, seed=seed, grad=grad)
         if checkpoints:
             tr = dict(_LAST.trace)
             for c in sorted(checkpoints):

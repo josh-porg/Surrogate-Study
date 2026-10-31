@@ -530,9 +530,15 @@ def task_e6(cfg):
 
 # ── E8: upscaling ─────────────────────────────────────────────────────────────────────────────────────────────
 E8_UPSCALERS = [("none", {}), ("tensor_spline", {"m": 12}), ("tensor_spline", {"m": 24}), ("smoothing_spline", {"m": 24}),
-                ("pspline_direct", {}), ("smolyak_grid", {}), ("tt_grid", {})]
-E8_OPTS = (("lbfgsb", "fd"), ("lbfgsb", "model"), ("slsqp", "model"), ("nelder_mead", "none"),
-           ("differential_evolution", "none"), ("cmaes", "none"))
+                ("pspline_direct", {}), ("smolyak_grid", {}), ("tt_grid", {}),
+                ("pou_quadratics", {}), ("subsample_ensemble", {})]                # stochastic upscalers (2026-10-31)
+# IPOPT (the thesis optimizer) added 2026-10-31 now that casadi is in the Kaggle wheels. "stoch" = the first-order
+# method fed the upscaler's stochastic gradient (one local quadratic / one subsample member per step); it runs only on
+# upscalers that have one, next to the same method with the exact surrogate gradient ("model").
+E8_OPTS = (("lbfgsb", "fd"), ("lbfgsb", "model"), ("slsqp", "model"), ("ipopt_multistart", "model"),
+           ("nelder_mead", "none"), ("differential_evolution", "none"), ("cmaes", "none"),
+           ("adam", "model"), ("adam", "stoch"), ("sgd_momentum", "model"), ("sgd_momentum", "stoch"),
+           ("robbins_monro", "model"), ("robbins_monro", "stoch"))
 
 
 def task_e8(cfg):
@@ -561,7 +567,8 @@ def task_e8(cfg):
         kw = {**kw, **({"seed": seed} if name == "tt_grid" else {})}
         t0 = time.perf_counter()
         try:
-            s = UP.build(name, m, d, U=U, y=y, **kw)
+            s = UP.build(name, m, d, U=U, y=y, **{**kw, **({"seed": seed} if name in ("pou_quadratics",
+                                                                                     "subsample_ensemble") else {})})
         except MemoryError as ex:
             ups[tag] = dict(infeasible=str(ex)[:120]); continue
         except Exception as ex:
@@ -576,9 +583,12 @@ def task_e8(cfg):
         if "fstar" in ref:
             memo = {}
             for opt, gsrc in E8_OPTS:
+                if gsrc == "stoch" and not hasattr(s, "stochastic_grad"):
+                    continue
                 try:
                     r = O.run(opt, s.predict, d, budget=cps[-1], seed=seed, memo=memo, checkpoints=cps,
-                              grad=(s.grad if gsrc == "model" else None))
+                              grad=(s.grad if gsrc == "model" else None),
+                              stochastic_grad=(s.stochastic_grad if gsrc == "stoch" else None))
                     X = np.array([r["trace"][c] for c in cps])
                     rec["regret"][f"{opt}|{gsrc}"] = [float((v - ref["fstar"]) / scale) for v in p.f_unit(X)]
                 except Exception as ex:

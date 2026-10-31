@@ -423,6 +423,17 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   5-fold CV on the HF points (a fixed 1e-2 forced a linear map and underfit the training data, 29 % NRMSE).
   Still planned, not coded: upscalers MBA and THB (multilevel / truncated hierarchical B-splines).
   Kaggle order: E9 → tuning → E13 → E6 → E8 → E5 → E14 → E9b.
+- **D-15 · 2026-10-31 · E8 extended before it runs (author's suggestions).** (a) IPOPT with the surrogate gradient
+  joins E8's optimizers, so E8 reproduces the thesis pipeline end to end (intermediate model → upscaled surrogate →
+  IPOPT). (b) Two stochastic upscalers (`code/surr/upscalers.py`; tests `code/tests/test_stochastic_upscalers.py`):
+  `pou_quadratics`, a partition of unity of K local quadratics fitted to the intermediate's predictions (smooth,
+  exact gradients; a stochastic gradient draws one local quadratic by its weight at x), and `subsample_ensemble`,
+  the mean of 8 cubic-RBF members each fitted to a random half of the training data (a stochastic gradient uses one
+  member: unbiased for the mean gradient, its noise = model uncertainty — the plan's E9 arm (b)). (c) A stochastic
+  arm: Adam, SGD-momentum and Robbins–Monro run with the stochastic gradient ("stoch") next to the same methods
+  with the exact surrogate gradient ("model"), so the effect of gradient noise on finding the global optimum is
+  measured directly. `optimizers.run` gained a `stochastic_grad` pass-through (default path unchanged; tests
+  re-run).
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee

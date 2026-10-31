@@ -139,6 +139,8 @@ upscalers:
   thb:             {favored_by: [multiscale, plateau_bump], hurt_by: [d_high], why: "local refinement"}
   smolyak_grid:    {favored_by: [additive, d_high], hurt_by: [axis_step, rotated_ridge], why: "mixed smoothness"}
   tt_grid:         {favored_by: [lowrank_product, d_high], hurt_by: [rotated_ridge], why: "compressed grid, rank in given axes"}
+  pou_quadratics:  {favored_by: [smooth_trig, tree_draw, axis_step], hurt_by: [multiscale, fourier_sparse], why: "summed local quadratics; smooth surface over a rough intermediate; stochastic gradient by piece"}
+  subsample_ensemble: {favored_by: [gp_draw, regime, noise_additive], hurt_by: [axis_step, d_high], why: "subset-trained smooth members; model uncertainty as gradient noise for SGD-type optimizers"}
 optimizers:
   ipopt_multistart: {favored_by: [bowl_shaped, smooth_trig], hurt_by: [many_local_minima, axis_step], why: "second-order local; needs derivatives"}
   slsqp:           {favored_by: [bowl_shaped, plate_shaped], hurt_by: [many_local_minima], why: "SQP local"}

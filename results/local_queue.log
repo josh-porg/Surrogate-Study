@@ -170,3 +170,29 @@ local queue already running
 [2026-10-30 19:22] E4_rair: start
   E4_rair: E4_rair: 7380 tasks in shard 1/1, 2598 done, 4782 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
 [2026-10-30 20:23] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2627 done, 4753 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-30 21:26] E4_rair: start
+[2026-10-30 22:50] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-30 22:50] E4_rair: start
+[2026-10-31 00:51] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 00:51] E4_rair: start
+[2026-10-31 02:52] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 02:52] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2767 done, 4613 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-31 03:53] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2769 done, 4611 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-31 04:56] E4_rair: start
+[2026-10-31 06:48] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 06:48] E4_rair: start
+[2026-10-31 08:49] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 08:49] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2779 done, 4601 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-31 09:50] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2886 done, 4494 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-31 10:51] E4_rair: start
+  E4_rair: E4_rair: 7380 tasks in shard 1/1, 2893 done, 4487 to run on 10 workers - restarting (re-sizes the worker pool to free RAM)
+[2026-10-31 11:53] E4_rair: start
+[2026-10-31 13:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 13:28] E4_rair: start
+[2026-10-31 15:28] E4_rair: watchdog - ending the runner after 70 min (resumable)
+[2026-10-31 15:28] E4_rair: start
