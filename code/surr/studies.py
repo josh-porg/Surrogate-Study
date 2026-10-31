@@ -432,6 +432,60 @@ def task_e9b(cfg):
                 fstar_confirmed=bool(ref.get("confirmed")))
 
 
+# ── E15: the surrogate–optimizer interface ────────────────────────────────────────────────────────────────────
+def task_e15(cfg):
+    """Fit one surrogate (E3/E9 design, noise and seeds), then let every coupling strategy (surr.coupling) pick a
+    point with the same budget of 500·d surrogate evaluations. Scored on the true function: normalised regret,
+    distance to x*, distance to the nearest training point, and the optimizer's curse — the surrogate's value minus
+    the true value at the pick (negative = the surrogate promised more than it delivers)."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from scipy.spatial import cKDTree
+    from surr import coupling as C, noise as N, problems as P, samplers as S
+    from surr.learners import REGISTRY, make
+    from surr.learners.ensembles import members
+    from surr.problems.base import shifted
+    p = shifted(P.get(cfg["problem"]), cfg["shift_seed"]); d, seed, n = p.d, cfg["seed"], cfg["n"]
+    ref = _fstar().get(p.name, {})
+    if "fstar" not in ref:
+        return dict(status="error", error=f"no f* for {p.name}")
+    L = REGISTRY[cfg["learner"]]
+    if (L.max_n and n > L.max_n) or (L.max_d and d > L.max_d):
+        return dict(status="infeasible")
+    T = S.sobol(4096, d, seed=10_000 + seed); scale = float(p.f_unit(T).std())
+    U = S.make("sobol", n, d, seed=seed)
+    y = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), p.f_unit(U), U, scale, seed=20_000 + seed)
+    t0 = time.perf_counter()
+    m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(U, y)
+    out = dict(status="ok", t_fit=time.perf_counter() - t0, scale=scale, fstar_confirmed=bool(ref.get("confirmed")),
+               nrmse=float(np.sqrt(np.mean((m.predict(T) - p.f_unit(T)) ** 2)) / scale))
+    mem = members(m)
+    tree = cKDTree(U)
+    budget = 500 * d
+    res = {}
+    for name, fn in C.STRATEGIES.items():
+        t0 = time.perf_counter()
+        try:
+            x = fn(m, U, y, d, budget, seed, mem=mem)
+        except MemoryError as ex:
+            res[name] = dict(infeasible=str(ex)[:100]); continue
+        except Exception as ex:
+            res[name] = dict(error=f"{type(ex).__name__}: {ex}"[:160]); continue
+        if x is None:
+            continue                                                     # strategy not applicable to this learner
+        x = np.clip(np.asarray(x, float), 0, 1)
+        fx, sx = float(p.f_unit(x[None])[0]), float(m.predict(x[None])[0])
+        rec = dict(regret=float((fx - ref["fstar"]) / scale), curse=float((sx - fx) / scale),
+                   dist_xstar=float(np.linalg.norm(x - np.asarray(ref["xstar"])) / np.sqrt(d)),
+                   dist_data=float(tree.query(x)[0] / np.sqrt(d)), wall=time.perf_counter() - t0)
+        if name == "milp_trees" and hasattr(C.milp_trees, "last"):
+            rec.update(C.milp_trees.last)
+        res[name] = rec
+    out["strategies"] = res
+    out["n_members"] = len(mem) if mem else 0
+    return out
+
+
 # ── E14: self-designing surrogates (Smolyak, TT-cross) vs learners on a Sobol' design of the same size ──────────
 def task_e14(cfg):
     """method ∈ surr.selfdesign (chooses its own ≤ budget points of the noisy function) or a learner name (fitted on

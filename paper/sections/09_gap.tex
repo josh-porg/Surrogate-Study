@@ -6,7 +6,10 @@ features, that within-family configuration matters, and that approximation accur
 quality. It does not, to our knowledge, contain a study that jointly varies (i) surface class and landscape features,
 (ii) dimension and sample budget, (iii) noise level and type, (iv) fidelity structure and cost ratio, (v) the pairing of
 the sampling scout with the deliverable model, (vi) the upscaling from learner to optimizer-ready surrogate, including
-compression, and (vii) the optimizer---and scores complete pipelines by true-function regret per unit simulation cost,
+compression, (vii) the optimizer, and (viii) the interface between them---how the optimizer consumes the trained
+model (its mean, a sampled member, a smoothed or risk-adjusted value, or an exact mixed-integer encoding), which
+gradients it uses, and how far the surrogate's promised optimum falls short of the true value
+(Section~\ref{sec:ensembles})---and scores complete pipelines by true-function regret per unit simulation cost,
 while explaining the persistent disagreement between engineering practice (Gaussian processes) and tabular machine
 learning (tree ensembles). The study part of this paper does this on the Surjanovic--Bingham functions, the
 multi-fidelity analytical benchmarks, and two real engineering datasets: coupled finite-element sizing of an inflatable

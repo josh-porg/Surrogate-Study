@@ -208,5 +208,37 @@ def tr_model_mgmt(f, d, budget, seed=0):
     return dict(X=X[:budget], y=y[:budget])
 
 
+@_reg
+def ego_bootstrap(f, d, budget, seed=0, B=10, n_cand=300):
+    """EGO with the bootstrapped kriging variance of Kleijnen, van Beers & van Nieuwenhuyse (2012): B parametric
+    bootstrap samples are drawn jointly at the design and the candidates from the fitted GP, the GP is re-estimated
+    (ML-II) on each bootstrap design, and the mean squared prediction error at each candidate replaces the plug-in
+    kriging variance in expected improvement (it accounts for hyper-parameter estimation error). Candidates: 300
+    fresh Sobol' points per step. Cost: B GP fits per evaluation, so E9b runs it at d <= 5 only."""
+    from sklearn.gaussian_process import GaussianProcessRegressor
+    X, y = _start(f, d, budget, seed)
+    gp = _GP(d, seed)
+    rng = np.random.default_rng(seed)
+    while len(y) < budget:
+        gp.fit(X, y)
+        C = _sobol(n_cand, d, int(rng.integers(1 << 30)))
+        Z = np.vstack([X, C])
+        K = gp.k(Z) + 1e-9 * np.eye(len(Z))
+        L = np.linalg.cholesky(K)
+        mse = np.zeros(n_cand)
+        for b in range(B):
+            ys = L @ rng.normal(size=len(Z))                             # standardised scale of the fitted GP
+            g = GaussianProcessRegressor(gp.k, normalize_y=False, n_restarts_optimizer=0,
+                                         random_state=int(rng.integers(1 << 30))).fit(X, ys[:len(X)])
+            mse += (g.predict(C) - ys[len(X):]) ** 2
+        s = np.sqrt(mse / B) * gp.s_
+        mu = gp.predict(C)
+        best = y.min(); s = np.maximum(s, 1e-12); z = (best - mu) / s
+        ei = (best - mu) * norm.cdf(z) + s * norm.pdf(z)
+        x = C[int(np.argmax(ei))]
+        X = np.vstack([X, x]); y = np.r_[y, f(x[None])]
+    return dict(X=X, y=y)
+
+
 def run(name, f, d, budget, seed=0):
     return REGISTRY[name](f, d, budget, seed=seed)

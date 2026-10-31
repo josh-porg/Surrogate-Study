@@ -169,6 +169,11 @@ def task_e14(cfg):
     return t(cfg)
 
 
+def task_e15(cfg):
+    from surr.studies import task_e15 as t
+    return t(cfg)
+
+
 def task_rfea_al(cfg):
     from surr.studies import task_rfea_al as t
     return t(cfg)
@@ -190,7 +195,7 @@ def task_e5(cfg):
 
 
 KINDS = {"learner": task_learner, "thesis_canon": task_thesis_canon, "fstar_refine": task_fstar_refine,
-         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e14": task_e14, "e9b": task_e9b, "e6": task_e6, "e8": task_e8, "e5": task_e5}
+         "rair": task_rair, "e9": task_e9, "e13": task_e13, "rfea": task_rfea, "rfea_al": task_rfea_al, "e14": task_e14, "e9b": task_e9b, "e15": task_e15, "e6": task_e6, "e8": task_e8, "e5": task_e5}
 
 
 def _init_worker():
@@ -569,6 +574,7 @@ def exp_E9b_managed():
     trust-region model management) and model-free baselines (random, Sobol') on the E9 problems × shifted instances
     0-9 × noise {0, 1 %}, budget 50·d true evaluations, incumbent scored at 10d / 20d / 50d. Compared in analysis
     with E9's fit-once-then-optimize rows (n = 10d, 50d) and the optimizers on the true function."""
+    from surr.problems import get
     rows = []
     for pn in E9_PROBLEMS:
         for s in range(10):
@@ -576,6 +582,36 @@ def exp_E9b_managed():
                 for m in ("ego", "turbo", "dycors", "tr_model_mgmt", "random", "sobol"):
                     rows.append(dict(kind="e9b", exp="E9b_managed", problem=pn, shift_seed=s, method=m, level=lvl,
                                      seed=s))
+                # bootstrapped-kriging EGO (Kleijnen et al. 2012; added 2026-10-31): B GP fits per evaluation,
+                # bounded by cost to d <= 5 and instances 0-4
+                if get(pn).d <= 5 and s < 5:
+                    rows.append(dict(kind="e9b", exp="E9b_managed", problem=pn, shift_seed=s, method="ego_bootstrap",
+                                     level=lvl, seed=s))
+    return rows
+
+
+E15_LEARNERS = [("gp", {}), ("hetgp", {}), ("rf", {}), ("xgb", {}), ("lgbm", {}), ("catboost", {}),
+                ("mlp_ens", {"opt": "lbfgs"}), ("mlp_rpf", {"opt": "lbfgs"}), ("gbt_committee", {}), ("ens_press", {}),
+                ("ens_optw", {})]
+
+
+def exp_E15_coupling():
+    """E15 (added 2026-10-31): the surrogate–optimizer interface. One fitted surrogate × every coupling strategy
+    (surr.coupling: mean + L-BFGS-B / CMA-ES; Thompson sampling over ensemble members; member-sampled SGD;
+    Gaussian-smoothing Adam; Langevin control; consensus-based optimization; exact MILP for tree ensembles;
+    distance-guarded and pessimistic objectives) at 500·d surrogate evaluations, scored by true regret and the
+    optimizer's curse. 11 surrogates (adds the optimised-weight ensemble and randomised-prior MLP ensembles) × the 38
+    E9 problems × instances 0-4 × n ∈ {10d, 50d} × noise {0, 1 %}."""
+    from surr.problems import get
+    rows = []
+    for pn in E9_PROBLEMS:
+        d = get(pn).d
+        for s in range(5):
+            for mult in (10, 50):
+                for noise, lvl in (("none", 0.0), ("additive", 0.01)):
+                    for L, kw in E15_LEARNERS:
+                        rows.append(dict(kind="e15", exp="E15_coupling", problem=pn, shift_seed=s, learner=L, kw=kw,
+                                         n=mult * d, noise=noise, level=lvl, seed=s))
     return rows
 
 
@@ -713,7 +749,8 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
                "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
-               "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt}
+               "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt,
+               "E15_coupling": exp_E15_coupling}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────

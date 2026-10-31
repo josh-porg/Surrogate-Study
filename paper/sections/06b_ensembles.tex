@@ -1,11 +1,23 @@
-\section{Ensemble and stochastic intermediate models}
+\section{The surrogate--optimizer interface}
 \label{sec:ensembles}
 
+Surrogates are compared almost everywhere by how well they approximate the function. The optimizer, however, never
+sees ``the surrogate'' in the abstract: it sees one particular presentation of a trained model---its mean, a sample,
+a smoothed version, a risk-adjusted value, an exact mixed-integer encoding---and it receives, or does not receive,
+the model's gradients. It also searches exactly where the model is least trustworthy, because it is drawn to the
+points the model scores best. These choices form an \emph{interface} between the trained model and the optimizer.
+Each facet has its own literature, mostly in separate communities; none of them is a standard axis of surrogate
+benchmarks, and Section~\ref{sec:sbo} shows that accuracy alone is a weak guide to optimization outcomes. This section
+reviews the four facets in turn: what the optimizer sees (ensembles and stochastic intermediate models), whether the
+model's structure is used for exact global optimization, how the optimizer exploits the model's errors, and which
+gradients it uses.
+
+\subsection{What the optimizer sees: ensembles and stochastic intermediate models}
+
 Section~\ref{sec:upscaling} treats the intermediate model as one deterministic function to be smoothed. A second
-line of work keeps \emph{many} models, or a random one, and lets the optimizer see the spread between them. Three
-uses can be separated: averaging to reduce error, randomness to drive exploration, and stochastic gradients that let
-first-order methods leave poor basins. They are rarely studied together, and almost never as a choice of
-optimizer-facing surrogate.
+line of work keeps \emph{many} models, or a random one, and lets the optimizer see the spread between them. Three uses
+can be separated: averaging to reduce error, randomness to drive exploration, and stochastic gradients that let
+first-order methods leave poor basins.
 
 \paragraph{Averaging ensembles.}
 In engineering design the ensemble of surrogates is a weighted average of different model classes, with weights
@@ -15,13 +27,12 @@ from generating many diverse surrogates and selecting by PRESS, with weighting g
 \cite{viana2009multiple}. A recent review \cite{chen2024ensemble} reports ensembles as the usual remedy for not knowing
 which surrogate is best, which is the selection problem of this paper seen from the averaging side. In machine
 learning the ensemble is homogeneous and randomised: bagging fits one class to bootstrap samples
-\cite{breiman1996bagging}, and subsampling without replacement (subagging) has the same variance-reduction
-mechanism with a cleaner analysis \cite{buhlmann2002analyzing}; random forests add feature subsampling
-\cite{breiman2001random}; deep ensembles train networks from different initialisations
-\cite{lakshminarayanan2017simple}; Monte-Carlo dropout samples sub-networks \cite{gal2016dropout}; and randomised
-prior functions add a fixed random network to each member so that uncertainty exists away from the data, which
-plain bootstrapping lacks \cite{osband2018randomized}. All of these give a mean predictor and a spread; the spread is
-what acquisition rules (Section~\ref{sec:uq}) consume.
+\cite{breiman1996bagging}, and subsampling without replacement (subagging) has the same variance-reduction mechanism
+with a cleaner analysis \cite{buhlmann2002analyzing}; random forests add feature subsampling \cite{breiman2001random};
+deep ensembles train networks from different initialisations \cite{lakshminarayanan2017simple}; Monte-Carlo dropout
+samples sub-networks \cite{gal2016dropout}; and randomised prior functions add a fixed random network to each member
+so that uncertainty exists away from the data, which plain bootstrapping lacks \cite{osband2018randomized}. All of
+these give a mean predictor and a spread; the spread is what acquisition rules (Section~\ref{sec:uq}) consume.
 
 \paragraph{Randomness for exploration.}
 The member-to-member variation can replace a posterior. Thompson sampling optimises one random draw of the model per
@@ -31,15 +42,15 @@ estimates from one surrogate to another, so that models without native uncertain
 \cite{viana2013efficient}; bootstrapped kriging replaces the plug-in kriging variance in expected improvement
 \cite{kleijnen2012expected}; ensembles of Gaussian processes with different kernels are combined in a mixture
 posterior for Thompson sampling \cite{lu2022surrogate}; and ensemble Bayesian optimization partitions the input space
-with random Mondrian trees and fits a GP per cell \cite{wang2018batched}. Neural ensembles are a common alternative
-to GPs in Bayesian optimization \cite{springenberg2016bayesian}, but a systematic comparison found deep ensembles
-explore poorly and level off below other surrogates on standard benchmarks \cite{li2024study}. Tree ensembles are
-the surrogate of SMAC \cite{hutter2011sequential}. In evolutionary computation, surrogate-assisted memetic algorithms
-use ensembles and smoothed surrogates inside local search \cite{lim2010generalizing,jin2011surrogate}, and the
-stochastic RBF method chooses each new point from random candidates scored by RBF prediction and distance, with
-probabilistic convergence to the global minimum \cite{regis2007stochastic}. For noisy simulators, stochastic
-kriging separates simulation noise from response-surface uncertainty \cite{ankenman2010stochastic}, which is the
-regime where an averaged intermediate model is most defensible.
+with random Mondrian trees and fits a GP per cell \cite{wang2018batched}. Neural ensembles are a common alternative to
+GPs in Bayesian optimization \cite{springenberg2016bayesian}, but a systematic comparison found deep ensembles explore
+poorly and level off below other surrogates on standard benchmarks \cite{li2024study}. Tree ensembles are the
+surrogate of SMAC \cite{hutter2011sequential}. In evolutionary computation, surrogate-assisted memetic algorithms use
+ensembles and smoothed surrogates inside local search \cite{lim2010generalizing,jin2011surrogate}, and the stochastic
+RBF method chooses each new point from random candidates scored by RBF prediction and distance, with probabilistic
+convergence to the global minimum \cite{regis2007stochastic}. For noisy simulators, stochastic kriging separates
+simulation noise from response-surface uncertainty \cite{ankenman2010stochastic}, the regime where an averaged
+intermediate model is most defensible.
 
 \paragraph{Stochastic gradients and smoothing.}
 A deterministic gradient method stops in the first basin. Two mechanisms change that without a new surrogate. First,
@@ -49,11 +60,10 @@ random ensemble member's gradient per step is a model-uncertainty version of the
 convolving a non-smooth function with a Gaussian or uniform kernel gives a smooth surrogate whose gradient can be
 estimated from random perturbations \cite{nesterov2017random,duchi2012randomized}. For a piecewise-constant tree
 ensemble this is the only way to obtain useful gradient information, and a smoothing upscaler
-(Section~\ref{sec:upscaling}) is its deterministic counterpart. Particle methods take the ensemble one step further
-and make the optimizer itself an ensemble: consensus-based optimization moves particles towards a weighted consensus
-point with an exploration noise \cite{pinnau2017consensus} and converges globally under mild conditions
-\cite{fornasier2024consensus}, and ensemble Kalman inversion is a derivative-free ensemble optimizer from inverse
-problems \cite{iglesias2013ensemble}.
+(Section~\ref{sec:upscaling}) is its deterministic counterpart. Particle methods make the optimizer itself an
+ensemble: consensus-based optimization moves particles towards a weighted consensus point with an exploration noise
+\cite{pinnau2017consensus} and converges globally under mild conditions \cite{fornasier2024consensus}, and ensemble
+Kalman inversion is a derivative-free ensemble optimizer from inverse problems \cite{iglesias2013ensemble}.
 
 \paragraph{Sums of local models.}
 A surrogate that is a sum of simple local pieces is both smooth and naturally stochastic. The partition-of-unity
@@ -63,31 +73,70 @@ quadratic models around the current best points and branches the domain to keep 
 weighted local gradient. We found no study that uses such a decomposition to run stochastic first-order methods on a
 fitted surrogate.
 
-\paragraph{Optimising tree ensembles directly.}
-Instead of smoothing a tree ensemble, it can be optimised exactly: a tree ensemble is piecewise constant on a finite
-partition, so its global minimum over a box is a mixed-integer linear program \cite{misic2020optimization}. ENTMOOT
+\subsection{Using the model's structure: exact global optimization of trained models}
+
+A trained model is not a black box to the optimizer that owns it. A tree ensemble is piecewise constant on a finite
+partition, so its global minimum over a box is a mixed-integer linear program \cite{misic2020optimization}; ENTMOOT
 solves this with a distance-based uncertainty term for Bayesian optimization over gradient-boosted trees
-\cite{thebelt2021entmoot}, and tree-ensemble kernels give trees a GP-like posterior whose acquisition is a
-mixed-integer second-order cone program \cite{thebelt2022tree}. This is the strongest alternative to upscaling for the
-thesis' question of whether an accurate tree model can be used for design optimization.
+\cite{thebelt2021entmoot}, and tree-ensemble kernels give trees a GP-like posterior whose acquisition is a mixed-integer
+second-order cone program \cite{thebelt2022tree}. A ReLU network is piecewise linear and can be encoded the same way
+\cite{fischetti2018deep}, with ideal formulations that tighten the relaxation considerably \cite{anderson2020strong}.
+Smooth models admit deterministic global optimization by branch-and-bound with McCormick relaxations propagated
+through the trained network \cite{schweidtmann2019deterministic} or through the Gaussian-process predictor and its
+acquisition functions \cite{schweidtmann2021deterministic}; OMLT automates such encodings of trained networks and
+gradient-boosted trees inside larger optimization models \cite{ceccon2022omlt}. These methods certify the surrogate's
+global optimum, which local and stochastic searches cannot. Whether a \emph{certified} optimum of the surrogate is a
+better design than a heuristic one depends on the surrogate's error near that optimum---the subject of the next
+facet---and has not, to our knowledge, been measured against the true function across model classes.
 
-\paragraph{State of the art and gaps.}
-Ensembles are well established for accuracy (averaging) and for exploration (Thompson sampling, multiple-surrogate
-EGO, SMAC), and tree ensembles can be optimised exactly. What is missing is a matched comparison of these routes from
-the optimizer's side: (i) averaging versus sampling members versus smoothing versus exact mixed-integer optimization
-for the same fitted ensemble, scored by regret on the true function rather than by accuracy; (ii) whether the
-gradient noise from sampling members helps stochastic first-order methods find better optima than the deterministic
-mean gradient, and at what cost in evaluations; (iii) whether the answer depends on the landscape type, as the
-accuracy results of this paper suggest it will.
+\subsection{Exploiting the model's errors: the optimizer's curse and validity domains}
 
-This study covers part of that space. Averaging ensembles (PRESS-weighted average, deep ensembles, Monte-Carlo
-dropout, random and quantile forests, GBT committees), surrogate-managed loops with randomised acquisition (TuRBO,
-DYCORS), and two stochastic upscalers with a stochastic-gradient arm (a partition of unity of local quadratics, and a
-subsample ensemble of smooth members) are included. Methods the literature suggests adding, in order of how directly
-they answer (i)--(iii): exact mixed-integer optimization of tree ensembles \cite{misic2020optimization,thebelt2021entmoot};
-Thompson sampling over ensemble members as a fit-once optimizer (optimise one random member per restart);
-Gaussian-smoothing gradient estimates on any surrogate \cite{nesterov2017random}; Langevin-type noise on the mean
-gradient as the control for member sampling \cite{raginsky2017nonconvex}; consensus-based optimization as an ensemble
-optimizer \cite{pinnau2017consensus}; optimised-weight ensembles \cite{acar2009ensemble} and randomised-prior members
-\cite{osband2018randomized} as intermediate models; and bootstrapped-kriging expected improvement in the managed loops
-\cite{kleijnen2012expected}.
+Choosing the best of many estimated values selects positive errors: even with unbiased estimates the chosen option's
+realised value falls short of its estimate, the optimizer's curse \cite{smith2006optimizer}. A surrogate optimizer is
+the extreme case, since it searches the whole design space for the most favourable prediction and is drawn to regions
+where the model errs in its favour, typically away from the data. Offline model-based optimization, where no new
+evaluations are possible, treats this as the central difficulty: conservative objective models train the surrogate to
+under-estimate out of distribution before optimizing it \cite{trabucco2021conservative}, conditioning by adaptive
+sampling restricts the search to inputs a generative model deems realistic \cite{brookes2019conditioning}, and
+Design-Bench collects tasks on which naive gradient ascent on a learned model fails \cite{trabucco2022design}. In
+process engineering the same concern leads to explicit validity domains: a one-class classifier fitted to the training
+inputs, after topological data analysis finds holes in the data, is added as a constraint to the optimization
+\cite{schweidtmann2022obey}; ENTMOOT's distance term plays a similar role for trees \cite{thebelt2021entmoot}.
+Risk-averse objectives (optimising $\mu + \kappa\sigma$ instead of $\mu$) are the uncertainty-aware counterpart for
+surrogates that have a predictive variance. The engineering surrogate literature that this paper extends rarely
+reports the gap between the surrogate's value at its optimum and the true value there, although it is the quantity
+that decides whether the surrogate's optimum can be trusted.
+
+\subsection{The gradients the model offers}
+
+Gradient-based optimizers need derivatives. A surrogate can supply its own analytic gradient (kriging, polynomial
+chaos, networks through automatic differentiation) or be differentiated by finite differences inside the evaluation
+budget; for trees the analytic gradient is zero almost everywhere. Which source to use is usually decided by
+convenience. It interacts with the other facets: an analytic gradient of an accurate model may still point at a
+spurious minimum, and a smoothed or sampled gradient trades bias for exploration.
+
+\subsection{State of the art and the class of gaps}
+
+Each facet is mature within its own community: ensembles for accuracy and exploration (engineering design, Bayesian
+optimization, evolutionary computation), exact optimization of trained models (mathematical programming and process
+systems), model exploitation and validity (offline model-based optimization and process engineering). What is missing
+is the interface itself as an object of study: for one fitted surrogate, a matched comparison of the ways an
+optimizer can consume it, scored by regret on the true function and by the gap between promised and delivered values,
+across model classes and landscapes. Concretely: (i) averaging versus sampling members versus smoothing versus exact
+mixed-integer optimization of the same ensemble; (ii) whether member-sampling noise helps stochastic first-order
+methods relative to an equal amount of isotropic noise; (iii) whether guarding against extrapolation, or optimising a
+pessimistic objective, reduces true regret or only the surrogate's over-promise; (iv) whether the answers depend on
+the landscape type, as the accuracy results of this paper suggest they will.
+
+This paper's study addresses the class rather than one item. The fit-once optimization study scores every optimizer on
+every surrogate with both gradient sources and records the surrogate's value at each pick; the upscaling study
+compares deterministic, sparse-grid, low-rank and stochastic presentations (a partition of unity of local quadratics,
+and a subsample ensemble of smooth members, each with a stochastic-gradient arm) of the same intermediate model; the
+surrogate-managed study adds bootstrapped-kriging EGO to the loops that return to the true function; and a dedicated
+interface study applies to one fitted surrogate the mean with local and global optimizers, Thompson sampling over
+ensemble members, member-sampled stochastic gradients against a Langevin-noise control, Gaussian-smoothing gradients,
+consensus-based optimization, exact mixed-integer optimization of tree ensembles, a distance-guarded objective and a
+pessimistic objective, with optimised-weight and randomised-prior ensembles among the intermediate models
+\cite{acar2009ensemble,osband2018randomized}. Mixed-integer encodings of ReLU networks and deterministic global
+optimization of Gaussian processes \cite{anderson2020strong,schweidtmann2021deterministic} need solvers outside this
+study's toolchain and are left as the main omission.

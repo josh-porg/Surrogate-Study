@@ -434,6 +434,19 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   with the exact surrogate gradient ("model"), so the effect of gradient noise on finding the global optimum is
   measured directly. `optimizers.run` gained a `stochastic_grad` pass-through (default path unchanged; tests
   re-run).
+- **D-16 · 2026-10-31 · E15 added: the surrogate–optimizer interface (closes a class of gaps, author's
+  direction).** The literature review found the ensemble/stochastic gap to be one case of a wider blind spot:
+  surrogates are compared by accuracy, rarely by how the optimizer consumes the trained model. E15
+  (`E15_coupling`, 8 360 tasks; `code/surr/coupling.py`, tests `code/tests/test_coupling.py`) fits one surrogate
+  and applies every coupling strategy at 500·d surrogate evaluations: presentation (mean + L-BFGS-B / CMA-ES,
+  Thompson sampling over members, member-sampled SGD, Gaussian-smoothing Adam, Langevin control, consensus-based
+  optimization), exact structure-exploiting optimization (MILP over RF / XGBoost / LightGBM, HiGHS; exact against a
+  dense grid in the tests), and exploitation/validity (distance-guarded objective, pessimistic μ + σ), each scored by
+  true regret and the optimizer's curse (surrogate − true value at the pick). New intermediate models:
+  `ens_optw` (CV-optimised weights, Acar & Rais-Rohani 2009) and `mlp_rpf` (randomised prior functions, Osband et
+  al. 2018) in `code/surr/learners/ensembles.py`. E9b gains bootstrapped-kriging EGO (Kleijnen et al. 2012) at
+  d ≤ 5, instances 0-4 (B = 10 GP refits per evaluation). Not covered (no solver here, recorded as planned): MILP
+  for ReLU networks and deterministic global optimization of GPs (MAiNGO). Kaggle: after E9b.
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee
