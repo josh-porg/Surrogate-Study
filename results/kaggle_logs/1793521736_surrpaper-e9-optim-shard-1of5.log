@@ -1,0 +1,159 @@
+[{"stream_name":"stdout","time":20.523905565,"data":"pebble ok\n"}
+,{"stream_name":"stdout","time":28.663672343,"data":"scikit-learn==1.9.1 ok\n"}
+,{"stream_name":"stdout","time":30.498601997,"data":"smt==2.15.0 FAILED ERROR: Cannot install smt because these package versions have conflicting dependencies.\n"}
+,{"stream_name":"stdout","time":30.498644791,"data":"ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts\n"}
+,{"stream_name":"stdout","time":30.49866361,"data":"\n"}
+,{"stream_name":"stdout","time":51.382582849,"data":"smt==2.15.0 no-deps fallback ok\n"}
+,{"stream_name":"stdout","time":54.340397659,"data":"cma==4.5.0 ok\n"}
+,{"stream_name":"stdout","time":57.855616225,"data":"gpytorch==1.15.2 ok\n"}
+,{"stream_name":"stdout","time":60.393066501,"data":"mf2==2022.6.0 ok\n"}
+,{"stream_name":"stdout","time":63.315596034,"data":"pygam==0.12.0 ok\n"}
+,{"stream_name":"stdout","time":66.826917818,"data":"ngboost==0.5.11 ok\n"}
+,{"stream_name":"stdout","time":74.137718229,"data":"casadi==3.8.1 ok\n"}
+,{"stream_name":"stderr","time":77.715763775,"data":"/usr/local/lib/python3.13/dist-packages/mf2/__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools\u003c81.\n"}
+,{"stream_name":"stderr","time":77.715822111,"data":"  import pkg_resources\n"}
+,{"stream_name":"stdout","time":78.28003663,"data":"E9_optim: 4873 tasks in shard 1/5, 3032 done, 1841 to run on 4 workers\n"}
+,{"stream_name":"stderr","time":12578.107653665,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.110369108,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.118196186,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.120829499,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.128241532,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.130891433,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.138287427,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.143991039,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.149556476,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.152239322,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.159668762,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.16240651,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.169899974,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.172620838,"data":"CasADi - 2026-10-31 23:59:45 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.180640346,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.189618679,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.201363583,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.203819104,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.207246911,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.209607208,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.213023261,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.215332732,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.218614871,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.220916843,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.224156895,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.226475892,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.229768655,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.232139093,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.235373472,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.237676037,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.240874053,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12578.243211534,"data":"CasADi - 2026-10-31 23:59:46 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.213125616,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.216160966,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.228216829,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.231758488,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.243625812,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.246560009,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.258015922,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.2610759,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.273600444,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.276139626,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.290406324,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.293838254,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.305869434,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.308746683,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.321219379,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.33341675,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.348496014,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.353228698,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.359197824,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.363730447,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.369454335,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.373877152,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.380449719,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.385086605,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.392261284,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.396872634,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.402978886,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.407455328,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.412753562,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.416982641,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.422493071,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":12592.4266917,"data":"CasADi - 2026-11-01 00:00:00 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stdout","time":12624.802782263,"data":"  50/1841  elapsed 209.1 min  eta 7490.3 min\n"}
+,{"stream_name":"stderr","time":14945.963143276,"data":"\u001b[91mOptimization failed.\u001b[0m Try increasing the 'nugget' above its current value of 1e-08.\n"}
+,{"stream_name":"stderr","time":14983.672212811,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.675369899,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.688122868,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.691315318,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.708035304,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.708112111,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.720661535,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.72365212,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.736210694,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.747560791,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.75970495,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.762742512,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.77507718,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.778120262,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.790187778,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.801596568,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.813524084,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.817861209,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.823634863,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.828093986,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.833384705,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.837654224,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.84291653,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.847123611,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.852366525,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.856589448,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.861824177,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.866143941,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.871338498,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.875525122,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.880791686,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":14983.885093513,"data":"CasADi - 2026-11-01 00:39:51 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.84776919,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.851374648,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.865329856,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.868974965,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.883041453,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.886679779,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.900617712,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.904219235,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.918101076,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.931562124,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.945317559,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.948916536,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.962803986,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.966394429,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.980314536,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15082.994088031,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.006136646,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.011179626,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.017077106,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.022115651,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.027988343,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.03298457,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.038771571,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.043819137,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.049504772,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.054432763,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.060156608,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.065178095,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.070899505,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.077000883,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.081772146,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15083.087056816,"data":"CasADi - 2026-11-01 00:41:30 WARNING(\"s:nlp_grad_f failed: NaN detected for output grad_f_x, at (row 0, col 0).\") [.../casadi/core/oracle_function.cpp:408]\n"}
+,{"stream_name":"stderr","time":15663.117081186,"data":"\u001b[91mOptimization failed.\u001b[0m Try increasing the 'nugget' above its current value of 1e-08.\n"}
+,{"stream_name":"stderr","time":15663.751774559,"data":"\u001b[91mOptimization failed.\u001b[0m Try increasing the 'nugget' above its current value of 1e-08.\n"}
+,{"stream_name":"stdout","time":17326.565765662,"data":"  100/1841  elapsed 287.5 min  eta 5004.9 min\n"}
+,{"stream_name":"stdout","time":23769.985257599,"data":"  150/1841  elapsed 394.9 min  eta 4451.4 min\n"}
+,{"stream_name":"stdout","time":30808.963854044,"data":"  200/1841  elapsed 512.2 min  eta 4202.4 min\n"}
+,{"stream_name":"stdout","time":36408.907244423,"data":"  250/1841  elapsed 605.5 min  eta 3853.5 min\n"}
+,{"stream_name":"stdout","time":38393.67762087,"data":"  max-hours 10.5 reached after 267 tasks; stopping (resume re-runs the rest)\n"}
+,{"stream_name":"stderr","time":38397.227039803,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":38397.227096433,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":38397.616185034,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":38397.616253648,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":38398.726740339,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":38399.522678665,"data":"[NbConvertApp] Writing 290322 bytes to __results__.html\n"}
+]

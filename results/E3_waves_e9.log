@@ -32,3 +32,5 @@
 max waves reached
 [resume] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
 [wave 1] E9_optim: 24700 tasks in shard 1/1, 13275 done, 11425 to run on 10 workers
+[wave 1] 5-shard statuses: ['done', 'done', 'done', 'done', 'done']
+[wave 2] E9_optim: 24700 tasks in shard 1/1, 14737 done, 9963 to run on 10 workers
