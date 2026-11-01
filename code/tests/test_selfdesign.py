@@ -41,7 +41,37 @@ def test_tt():
     return m.n, err
 
 
+def _smolyak_predict_uncached(s, U):
+    """Smolyak.predict as it was before the per-call matrix cache (2026-11-01), kept here as the reference."""
+    from surr.selfdesign import _m
+    U = np.atleast_2d(U)
+    out = np.zeros(len(U))
+    for l, c, V in s.terms:
+        T = V
+        first = True
+        for i, li in enumerate(l):
+            B = bary_matrix(U[:, i], _m(li))
+            T = np.tensordot(B, T, axes=([1], [0])) if first else np.einsum("nj,nj...->n...", B, T)
+            first = False
+        out += c * T
+    return out
+
+
+def test_smolyak_cache_bit_identical():
+    f = lambda U: np.sin(3 * U).sum(1) + U.prod(1)
+    n = 0
+    for d, budget in ((2, 2000), (5, 20_000), (10, 20_000)):
+        s = make("smolyak").fit(f, d, budget)
+        rng = np.random.default_rng(d)
+        for U in (rng.random((1, d)), rng.random((257, d)), S.sobol(64, d, seed=3), np.zeros((1, d)), np.ones((2, d))):
+            a, b = s.predict(U), _smolyak_predict_uncached(s, U)
+            assert np.array_equal(a, b), (d, np.abs(a - b).max())
+            n += 1
+    return n
+
+
 if __name__ == "__main__":
     test_bary(); print("barycentric partition of unity: ok")
+    print("smolyak per-call cache bit-identical to the uncached predictor:", test_smolyak_cache_bit_identical(), "cases")
     print("smolyak exact on a degree-2 polynomial; errors at budgets 30/100/400:", test_smolyak())
     print("tt_cross (evaluations, NRMSE):", test_tt())

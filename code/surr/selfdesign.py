@@ -122,11 +122,14 @@ class Smolyak:
     def predict(self, U):
         U = np.atleast_2d(U)
         out = np.zeros(len(U))
+        Bc = {}                      # (axis, level) -> the same matrix every term would rebuild (identical values)
         for l, c, V in self.terms:
             T = V
             first = True
             for i, li in enumerate(l):
-                B = bary_matrix(U[:, i], _m(li))
+                B = Bc.get((i, li))
+                if B is None:
+                    B = Bc[(i, li)] = bary_matrix(U[:, i], _m(li))
                 T = np.tensordot(B, T, axes=([1], [0])) if first else np.einsum("nj,nj...->n...", B, T)
                 first = False
             out += c * T

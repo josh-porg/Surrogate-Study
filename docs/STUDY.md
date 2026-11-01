@@ -511,3 +511,11 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   natural first test of the F10 compressed-sensing branch (H8).
 - 2026-10-03 · Trees also out-predicted the deep ANN on the author's aircraft-performance data (R² 0.55 vs 0.31), the
   second engineering dataset with this pattern; there, a transformer edged GBT (0.585).
+- **D-18 · 2026-11-01 · E8 cost: Smolyak predict cache (results unchanged).** An E8 smoke test of levy_d5 + CatBoost
+  took 7 695 s on the laptop. `code/analysis/e8_profile.py` traced 4 328 s of it to the Smolyak upscaler. Its
+  predict rebuilt the same 1-D barycentric matrices for each of the 771 combination-technique terms, and each
+  finite-difference gradient costs 2d predicts. The matrices are now cached per (axis, level) within each call.
+  `tests/test_selfdesign.py` checks the result is bit-identical to the old code (kept inline) on 15 cases at
+  d = 2, 5, 10. A single-point predict at d = 5 fell from 94 to 13 ms, and the Smolyak part of the cell from
+  4 328 s to 567 s, so the cell now takes about 11 min. E8 is now about 5 Kaggle waves instead of about 24. E14
+  results are unaffected. E8 records now include per-optimizer wall time (`t_opt`), which measures time only.
