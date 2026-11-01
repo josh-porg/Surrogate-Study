@@ -592,7 +592,7 @@ def exp_E9b_managed():
 
 E15_LEARNERS = [("gp", {}), ("hetgp", {}), ("rf", {}), ("xgb", {}), ("lgbm", {}), ("catboost", {}),
                 ("mlp_ens", {"opt": "lbfgs"}), ("mlp_rpf", {"opt": "lbfgs"}), ("gbt_committee", {}), ("ens_press", {}),
-                ("ens_optw", {})]
+                ("ens_optw", {}), ("mlp_relu", {"opt": "lbfgs"})]                   # mlp_relu: exact MILP, 2026-11-01
 
 
 def exp_E15_coupling():

@@ -465,6 +465,7 @@ def task_e15(cfg):
     res = {}
     for name, fn in C.STRATEGIES.items():
         t0 = time.perf_counter()
+        fn.__dict__.pop("last", None)                                    # solver status must come from this call
         try:
             x = fn(m, U, y, d, budget, seed, mem=mem)
         except MemoryError as ex:
@@ -472,14 +473,15 @@ def task_e15(cfg):
         except Exception as ex:
             res[name] = dict(error=f"{type(ex).__name__}: {ex}"[:160]); continue
         if x is None:
-            continue                                                     # strategy not applicable to this learner
+            if hasattr(fn, "last"):                                      # exact solver ran but found no point
+                res[name] = dict(no_point=True, wall=time.perf_counter() - t0, **fn.last)
+            continue                                                     # otherwise: not applicable to this learner
         x = np.clip(np.asarray(x, float), 0, 1)
         fx, sx = float(p.f_unit(x[None])[0]), float(m.predict(x[None])[0])
         rec = dict(regret=float((fx - ref["fstar"]) / scale), curse=float((sx - fx) / scale),
                    dist_xstar=float(np.linalg.norm(x - np.asarray(ref["xstar"])) / np.sqrt(d)),
                    dist_data=float(tree.query(x)[0] / np.sqrt(d)), wall=time.perf_counter() - t0)
-        if name == "milp_trees" and hasattr(C.milp_trees, "last"):
-            rec.update(C.milp_trees.last)
+        rec.update(getattr(fn, "last", {}))                              # exact strategies: status, gap, size
         res[name] = rec
     out["strategies"] = res
     out["n_members"] = len(mem) if mem else 0
@@ -618,6 +620,8 @@ def task_e8(cfg):
     ups = {}
     for name, kw in E8_UPSCALERS:
         tag = name + (f"[m={kw['m']}]" if "m" in kw else "")
+        if cfg.get("only_upscalers") and tag not in cfg["only_upscalers"]:      # profiling / re-runs only
+            continue
         kw = {**kw, **({"seed": seed} if name == "tt_grid" else {})}
         t0 = time.perf_counter()
         try:
@@ -639,6 +643,7 @@ def task_e8(cfg):
             for opt, gsrc in E8_OPTS:
                 if gsrc == "stoch" and not hasattr(s, "stochastic_grad"):
                     continue
+                t1 = time.perf_counter()
                 try:
                     r = O.run(opt, s.predict, d, budget=cps[-1], seed=seed, memo=memo, checkpoints=cps,
                               grad=(s.grad if gsrc == "model" else None),
@@ -647,6 +652,7 @@ def task_e8(cfg):
                     rec["regret"][f"{opt}|{gsrc}"] = [float((v - ref["fstar"]) / scale) for v in p.f_unit(X)]
                 except Exception as ex:
                     rec["regret"][f"{opt}|{gsrc}"] = f"{type(ex).__name__}: {ex}"[:120]
+                rec.setdefault("t_opt", {})[f"{opt}|{gsrc}"] = time.perf_counter() - t1     # wall only
         ups[tag] = rec
     out["intermediate_nrmse"] = float(np.sqrt(np.mean((pm - yt) ** 2)) / scale)
     out["upscalers"] = ups

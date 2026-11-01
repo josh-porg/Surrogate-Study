@@ -135,8 +135,17 @@ and a subsample ensemble of smooth members, each with a stochastic-gradient arm)
 surrogate-managed study adds bootstrapped-kriging EGO to the loops that return to the true function; and a dedicated
 interface study applies to one fitted surrogate the mean with local and global optimizers, Thompson sampling over
 ensemble members, member-sampled stochastic gradients against a Langevin-noise control, Gaussian-smoothing gradients,
-consensus-based optimization, exact mixed-integer optimization of tree ensembles, a distance-guarded objective and a
-pessimistic objective, with optimised-weight and randomised-prior ensembles among the intermediate models
-\cite{acar2009ensemble,osband2018randomized}. Mixed-integer encodings of ReLU networks and deterministic global
-optimization of Gaussian processes \cite{anderson2020strong,schweidtmann2021deterministic} need solvers outside this
-study's toolchain and are left as the main omission.
+consensus-based optimization, a distance-guarded objective and a pessimistic objective, with optimised-weight and
+randomised-prior ensembles among the intermediate models \cite{acar2009ensemble,osband2018randomized}. Exact
+optimization covers all three structured model classes with open-source tools only: tree ensembles and ReLU-network
+ensembles as mixed-integer linear programs \cite{misic2020optimization,fischetti2018deep}, solved by HiGHS, and the
+Gaussian-process mean by a spatial branch-and-bound written for this study. Its lower bound on each box is the larger
+of an interval bound on every kernel term, the scheme of \citet{franey2011branch} for expected improvement, and a
+centred bound: the mean and gradient at the box centre minus a Taylor remainder bounded by Cauchy--Schwarz in the
+kernel's reproducing-kernel Hilbert space. The second bound shrinks with the square of the box size for Mat\'ern-5/2
+and squared-exponential kernels, and it keeps the cancellation between the large, mixed-sign weights of a nearly
+interpolating GP, which makes the interval bound alone too loose to certify even in two dimensions. Every exact solve
+is time-limited and records its certified gap, so the study separates certified from uncertified optima. The
+tightened (ideal) network formulations of \citet{anderson2020strong} and the McCormick relaxations of
+\citet{schweidtmann2021deterministic}, which bound the posterior variance and acquisition functions as well as the
+mean, are not reimplemented.

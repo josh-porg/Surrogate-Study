@@ -42,10 +42,14 @@ def load():
                 seen.add(r["key"]); continue
             seen.add(r["key"]); c = r["cfg"]
             for s, v in r["strategies"].items():
-                if "regret" in v:
-                    rows.append(dict(task=r["key"], problem=c["problem"], surr=cfg_name(c),
-                                     family=FAMILY.get(c["learner"], "other"), strategy=s,
-                                     regret=max(v["regret"], FLOOR), curse=v["curse"], dist_data=v["dist_data"]))
+                if "regret" in v or v.get("no_point"):
+                    cert = (v.get("status") == "certified" if s == "gp_bnb" else
+                            (v.get("status") == 0 and (v.get("mip_gap") or 0) <= 1e-4) if s.startswith("milp") else None)
+                    rows.append(dict(task=r["key"], problem=c["problem"], surr=cfg_name(c), learner=c["learner"],
+                                     family=FAMILY.get(c["learner"], "other"), strategy=s, d=r.get("d"),
+                                     regret=max(v["regret"], FLOOR) if "regret" in v else np.nan,
+                                     curse=v.get("curse", np.nan), dist_data=v.get("dist_data", np.nan),
+                                     certified=cert, no_point=bool(v.get("no_point"))))
     return pd.DataFrame(rows)
 
 
@@ -70,17 +74,28 @@ def main():
                                   dist_to_data=("dist_data", "median"))
     out += ["## 3. Optimizer's curse (surrogate − true value at the pick, ÷ std f; < 0 = promised more than "
             "delivered) and distance from the pick to the data\n", md(C, ".3f"), ""]
-    tr = D[D.family == "trees"]
-    if "milp_trees" in set(tr.strategy):
-        P = tr.pivot_table(index="task", columns="strategy", values="regret")
+    ex = D[D.strategy.isin(["milp_trees", "milp_relu", "gp_bnb"])]
+    if len(ex):
+        P = D.pivot_table(index="task", columns="strategy", values="regret")
         rows = {}
-        for s in ("mean_lbfgsb", "mean_cmaes", "smoothed_adam", "cbo"):
-            if s in P:
-                q = P[["milp_trees", s]].dropna()
-                rows[s] = dict(milp_over=np.exp(np.log(q.milp_trees / q[s]).mean()),
-                               milp_better=(q.milp_trees < q[s]).mean(), tasks=len(q))
-        out += ["## 4. Exact MILP on tree ensembles vs other strategies on the same tree model (< 1: MILP better)\n",
-                md(pd.DataFrame(rows).T, ".2f"), ""]
+        for s, grp in ex.groupby("strategy"):
+            row = dict(tasks=len(grp), certified=grp.certified.astype(float).mean(), no_point=grp.no_point.mean())
+            for b in ("mean_lbfgsb", "mean_cmaes", "smoothed_adam", "cbo"):
+                if b in P and s in P:
+                    q = P[[s, b]].dropna()
+                    if len(q):
+                        row[f"vs_{b}"] = np.exp(np.log(q[s] / q[b]).mean())
+                        row[f"better_than_{b}"] = (q[s] < q[b]).mean()
+            rows[s] = row
+        out += ["## 4. Exact optimization of the trained model (MILP for trees and ReLU nets, certified branch-and-bound "
+                "for GPs): share certified within the time limit, and true-regret ratio against other strategies on "
+                "the same fit (< 1: the exact optimum is the better design)\n", md(pd.DataFrame(rows).T, ".2f"), ""]
+        cg = ex.dropna(subset=["regret"]).assign(cert=lambda t: t.certified.astype(bool))
+        if cg.cert.any() and (~cg.cert).any():
+            base = D[D.strategy == "mean_lbfgsb"].set_index("task").regret
+            cg = cg.assign(lr=np.log(cg.regret.values / base.reindex(cg.task).values)).dropna(subset=["lr"])
+            out += ["Certified vs uncertified solves (geometric-mean regret ratio against mean + L-BFGS-B):\n",
+                    md(cg.groupby(["strategy", "cert"]).lr.agg(ratio=lambda x: np.exp(x.mean()), n="size"), ".2f"), ""]
     (ROOT / "results" / "E15_report.md").write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))
 

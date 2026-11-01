@@ -18,6 +18,9 @@ budget (gradients from the learner's own grad() are free, as in E9's "model" arm
   Exact structure-exploiting optimization
     milp_trees         global minimum of a tree ensemble (RF / XGBoost / LightGBM) as a mixed-integer linear
                        program (HiGHS via scipy.optimize.milp, time-limited)                Mišić 2020
+    milp_relu          global minimum of a ReLU-network ensemble (mlp_relu) as a big-M MILP  Fischetti & Jo 2018
+    gp_bnb             certified global minimum of a GP mean by spatial branch-and-bound with interval bounds on the
+                       kernel terms (records the certified gap)           Franey et al. 2011; cf. Schweidtmann 2021
   Exploitation and validity
     guard_distance     L-BFGS-B on the mean + a penalty for leaving the data (distance to the nearest training point
                        beyond the design's 75th-percentile nearest-neighbour distance)    Schweidtmann et al. 2022;
@@ -307,6 +310,7 @@ def milp_trees(m, U, y, d, budget, seed, time_limit=120, max_leaves=30_000, **kw
     res = milp(c, constraints=[LinearConstraint(A[:r].tocsr(), lo, hi), LinearConstraint(A2.tocsr(), lo2, hi2)],
                integrality=integrality, bounds=Bounds(0, 1), options=dict(time_limit=time_limit, disp=False))
     if res.x is None:
+        milp_trees.last = dict(status=int(res.status), mip_gap=float("nan"), leaves=nl, binaries=nx)
         return None
     xv = res.x[:nx] > 0.5
     point = np.empty(d)
@@ -334,5 +338,175 @@ def _leaf_counts(m):
     return df[df.split_feature.isna()].groupby("tree_index").size().tolist()
 
 
+def _relu_layers(net):
+    """(W, b) per Linear layer of a ReLU nn.Sequential, float64."""
+    import torch
+    L = [mod for mod in net if isinstance(mod, torch.nn.Linear)]
+    return [(mod.weight.detach().double().numpy(), mod.bias.detach().double().numpy()) for mod in L]
+
+
+def milp_relu(m, U, y, d, budget, seed, time_limit=120, **kw):
+    """Global minimum of the mean of a ReLU-network ensemble over [0, 1]^d as a mixed-integer linear program
+    (Fischetti & Jo 2018 big-M encoding). Pre-activation bounds [l, u] by interval arithmetic layer by layer;
+    a unit with u <= 0 is fixed at 0, one with l >= 0 is linear (h = a), and an unstable unit gets a binary δ:
+        h >= a,  h <= a − l(1 − δ),  h <= u δ,  h >= 0.
+    Objective: (1/K) Σ_k (w_out,k · h_k + b_out,k), the ensemble mean in standardised units. HiGHS, time-limited;
+    status and relative gap are recorded (a time-limited solve returns its incumbent, not a certificate)."""
+    if m.name != "mlp_relu":
+        return None
+    from scipy.optimize import Bounds, LinearConstraint, milp
+    from scipy.sparse import lil_matrix
+    nets = [_relu_layers(n) for n in m._nets]
+    K = len(nets)
+    lb, ub, integ = [0.0] * d, [1.0] * d, [0] * d                       # variables: x, then per unit h (and δ)
+    rows, rlo, rhi = [], [], []                                          # sparse rows as {col: coef}
+    c, nb, const = {}, 0, 0.0
+    for layers in nets:
+        prev, plo, phi = list(range(d)), np.zeros(d), np.ones(d)
+        for li, (W, b) in enumerate(layers):
+            lo = b + np.minimum(W, 0) @ phi + np.maximum(W, 0) @ plo      # interval bounds on a = W h_prev + b
+            hi = b + np.maximum(W, 0) @ phi + np.minimum(W, 0) @ plo
+            if li == len(layers) - 1:                                    # output layer: linear, into the objective
+                for j, col in enumerate(prev):
+                    c[col] = c.get(col, 0.0) + W[0, j] / K
+                const += b[0] / K
+                break
+            cur = []
+            for u in range(W.shape[0]):
+                h = len(lb); cur.append(h)
+                neg_a = {col: -W[u, j] for j, col in enumerate(prev) if W[u, j] != 0.0}
+                if hi[u] <= 0:                                           # always inactive
+                    lb.append(0.0); ub.append(0.0); integ.append(0); continue
+                lb.append(0.0); ub.append(float(hi[u])); integ.append(0)
+                if lo[u] >= 0:                                           # always active: h − W h_prev = b
+                    rows.append({**neg_a, h: 1.0}); rlo.append(b[u]); rhi.append(b[u]); continue
+                dl = len(lb); lb.append(0.0); ub.append(1.0); integ.append(1); nb += 1
+                rows.append({**neg_a, h: 1.0}); rlo.append(b[u]); rhi.append(np.inf)             # h >= a
+                rows.append({**neg_a, h: 1.0, dl: -lo[u]}); rlo.append(-np.inf); rhi.append(b[u] - lo[u])
+                rows.append({h: 1.0, dl: -hi[u]}); rlo.append(-np.inf); rhi.append(0.0)           # h <= u δ
+            prev, plo, phi = cur, np.maximum(lo, 0), np.maximum(hi, 0)
+    nv = len(lb)
+    A = lil_matrix((len(rows), nv))
+    for i, r in enumerate(rows):
+        for k, v in r.items():
+            A[i, k] = v
+    cv = np.zeros(nv)
+    for k, v in c.items():
+        cv[k] = v
+    res = milp(cv, constraints=[LinearConstraint(A.tocsr(), rlo, rhi)], integrality=np.array(integ),
+               bounds=Bounds(np.array(lb), np.array(ub)), options=dict(time_limit=time_limit, disp=False))
+    if res.x is None:                                                     # no incumbent within the time limit
+        milp_relu.last = dict(status=int(res.status), mip_gap=float("nan"), binaries=nb, milp_obj=float("nan"))
+        return None
+    milp_relu.last = dict(status=int(res.status), mip_gap=float(getattr(res, "mip_gap", np.nan) or 0.0),
+                          binaries=nb, milp_obj=float(res.fun + const))
+    return np.clip(res.x[:d], 0, 1)
+
+
+_S3, _S5 = np.sqrt(3.0), np.sqrt(5.0)
+# per kernel: κ(r), κ'(r)/r, κ''(0)   (r = length-scale-scaled distance; κ'(r)/r is finite at 0 for C² kernels)
+_KAPPA = {1.5: (lambda r: (1 + _S3 * r) * np.exp(-_S3 * r), lambda r: -3.0 * np.exp(-_S3 * r), -3.0),
+          2.5: (lambda r: (1 + _S5 * r + 5 * r * r / 3) * np.exp(-_S5 * r),
+                lambda r: -(5.0 / 3.0) * (1 + _S5 * r) * np.exp(-_S5 * r), -5.0 / 3.0),
+          "se": (lambda r: np.exp(-0.5 * r * r), lambda r: -np.exp(-0.5 * r * r), -1.0)}
+
+
+def _gp_parts(m):
+    """(X, α, c, 1/ℓ, (κ, κ'/r, κ''(0))) with mean_z(x) = c Σ_i α_i κ(‖(x − X_i)/ℓ‖) for the sklearn GP learners;
+    None otherwise (including Matérn-1/2, which is not differentiable)."""
+    from sklearn.gaussian_process.kernels import RBF, Matern
+    g = m._m
+    if getattr(g, "normalize_y", False):
+        return None
+    k1 = g.kernel_.k1                                                    # C * base (+ White: zero off the diagonal)
+    cst, base = k1.k1.constant_value, k1.k2
+    il = 1.0 / np.broadcast_to(np.asarray(base.length_scale, float), (g.X_train_.shape[1],))
+    if isinstance(base, Matern):
+        kk = _KAPPA.get(float(base.nu))
+    elif isinstance(base, RBF):
+        kk = _KAPPA["se"]
+    else:
+        kk = None
+    if kk is None:
+        return None
+    return g.X_train_, np.asarray(g.alpha_, float).reshape(-1), cst, il, kk
+
+
+def gp_bnb(m, U, y, d, budget, seed, time_limit=120, max_nodes=200_000, tol=1e-4, **kw):
+    """Deterministic global minimisation of a GP posterior mean over [0, 1]^d by spatial branch-and-bound. Each box
+    takes the larger of two valid lower bounds (standardised units):
+      interval  κ decreases in the scaled distance r, so with r_i ∈ [rmin_i, rmax_i] over the box
+                μ >= c (Σ_{α_i>0} α_i κ(rmax_i) + Σ_{α_i<0} α_i κ(rmin_i))   (Franey, Ranjan & Chipman 2011, for EI);
+                tight far from the data, loose near it when the α_i are large and of mixed sign;
+      centred   μ(x) >= μ(c) − Σ_j |∂_j μ(c)| h_j − ‖μ‖_H √N(ρ), with h the half-widths, ρ = ‖h / ℓ‖ and
+                N(r) = c [2 − 2κ(r) + 2 r κ'(r) − κ''(0) r²] = max over the box of ‖k_x − k_c − (x − c)·∇k_c‖²_H
+                (Cauchy–Schwarz in the RKHS: the first-order Taylor remainder of μ is <μ, k_x − k_c − v·∇k_c>);
+                ‖μ‖²_H = αᵀ K_f α with the noise-free kernel matrix, so the cancellation between the α_i is kept.
+                N is increasing (checked in tests) and √N = O(r²) for Matérn-5/2 and SE, O(r^1.5) for Matérn-3/2.
+    Best-first; upper bounds from box centres and an initial L-BFGS-B multistart; boxes split along the longest side
+    in length-scale units; pruned when LB >= UB − tol. Stops at gap <= tol (certified), the node cap or the time
+    limit, and records the remaining certified gap."""
+    import heapq
+    import time
+    parts = _gp_parts(m) if m.name in ("gp", "gp_se") else None
+    if parts is None:
+        return None
+    X, al, cst, il, (kap, dkr, k20) = parts
+    pos = al > 0
+    D = np.sqrt(((((X[:, None, :] - X[None, :, :]) * il) ** 2).sum(-1)))
+    Hn = float(np.sqrt(max(al @ (cst * kap(D)) @ al, 0.0)))             # ‖μ‖_H
+    del D
+
+    def mu_grad(x):
+        Z = (x - X) * il; r = np.sqrt((Z ** 2).sum(1))
+        return float(cst * (al @ kap(r))), cst * ((al * dkr(r)) @ (Z * il))
+
+    def mu(x):
+        return mu_grad(np.asarray(x, float).reshape(-1))[0]
+
+    def remainder(rho):
+        return Hn * np.sqrt(max(cst * (2 - 2 * kap(rho) + 2 * rho * rho * dkr(rho) - k20 * rho * rho), 0.0))
+
+    def lower(lo, hi, fc=None, gc=None):
+        dmin = np.maximum(np.maximum(lo - X, 0), X - hi) * il
+        dmax = np.maximum(np.abs(X - lo), np.abs(X - hi)) * il
+        kmin, kmax = kap(np.sqrt((dmax ** 2).sum(1))), kap(np.sqrt((dmin ** 2).sum(1)))
+        lb = float(cst * (al[pos] @ kmin[pos] + al[~pos] @ kmax[~pos]))
+        if fc is None:
+            fc, gc = mu_grad(0.5 * (lo + hi))
+        h = 0.5 * (hi - lo)
+        return max(lb, fc - float(np.abs(gc) @ h) - remainder(float(np.sqrt(((h * il) ** 2).sum()))))
+
+    t0 = time.perf_counter()
+    best, best_x = np.inf, None
+    for x0 in _starts(d, 2 * d + 2, seed):                               # incumbent: local searches on the mean
+        r = minimize(lambda x: mu_grad(x), x0, jac=True, method="L-BFGS-B", bounds=[(0, 1)] * d,
+                     options=dict(maxiter=100))
+        if r.fun < best:
+            best, best_x = float(r.fun), np.clip(r.x, 0, 1)
+    lo0, hi0 = np.zeros(d), np.ones(d)
+    heap, cnt, nodes, status = [(lower(lo0, hi0), 0, lo0, hi0)], 1, 0, "certified"
+    while heap:
+        lb, _, lo, hi = heap[0]
+        if lb >= best - tol:                                             # best-first: every open box is pruned
+            heap = []; break
+        if nodes >= max_nodes or time.perf_counter() - t0 > time_limit:
+            status = "limit"; break
+        heapq.heappop(heap); nodes += 1
+        j = int(np.argmax((hi - lo) * il)); mid = 0.5 * (lo[j] + hi[j])
+        for a, b in ((lo[j], mid), (mid, hi[j])):
+            l2, h2 = lo.copy(), hi.copy(); l2[j], h2[j] = a, b
+            cx = 0.5 * (l2 + h2); fc, gc = mu_grad(cx)
+            if fc < best:
+                best, best_x = fc, cx
+            lb2 = lower(l2, h2, fc, gc)
+            if lb2 < best - tol:
+                heapq.heappush(heap, (lb2, cnt, l2, h2)); cnt += 1
+    gap = max(best - heap[0][0], 0.0) if heap else 0.0
+    gp_bnb.last = dict(status=status, bnb_gap=float(gap), nodes=nodes, bnb_obj=float(best),
+                       wall_bnb=time.perf_counter() - t0)
+    return best_x
+
+
 STRATEGIES = {f.__name__: f for f in (mean_lbfgsb, mean_cmaes, thompson_members, member_sgd, smoothed_adam, langevin,
-                                       cbo, milp_trees, guard_distance, pessimistic)}
+                                       cbo, milp_trees, milp_relu, gp_bnb, guard_distance, pessimistic)}

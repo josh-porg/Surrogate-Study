@@ -105,7 +105,7 @@ def _train(net, X, y, seed, epochs=3000, lr=3e-3, wd=1e-5, patience=200, val_fra
 
 def _mlp(d, width=64, depth=3, p_drop=0.0, act="silu"):
     torch = _torch(); nn = torch.nn
-    A = {"silu": nn.SiLU, "tanh": nn.Tanh}[act]
+    A = {"silu": nn.SiLU, "tanh": nn.Tanh, "relu": nn.ReLU}[act]
     layers, w = [], d
     for _ in range(depth):
         layers += [nn.Linear(w, width), A()] + ([nn.Dropout(p_drop)] if p_drop else []); w = width
@@ -138,6 +138,24 @@ class MLPEnsemble(Learner):
 
     def _predict_std(self, U):
         return self._all(U).std(0)
+
+
+@register
+class MLPReLU(MLPEnsemble):
+    """Deep ensemble of ReLU networks (d -> 32 -> 32 -> 1, K = 5, bootstrap as mlp_ens). The network is piecewise
+    linear, so its global minimum over the box is a mixed-integer linear program (coupling.milp_relu; Fischetti & Jo
+    2018). Narrower than mlp_ens (64 x 3, SiLU) so the exact program stays solvable; the activation and width
+    difference is part of the comparison, not hidden."""
+    name, year, ref, smooth = "mlp_relu", 2018, "fischetti2018deep", False
+    width, depth = 32, 2
+
+    def _fit(self, U, z):
+        torch = _torch(); rng = np.random.default_rng(self.seed); self._nets = []
+        for k in range(self.K):
+            torch.manual_seed(self.seed * 100 + k)
+            idx = rng.integers(0, len(z), len(z)) if self.K > 1 else np.arange(len(z))
+            net = _mlp(U.shape[1], self.width, self.depth, act="relu")
+            self._nets.append(_train(net, U[idx], z[idx], self.seed + k, opt=self.kw.get("opt", "lbfgs")))
 
 
 @register

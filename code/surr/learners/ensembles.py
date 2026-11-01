@@ -87,7 +87,7 @@ def members(m):
     if m.name in ("rf", "extratrees"):
         T = m._m.estimators_
         return [(1 / len(T), (lambda U, t=t: m._yinv(t.predict(np.atleast_2d(U))))) for t in T]
-    if hasattr(m, "_all") and m.name in ("mlp_ens", "mlp_rpf", "gbt_committee"):
+    if hasattr(m, "_all") and m.name in ("mlp_ens", "mlp_rpf", "mlp_relu", "gbt_committee"):
         K = len(m._all(np.full((1, m.d), 0.5)))
         return [(1 / K, (lambda U, k=k: m._yinv(m._all(np.atleast_2d(U))[k]))) for k in range(K)]
     return None

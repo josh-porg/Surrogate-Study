@@ -446,7 +446,35 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   `ens_optw` (CV-optimised weights, Acar & Rais-Rohani 2009) and `mlp_rpf` (randomised prior functions, Osband et
   al. 2018) in `code/surr/learners/ensembles.py`. E9b gains bootstrapped-kriging EGO (Kleijnen et al. 2012) at
   d ≤ 5, instances 0-4 (B = 10 GP refits per evaluation). Not covered (no solver here, recorded as planned): MILP
-  for ReLU networks and deterministic global optimization of GPs (MAiNGO). Kaggle: after E9b.
+  for ReLU networks and deterministic global optimization of GPs (MAiNGO). Kaggle: after E9b. *Superseded by D-17.*
+- **D-17 · 2026-11-01 · E15 exact optimization extended to ReLU networks and GPs (author's question "can we write
+  them?").** Both now run with open-source tools only. (a) `mlp_relu`: a ReLU deep ensemble (d→32→32→1, K = 5,
+  bootstrap as `mlp_ens`; narrower than `mlp_ens` so the program stays solvable; the activation and width differ
+  and are reported). `coupling.milp_relu` writes the big-M encoding of Fischetti & Jo (2018), with interval-arithmetic
+  pre-activation bounds and stable units fixed or linear, and solves it with HiGHS (120 s limit). The tests check that
+  the program's objective equals the network's prediction at the recovered point, and that the point is no worse
+  than a 401² grid. (b) `coupling.gp_bnb`: spatial branch-and-bound on the GP mean (Matérn-3/2, Matérn-5/2, SE; the
+  sklearn `gp`/`gp_se` learners). Each box takes the larger of two lower bounds:
+  - an interval bound on each kernel term (Franey, Ranjan & Chipman 2011);
+  - a centred RKHS bound, μ(c) − Σ|∂_jμ(c)| h_j − ‖μ‖_H √N(ρ), with N(r) = c[2 − 2κ(r) + 2rκ′(r) − κ″(0)r²].
+
+  The interval bound alone failed to certify Branin at n = 40 (gap 75 after 2·10⁵ nodes); with the centred bound it
+  certified in 354 nodes. The tests check that N is increasing, the analytic gradient, and the centred bound against
+  sampled minima on 300 random boxes. Limits are 120 s and 2·10⁵ nodes, and the remaining certified gap is recorded.
+  Timings (laptop):
+
+  | Cell | GP branch-and-bound | ReLU MILP |
+  |---|---|---|
+  | levy_d5, n = 50 | certified, 28 s | gap 9·10⁻⁵, 55 s |
+  | levy_d5, n = 250 | gap 1.35 at the node cap | gap 0.22 at the time limit |
+  | smooth_trig_d10, n = 100 | certified, 30 s | 6.5 s |
+  | ackley_d10, n = 500 | gap 21 at the node cap | no incumbent in 120 s, recorded as `no_point` |
+
+  Exact strategies now always record solver status, even when they return no point. Before this change a stale
+  status from an earlier call could carry over. E15 is now 12 surrogates, 9 120 tasks. `e15_analysis.py` §4 reports
+  the certified share and compares certified with uncertified optima. The paper's §6b no longer lists these methods
+  as omissions. Still not reimplemented: Anderson et al. (2020) ideal formulations, and McCormick bounds on the GP
+  variance and acquisition functions (Schweidtmann et al. 2021).
 
 ### Smoke-test signals (1 seed, small n — direction only, not results)
 - 2026-10-11 · **Rational surrogates (E12 smoke, seed 0).** Clean data: `rat_ls`/`paaa` reach 1e-15 on pole/knee
