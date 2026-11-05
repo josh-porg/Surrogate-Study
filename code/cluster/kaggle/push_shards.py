@@ -71,6 +71,13 @@ os.makedirs(f"{{W}}/proj/results/raw/{exp}", exist_ok=True)
 json.dump(dict(python=platform.python_version(), cpus=os.cpu_count(), shard="{i}/{k}", freeze=env.splitlines()),
           open(f"{{W}}/proj/results/raw/{exp}/env_shard{i}of{k}.json", "w"))
 os.chdir(f"{{W}}/proj/code")
+# the task list must match the laptop's: an experiment defined from local records builds an empty or different list
+# here if its inputs were not shipped (E9_ipopt, 2026-11-05: 0 tasks, five shards "done" with nothing run)
+n = subprocess.run([sys.executable, "-c", "from surr.runner import EXPERIMENTS as E; print(len(E[{exp!r}]()))"],
+                   capture_output=True, text=True)
+print("task list:", n.stdout.strip(), "expected {n_expected}", n.stderr[-300:], flush=True)
+if n.stdout.strip() != "{n_expected}":
+    raise SystemExit("task list differs from the laptop's; not running")
 try:
     import torch
     if torch.cuda.is_available():
@@ -94,7 +101,8 @@ def build_archive(exp: str, path: Path):
         skip = lambda ti: None if ("__pycache__" in ti.name or ti.name.endswith(".pyc") or "/cluster" in ti.name) else ti
         tf.add(ROOT / "code", arcname="proj/code", filter=skip)
         for f in [*(ROOT / "results").glob("*_shortlist.json"),         # inputs later experiments read (E3 ← E2a,
-                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith(("Efstar", "E9")) else [])]:  # ← f*
+                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith(("Efstar", "E9")) else []),  # ← f*
+                  *((ROOT / "results").glob("E9_ipopt_keys.json") if exp == "E9_ipopt" else [])]:  # frozen list
             tf.add(f, arcname=f"proj/results/{f.name}")
         prev = ROOT / "results" / "raw" / exp
         if prev.exists():                                                # only the finished task keys, not records
@@ -120,6 +128,14 @@ def main():
         sys.exit("refusing: real-data experiments stay on this machine (STUDY_PLAN §4b data rule)")
     slug = f"surrpaper-{a.exp.lower().replace('_', '-')}" + (f"-{a.tag}" if a.tag else "")
     extra = (["--skip-learners", a.skip_learners] if a.skip_learners else []) +             (["--only-learners", a.only_learners] if a.only_learners else []) + (["--limit", str(a.limit)] if a.limit else [])
+    sys.path.insert(0, str(ROOT / "code"))
+    from surr import runner as R
+    if a.exp == "E9_ipopt":                                      # freeze the record-derived list for the shards
+        (ROOT / "results" / "E9_ipopt_keys.json").write_text(json.dumps(sorted(R.e9_ipopt_keys())), encoding="utf8")
+    n_expected = len(R.EXPERIMENTS[a.exp]())
+    if n_expected == 0:
+        sys.exit(f"refusing: {a.exp} has no tasks on this machine")
+    print(f"{a.exp}: {n_expected} tasks")
     smt = {"smt_krg", "smt_kpls"}
     needs_smt = bool(smt & set(a.only_learners.split(","))) if a.only_learners else not smt <= set(a.skip_learners.split(","))
     with tempfile.TemporaryDirectory() as td:
@@ -144,7 +160,7 @@ def main():
             kd = Path(td) / f"k{i}"; kd.mkdir()
             name = f"{slug}-shard-{i}of{a.shards}"
             (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards,
-                                                     extra=extra, needs_smt=needs_smt,
+                                                     extra=extra, needs_smt=needs_smt, n_expected=n_expected,
                                                      timeout=TIMEOUTS.get(a.exp, 900)))
             (kd / "kernel-metadata.json").write_text(json.dumps({
                 "id": f"{a.user}/{name}", "title": name, "code_file": "run.py", "language": "python",

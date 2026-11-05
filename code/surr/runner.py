@@ -552,7 +552,20 @@ def exp_E11_al():
 def exp_E9_ipopt():
     """IPOPT for the E9 tasks that ran without it (casadi was missing from the offline Kaggle wheels in waves 1-2;
     added 2026-10-30). One task per E9 task whose stored IPOPT runs are errors: same surrogate fit (same seeds), only
-    ipopt_multistart with both gradient sources. Defined from the E9 records, so run it after E9 finishes."""
+    ipopt_multistart with both gradient sources. Defined from the E9 records, so run it after E9 finishes.
+    Kaggle shards do not receive the E9 records, so push_shards freezes the key list into results/E9_ipopt_keys.json
+    (written by e9_ipopt_keys() on the laptop) and ships it; the builder reads that file when it exists."""
+    frozen = ROOT / "results" / "E9_ipopt_keys.json"
+    want = set(json.loads(frozen.read_text(encoding="utf8"))) if frozen.exists() else e9_ipopt_keys()
+    rows = []
+    for c in exp_E9_optim():
+        if key_of(c) in want:
+            rows.append({**c, "exp": "E9_ipopt", "only_opts": ["ipopt_multistart"]})
+    return rows
+
+
+def e9_ipopt_keys():
+    """E9 task keys whose stored IPOPT runs are errors (read from the E9 records; laptop only)."""
     want = set()
     for f in sorted((RAW / "E9_optim").glob("*.jsonl")):
         for line in f.read_text(encoding="utf8").splitlines():
@@ -562,11 +575,7 @@ def exp_E9_ipopt():
                 continue
             if r.get("status") == "ok" and "error" in r.get("runs", {}).get("ipopt_multistart|fd", {}):
                 want.add(r["key"])
-    rows = []
-    for c in exp_E9_optim():
-        if key_of(c) in want:
-            rows.append({**c, "exp": "E9_ipopt", "only_opts": ["ipopt_multistart"]})
-    return rows
+    return want
 
 
 def exp_E9b_managed():
