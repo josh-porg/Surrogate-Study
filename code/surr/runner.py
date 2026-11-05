@@ -527,6 +527,39 @@ def exp_E9_optim():
     return rows
 
 
+# E12's two most robust rational learners, so the rational-structure accuracy result can be tested on optimization
+E9X_LEARNERS = E9_LEARNERS + [("rat_ls", {}), ("rat_ls", {"reg": "tik"})]
+
+
+def e9x_problems():
+    """Every E3 core and E3x problem that E9 left out (133 on 2026-11-05)."""
+    from surr.problems import core_set
+    core = sorted(p.name for p in core_set())
+    ext = sorted({r["problem"] for r in exp_E3x_learners(seeds=[0])})
+    return [p for p in core + ext if p not in E9_PROBLEMS]
+
+
+def exp_E9x_optim():
+    """E9x (added 2026-11-05, STUDY D-19): E9 widened to every E3 / E3x problem it left out, so the selector (E10)
+    and the rational-structure question have optimization outcomes on all 171 problems. Reduced design: shifted
+    instances 0-4, n ∈ {10d, 50d}, noise-free only; E9's 16 surrogates + rat_ls and rat_ls[reg=tik]; same
+    optimizers, budget and checkpoints as E9 (task_e9). Full design (instances 0-9, both noise levels, ≈ 97 000
+    tasks) is recorded in D-19 for a possible later run and is not queued."""
+    from surr.problems import get
+    rows = []
+    for pn in e9x_problems():
+        d = get(pn).d
+        for s in range(5):
+            rows.append(dict(kind="e9", exp="E9x_optim", problem=pn, shift_seed=s, learner="truth", seed=s))
+            for mult in (10, 50):
+                for L, kw in E9X_LEARNERS:
+                    if L == "smt_krg" and mult * d > 500:
+                        continue
+                    rows.append(dict(kind="e9", exp="E9x_optim", problem=pn, shift_seed=s, learner=L, kw=kw,
+                                     n=mult * d, noise="none", level=0.0, seed=s))
+    return rows
+
+
 def exp_E11_fea():
     """E11 (RQ8) on R-FEA, local only (real data): every E3 learner config × use of the free scalar model {direct,
     tmf, aug} × training size {60, 140 (the thesis' canonical n), all ≈ 498} × 30 random 80/20 splits."""
@@ -755,7 +788,7 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
                "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
                "Efstar_refine": exp_Efstar_refine, "E4_mechanisms": exp_E4_mechanisms, "E4_rair": exp_E4_rair,
-               "E9_optim": exp_E9_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
+               "E9_optim": exp_E9_optim, "E9x_optim": exp_E9x_optim, "E13_gradient": exp_E13_gradient, "E6_mf": exp_E6_mf,
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
                "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
                "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt,

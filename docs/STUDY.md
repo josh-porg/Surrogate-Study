@@ -519,3 +519,24 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   d = 2, 5, 10. A single-point predict at d = 5 fell from 94 to 13 ms, and the Smolyak part of the cell from
   4 328 s to 567 s, so the cell now takes about 11 min. E8 is now about 5 Kaggle waves instead of about 24. E14
   results are unaffected. E8 records now include per-optimizer wall time (`t_opt`), which measures time only.
+- **D-19 · 2026-11-05 · E9x: E9 widened to all 171 E3/E3x problems (reduced design queued; full design not
+  queued).**
+  - **Why.** E9 ran 38 of the 171 accuracy problems: 25 E3 core and 13 E3x. It used none of the 10 rational
+    (P-RAT) problems and none of the rational learners. That is too few problems to train the selector (E10) on
+    optimization outcomes. It also leaves open whether E12's accuracy advantage for rational structure carries over
+    to optimization.
+  - **Design.** `E9x_optim` (`code/surr/runner.py: exp_E9x_optim`, `e9x_problems`) covers the 133 problems E9 left
+    out. These are 47 P-FEAT, 43 P-VLSEd, 25 P-VLSE2, 10 P-RAT, 5 P-THESIS and 3 P-ENG, with d = 1–13. Learners are
+    E9's 16 plus `rat_ls` and `rat_ls[reg=tik]`, the two most robust rational learners in E12.
+  - **Reduced design (queued).** Shifted instances 0–4, n ∈ {10d, 50d}, noise-free only, with the E9 optimizers,
+    budget and checkpoints. That is 24 595 tasks, Kaggle track `e9x`, after E15. All 133 problems have f* for
+    instances 0–4; 122 have all five confirmed, and the analysis excludes unconfirmed instances as in E9.
+  - **CMA-ES at d = 1.** The `cma` package does not run 1-D problems, so on the 5 one-dimensional problems CMA-ES
+    is recorded as an error. Every other optimizer runs (smoke-tested).
+  - **Analysis.** `e9_analysis.py E9x` reports E9x alone. `e9_analysis.py all` reports all 171 problems on the
+    matched design (E9 restricted to instances 0–4, noise-free). The default E9 report now merges the E9_ipopt
+    re-runs; its numbers are otherwise unchanged (diff-checked).
+  - **Full design (NOT queued; possible later run).** Instances 0–9 × n ∈ {10d, 50d} × noise {none, additive 1 %},
+    as E9. That is about 1 330 × (1 + 4 × 18) ≈ 97 000 tasks, roughly four times E9 on Kaggle. Run it only if
+    E9x's noise-free results leave the noise question open for the new problems. To queue it, widen
+    `exp_E9x_optim`'s loops into a separate experiment name, so the reduced task keys stay finished.

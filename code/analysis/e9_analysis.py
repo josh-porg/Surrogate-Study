@@ -13,8 +13,9 @@ Success = regret < 1e-2 (1 % of the function's spread). Unit of analysis for tes
 5. Anytime: success rate vs evaluations for the truth and the three best surrogates.
 6. Interaction: best surrogate × optimizer pair per problem; how many distinct pairs win.
 
-    python code/analysis/e9_analysis.py
-Writes results/E9_report.md.
+    python code/analysis/e9_analysis.py [E9 | E9x | all]
+E9 (default; merges the E9_ipopt re-runs) writes results/E9_report.md; E9x writes E9x_report.md; all (171 problems,
+E9 restricted to E9x's design: instances 0-4, noise-free) writes E9all_report.md.
 """
 from __future__ import annotations
 
@@ -43,29 +44,46 @@ def opt_class(o):
             "local derivative-free" if o in LOCAL_DFO else "global")
 
 
-def load():
+VIEWS = {  # name -> (record folders, report file, filter on the task table)
+    "E9": (("E9_optim", "E9_ipopt"), "E9_report.md", None),
+    "E9x": (("E9x_optim",), "E9x_report.md", None),
+    # all 171 problems on E9x's reduced design: E9 restricted to instances 0-4, noise-free
+    "all": (("E9_optim", "E9_ipopt", "E9x_optim"), "E9all_report.md", lambda t: (t.inst < 5) & (t.noise == 0)),
+}
+
+
+def load(exps=("E9_optim", "E9_ipopt")):
+    """Rows per (task, optimizer, checkpoint). E9_ipopt records re-run only IPOPT on an E9 task (same fit, same seeds),
+    so they contribute their IPOPT runs and no task row; E9's own IPOPT runs on those tasks are errors (no regret)
+    and are skipped."""
     rows, tasks, seen = [], [], set()
-    for f in sorted((ROOT / "results" / "raw" / "E9_optim").glob("*.jsonl")):
-        for line in f.read_text(encoding="utf8").splitlines():
-            try:
-                r = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if r["key"] in seen or r.get("status") != "ok":
-                seen.add(r["key"]); continue
-            seen.add(r["key"])
-            c = r["cfg"]
-            surr = "truth" if c["learner"] == "truth" else cfg_name(c)
-            t = dict(problem=c["problem"], inst=c["shift_seed"], n=c.get("n", 0), noise=c.get("level", 0.0), surr=surr,
-                     nrmse=r.get("nrmse", 0.0), design_best=r.get("design_best_regret", np.nan),
-                     confirmed=r.get("fstar_confirmed", True))
-            tasks.append(t)
-            for opt, v in r["runs"].items():
-                if "regret" not in v:
-                    continue
-                for k, (reg, dist) in enumerate(zip(v["regret"], v["dist"])):
-                    rows.append({**t, "opt": opt, "cp": r["checkpoints"][k], "regret": max(reg, FLOOR), "dist": dist})
+    for exp in exps:
+        for f in sorted((ROOT / "results" / "raw" / exp).glob("*.jsonl")):
+            _read(f, exp, rows, tasks, seen)
     return pd.DataFrame(rows), pd.DataFrame(tasks)
+
+
+def _read(f, exp, rows, tasks, seen):
+    for line in f.read_text(encoding="utf8").splitlines():
+        try:
+            r = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if r["key"] in seen or r.get("status") != "ok":
+            seen.add(r["key"]); continue
+        seen.add(r["key"])
+        c = r["cfg"]
+        surr = "truth" if c["learner"] == "truth" else cfg_name(c)
+        t = dict(problem=c["problem"], inst=c["shift_seed"], n=c.get("n", 0), noise=c.get("level", 0.0), surr=surr,
+                 nrmse=r.get("nrmse", 0.0), design_best=r.get("design_best_regret", np.nan),
+                 confirmed=r.get("fstar_confirmed", True), exp=exp)
+        if exp != "E9_ipopt":
+            tasks.append(t)
+        for opt, v in r["runs"].items():
+            if "regret" not in v:
+                continue
+            for k, (reg, dist) in enumerate(zip(v["regret"], v["dist"])):
+                rows.append({**t, "opt": opt, "cp": r["checkpoints"][k], "regret": max(reg, FLOOR), "dist": dist})
 
 
 def load_e9b():
@@ -121,13 +139,17 @@ def crossover(df, T):
             ""]
 
 
-def main():
-    df, T = load()
+def main(view="E9"):
+    exps, report, keep = VIEWS[view]
+    df, T = load(exps)
     if df.empty:
-        print("no E9 records yet"); return
+        print(f"no {view} records yet"); return
+    if keep is not None:
+        T = T[keep(T)]; df = df[keep(df)]
     df = df[df.confirmed]
     full = df[df.cp == df.cp.max()]
-    out = [f"# E9 — optimization on the surrogate ({len(T)} tasks, {df.problem.nunique()} problems)\n",
+    out = [f"# {view} — optimization on the surrogate ({len(T)} tasks, {df.problem.nunique()} problems; "
+           f"records: {', '.join(exps)})\n",
            f"Regret normalised by std(f); success = regret < {OK:g}. Instances with an unconfirmed f* are excluded.\n"]
 
     # 1. per surrogate
@@ -186,10 +208,10 @@ def main():
     out += [f"## 6. Best surrogate + optimizer per problem ({wins.nunique()} distinct pairs over {len(wins)} problems)\n",
             md(wins.to_frame("best pair (geo-mean regret)"), ""), ""]
     out += crossover(df, T)
-    (ROOT / "results" / "E9_report.md").write_text("\n".join(out), encoding="utf8")
+    (ROOT / "results" / report).write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))
 
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")         # reports use Greek letters; the Windows console is cp1252
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else "E9")

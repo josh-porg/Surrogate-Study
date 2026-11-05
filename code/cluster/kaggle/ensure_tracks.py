@@ -44,6 +44,8 @@ TRACKS = {
     "e14": ["E14_selfdesign", "--shards", "5", "--max-waves", "5", "--start-after", "E5_sampling:"],
     "e9b": ["E9b_managed", "--shards", "5", "--max-waves", "10", "--start-after", "E14_selfdesign:"],
     "e15": ["E15_coupling", "--shards", "5", "--max-waves", "6", "--start-after", "E9b_managed:"],
+    # E9x (D-19): the 133 E3/E3x problems E9 left out, reduced design (~24 600 tasks); the full design is not queued
+    "e9x": ["E9x_optim", "--shards", "5", "--max-waves", "12", "--start-after", "E15_coupling:"],
     # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 
