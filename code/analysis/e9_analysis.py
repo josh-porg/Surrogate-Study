@@ -83,7 +83,8 @@ def _read(f, exp, rows, tasks, seen):
             if "regret" not in v:
                 continue
             for k, (reg, dist) in enumerate(zip(v["regret"], v["dist"])):
-                rows.append({**t, "opt": opt, "cp": r["checkpoints"][k], "regret": max(reg, FLOOR), "dist": dist})
+                rows.append({**t, "opt": opt, "cp": r["checkpoints"][k], "regret": max(reg, FLOOR), "dist": dist,
+                             "nfev": v.get("nfev", np.nan), "wall": v.get("wall", np.nan)})
 
 
 def load_e9b():
@@ -137,6 +138,33 @@ def crossover(df, T):
             md(R.sort_values(R.columns[-1], ascending=False).head(25), ".2f"), "",
             "Geometric-mean regret:\n", md(G.loc[R.sort_values(R.columns[-1], ascending=False).head(25).index], ".3g"),
             ""]
+
+
+def cost_section(df):
+    """Optimizers at matched cost. Every run is scored at the incumbent when the evaluation counter reaches each
+    checkpoint, so running past the 500·d cap (IPOPT, trust-constr, DIRECT, CMA-ES overshoot; scipy/casadi expose
+    iteration limits only) cannot improve a score; stopping early keeps the final incumbent. Gradients of the
+    "model" arm are not counted (one call each), so its evaluation counts understate its cost."""
+    from surr.problems import get
+    full = df[df.cp == df.cp.max()].copy()
+    dmap = {p: get(p).d for p in full.problem.unique()}
+    full["used"] = full.nfev / (full.cp * full.problem.map(dmap))
+    out = ["## 8. Cost: optimizers at matched evaluation budgets\n",
+           "Success at 10d / 50d / 500d evaluations (scored when the counter reaches the checkpoint, so overshooting "
+           "the cap gives no advantage); budget used = evaluations ÷ (500·d), median and share of runs past the cap; "
+           "wall = median seconds per run. Model-gradient calls are free here (not counted).\n"]
+    for lab, sel in (("on the surrogates", df.surr != "truth"), ("on the true function", df.surr == "truth")):
+        g = df[sel]
+        S = g.assign(ok=g.regret < OK).pivot_table(index="opt", columns="cp", values="ok", aggfunc="mean")
+        S = S[[c for c in (10, 50, 500) if c in S.columns]].add_prefix("success_")
+        f2 = full[sel[full.index]]
+        C = f2.groupby("opt").agg(used_median=("used", "median"), past_cap=("used", lambda x: (x > 1.0001).mean()),
+                                  wall_s=("wall", "median"))
+        R = S.join(C)
+        for c in S.columns:
+            R[f"rank_{c.split('_')[1]}"] = R[c].rank(ascending=False, method="min").astype(int)
+        out += [f"### {lab}\n", md(R.sort_values(S.columns[-1], ascending=False), ".3g"), ""]
+    return out
 
 
 def main(view="E9"):
@@ -207,6 +235,7 @@ def main(view="E9"):
     wins = pr.groupby(level="problem").idxmin().apply(lambda t: f"{t[1]} + {t[2]}")
     out += [f"## 6. Best surrogate + optimizer per problem ({wins.nunique()} distinct pairs over {len(wins)} problems)\n",
             md(wins.to_frame("best pair (geo-mean regret)"), ""), ""]
+    out += cost_section(df)
     out += crossover(df, T)
     (ROOT / "results" / report).write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))

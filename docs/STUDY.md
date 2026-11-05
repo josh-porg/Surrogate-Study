@@ -540,3 +540,22 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     as E9. That is about 1 330 × (1 + 4 × 18) ≈ 97 000 tasks, roughly four times E9 on Kaggle. Run it only if
     E9x's noise-free results leave the noise question open for the new problems. To queue it, widen
     `exp_E9x_optim`'s loops into a separate experiment name, so the reduced task keys stay finished.
+- **D-20 · 2026-11-05 · E9 cost accounting made explicit (analysis only; no re-runs).** Prompted by the author's
+  question: is PSO's first place at 500·d only an effect of the budget?
+  - **Scoring is fair at every checkpoint.** `optimizers._Counter` records the incumbent at the moment the
+    evaluation count reaches 10d … 500d. Several optimizers expose only iteration limits and run past the cap: on
+    the surrogates, IPOPT with finite differences has a median 2.6× and a maximum 10.8× the budget, and IPOPT with
+    the model gradient 45 % of runs past the cap. Trust-constr, DIRECT and CMA-ES do the same. This wastes wall time
+    but cannot improve a score. Methods that stop early keep their final incumbent.
+  - **Model gradients are not counted.** Gradient calls in the `|model` arm are free. L-BFGS-B, SLSQP and basin
+    hopping with model gradients use a median 3–6 % of the evaluation budget, so their counts understate their
+    cost. E13 covers gradient cost.
+  - **Ranking depends on budget.** `e9_analysis.py` §8 reports success at 10d / 50d / 500d with budget used and
+    wall time.
+
+    | Setting | Top at 10d (low budget) | Top at 500d |
+    |---|---|---|
+    | On the true function | L-BFGS-B and SLSQP with model gradients, 0.65 (PSO 0.31) | PSO 0.87, CMA-ES 0.82 |
+    | On a surrogate | SLSQP and L-BFGS-B with model gradients, 0.33 at 10d, ≈ their 500d value (PSO 0.18) | PSO 0.35 |
+
+    A single full-budget ranking is therefore not a statement of efficiency. The paper reports the curves.
