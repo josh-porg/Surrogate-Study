@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1791814496.19048 "main.tex" "main.pdf" "main" 1791814498.98562 0
+["pdflatex"] 1793978162.05869 "main.tex" "main.pdf" "main" 1793978163.83559 0
   "C:/Users/satur/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1791808993.06465 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/satur/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1791808996.12301 12668 05d2fe7e83afb045be82683daec05151 ""
   "C:/Users/satur/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1790022847.8901 13333487 1b45f9a1fe5312d154d410a46b286385 ""
@@ -127,15 +127,18 @@
   "C:/Users/satur/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "chapters/ch01.tex" 1791814254.45541 40526 3d34e7d724f5f827c3586b8193f28351 ""
   "chapters/ch02.tex" 1791814485.06147 22758 624044b2241f084d148634141797787a ""
+  "chapters/ch03.tex" 1793978053.09333 25566 771d8314465573ee16adad5c75aac81c ""
   "figures/ch01_fd_error.pdf" 1791809022.20513 20075 a27cdfde07582856ff5fc4f4741cef4f ""
   "figures/ch01_rates.pdf" 1791809022.58943 17823 0a790da9cb040855eb38ab9ba5dafd46 ""
   "figures/ch02_lml_landscape.pdf" 1791814492.59543 101551 ddaba19e164ceb7d79927b2be519ee24 ""
   "figures/ch02_posterior.pdf" 1791814489.86173 36262 9b92b40f0d29bfee76cdb20ea7ded948 ""
   "figures/ch02_prior_samples.pdf" 1791814487.07796 37240 23966198c65074fe42424c800740697c ""
-  "main.aux" 1791814497.63701 13546 fa6aa79fffbdc951261f0885f25d7b51 "pdflatex"
-  "main.out" 1791814497.64834 4867 a1bbac68fae23f93ff3490b490b7324f "pdflatex"
-  "main.tex" 1791814456.90995 2397 f8ef92acbe07c177546e8fc56c9c0b0b ""
-  "main.toc" 1791814497.65386 4723 78c78e05352da9e674fe8c55d154d94a "pdflatex"
+  "figures/ch03_coeff_decay.pdf" 1793978138.28861 23619 fea060d4cb14b2d38552474514117784 ""
+  "figures/ch03_sparse.pdf" 1793978140.66362 22351 3ae285dfe03b42e336727f412c887a67 ""
+  "main.aux" 1793978163.27208 17869 67232e3f2c34af73e1676b650daee257 "pdflatex"
+  "main.out" 1793978163.31398 7166 456c487a8943d253fae87d99d884d3c1 "pdflatex"
+  "main.tex" 1793978039.76533 2419 9ab47770faab8fb033eb321cf10e27c5 ""
+  "main.toc" 1793978163.316 6022 fead0aa2e918de49cbc639adc86e8b9c "pdflatex"
   (generated)
   "main.aux"
   "main.log"

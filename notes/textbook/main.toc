@@ -58,3 +58,18 @@
 \contentsline {paragraph}{Ill-conditioning.}{19}{section*.41}%
 \contentsline {paragraph}{What the study found, and the remedies.}{19}{section*.42}%
 \contentsline {section}{\numberline {2.7}When a GP is the wrong model}{20}{section.2.7}%
+\contentsline {chapter}{\numberline {3}Polynomial chaos and sparse regression}{22}{chapter.3}%
+\contentsline {section}{\numberline {3.1}From one input to many}{22}{section.3.1}%
+\contentsline {paragraph}{Which multi-indices?}{22}{section*.45}%
+\contentsline {section}{\numberline {3.2}Polynomial chaos: orthogonal under the input distribution}{23}{section.3.2}%
+\contentsline {section}{\numberline {3.3}How fast the coefficients fall}{24}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Computing the coefficients}{25}{section.3.4}%
+\contentsline {paragraph}{By projection (quadrature).}{25}{section*.46}%
+\contentsline {paragraph}{By regression.}{25}{section*.47}%
+\contentsline {section}{\numberline {3.5}Sparsity: the LASSO and least-angle regression}{25}{section.3.5}%
+\contentsline {paragraph}{Least-angle regression (LARS).}{26}{section*.48}%
+\contentsline {section}{\numberline {3.6}Statistics for free: mean, variance and Sobol' indices}{27}{section.3.6}%
+\contentsline {paragraph}{Variance-based sensitivity.}{27}{section*.49}%
+\contentsline {section}{\numberline {3.7}The quadratic response surface}{28}{section.3.7}%
+\contentsline {section}{\numberline {3.8}When polynomials are the wrong model}{28}{section.3.8}%
+\contentsline {paragraph}{What the study found.}{29}{section*.50}%

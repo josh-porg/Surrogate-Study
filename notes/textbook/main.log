@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.21)  12 OCT 2026 07:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.21)  6 NOV 2026 07:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -490,13 +490,13 @@ Chapter 1.
 
 
 ]
-<figures/ch01_rates.pdf, id=149, 375.804pt x 245.718pt>
+<figures/ch01_rates.pdf, id=194, 375.804pt x 245.718pt>
 File: figures/ch01_rates.pdf Graphic file (type pdf)
 <use figures/ch01_rates.pdf>
 Package pdftex.def Info: figures/ch01_rates.pdf  used on input line 85.
 (pdftex.def)             Requested size: 282.28384pt x 184.58049pt.
  [2] [3 <./figures/ch01_rates.pdf>] [4] [5] [6]
-<figures/ch01_fd_error.pdf, id=264, 375.804pt x 245.718pt>
+<figures/ch01_fd_error.pdf, id=309, 375.804pt x 245.718pt>
 File: figures/ch01_fd_error.pdf Graphic file (type pdf)
 <use figures/ch01_fd_error.pdf>
 Package pdftex.def Info: figures/ch01_fd_error.pdf  used on input line 329.
@@ -526,7 +526,7 @@ Chapter 2.
 [14
 
 ]
-<figures/ch02_prior_samples.pdf, id=414, 722.7pt x 173.448pt>
+<figures/ch02_prior_samples.pdf, id=459, 722.7pt x 173.448pt>
 File: figures/ch02_prior_samples.pdf Graphic file (type pdf)
 <use figures/ch02_prior_samples.pdf>
 Package pdftex.def Info: figures/ch02_prior_samples.pdf  used on input line 67.
@@ -562,14 +562,14 @@ mr/m/n/10.95 (\OML/cmm/m/it/10.95 x[]; x\OT1/cmr/m/n/10.95 )$:
  []
 
 [17]
-<figures/ch02_lml_landscape.pdf, id=519, 390.25798pt x 260.17201pt>
+<figures/ch02_lml_landscape.pdf, id=564, 390.25798pt x 260.17201pt>
 File: figures/ch02_lml_landscape.pdf Graphic file (type pdf)
 <use figures/ch02_lml_landscape.pdf>
 Package pdftex.def Info: figures/ch02_lml_landscape.pdf  used on input line 253
 .
 (pdftex.def)             Requested size: 300.49974pt x 200.33305pt.
  [18]
-<figures/ch02_posterior.pdf, id=531, 693.792pt x 231.26399pt>
+<figures/ch02_posterior.pdf, id=576, 693.792pt x 231.26399pt>
 File: figures/ch02_posterior.pdf Graphic file (type pdf)
 <use figures/ch02_posterior.pdf>
 Package pdftex.def Info: figures/ch02_posterior.pdf  used on input line 269.
@@ -584,22 +584,73 @@ Underfull \hbox (badness 10000) in paragraph at lines 316--318
 []\OT1/cmr/m/n/10 heteroscedastic GP,
  []
 
-[20 <./figures/ch02_posterior.pdf>]) [21] (main.aux)
+[20 <./figures/ch02_posterior.pdf>]) (chapters/ch03.tex [21]
+Chapter 3.
+[22
+
+] [23]
+<figures/ch03_coeff_decay.pdf, id=728, 693.792pt x 238.49101pt>
+File: figures/ch03_coeff_decay.pdf Graphic file (type pdf)
+<use figures/ch03_coeff_decay.pdf>
+Package pdftex.def Info: figures/ch03_coeff_decay.pdf  used on input line 146.
+(pdftex.def)             Requested size: 455.30013pt x 156.50932pt.
+ [24 <./figures/ch03_coeff_decay.pdf>] [25]
+<figures/ch03_sparse.pdf, id=814, 390.25798pt x 245.718pt>
+File: figures/ch03_sparse.pdf Graphic file (type pdf)
+<use figures/ch03_sparse.pdf>
+Package pdftex.def Info: figures/ch03_sparse.pdf  used on input line 269.
+(pdftex.def)             Requested size: 282.28384pt x 177.73418pt.
+ [26] [27 <./figures/ch03_sparse.pdf>]
+Underfull \hbox (badness 2735) in paragraph at lines 359--359
+[]\OT1/cmr/m/n/10 algebraic co-ef-fi-cient de-cay (Re-
+ []
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 361--361
+[]\OT1/cmr/m/n/10 Singularity near the do-
+ []
+
+
+Underfull \hbox (badness 1226) in paragraph at lines 363--364
+[]\OT1/cmr/m/n/10 low-rank and tensor-train
+ []
+
+
+Underfull \hbox (badness 1303) in paragraph at lines 364--365
+[]\OT1/cmr/m/n/10 kernels and RBF (Chap-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--365
+[]\OT1/cmr/m/n/10 Predicting out-side the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 367--369
+[]\OT1/cmr/m/n/10 transforms (Rosen-blatt,
+ []
+
+
+Underfull \hbox (badness 2088) in paragraph at lines 367--369
+\OT1/cmr/m/n/10 Nataf), data-driven ar-bi-
+ []
+
+[28]) [29] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: A1BBAC68FAE23F93FF3490B490B7324F;4867.
+(rerunfilecheck)             Checksum: 456C487A8943D253FAE87D99D884D3C1;7166.
  ) 
 Here is how much of TeX's memory you used:
- 11756 strings out of 467871
- 182049 string characters out of 5418376
- 612182 words of memory out of 5000000
- 40311 multiletter control sequences out of 15000+600000
- 647540 words of font info for 111 fonts, out of 8000000 for 9000
+ 11845 strings out of 467871
+ 183496 string characters out of 5418376
+ 613524 words of memory out of 5000000
+ 40354 multiletter control sequences out of 15000+600000
+ 647708 words of font info for 112 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,543b,602s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,543b,606s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\satur\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
 1095.pk><C:/Users/satur/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx10.pfb><C:/Users/satur/AppData/Local/Programs/MiKTeX/fonts/type1/publ
@@ -628,9 +679,9 @@ sfonts/cm/cmti10.pfb><C:/Users/satur/AppData/Local/Programs/MiKTeX/fonts/type1/
 public/amsfonts/cm/cmtt10.pfb><C:/Users/satur/AppData/Local/Programs/MiKTeX/fon
 ts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/satur/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (24 pages, 660160 bytes).
+Output written on main.pdf (32 pages, 761796 bytes).
 PDF statistics:
- 797 PDF objects out of 1000 (max. 8388607)
- 160 named destinations out of 1000 (max. 500000)
- 202 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1060 PDF objects out of 1200 (max. 8388607)
+ 203 named destinations out of 1000 (max. 500000)
+ 284 words of extra memory for PDF output out of 10000 (max. 10000000)
 
