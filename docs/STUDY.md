@@ -559,3 +559,30 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     | On a surrogate | SLSQP and L-BFGS-B with model gradients, 0.33 at 10d, ≈ their 500d value (PSO 0.18) | PSO 0.35 |
 
     A single full-budget ranking is therefore not a statement of efficiency. The paper reports the curves.
+- **R-E3s/E13 · 2026-11-07 · Results: the tuning sensitivity run and E13 are complete** (`code/analysis/e3s_tuning.py`,
+  `e13_analysis.py`; reports `results/E3s_tuning_report.md`, `results/E13_report.md`).
+  - **Tuning (36 090 cells paired with their E3 twins).**
+
+    | Learner | Error ratio, tuned / E3 | Cells improved | Fit time |
+    |---|---|---|---|
+    | CatBoost, 30-trial random search | 0.89 | 75 % | ×86 |
+    | XGBoost, 30-trial random search | 0.92 | 76 % | ×16 |
+    | MLP ensemble, 10 members | 0.95 | 71 % | ×1.8 |
+
+    All three gains are significant over problems (p < 1e-11). Distance to the per-cell best moves only from
+    7.2 to 6.4 (CatBoost), 8.5 to 7.8 (XGBoost) and 5.3 to 5.0 (MLP). The share of cells won against the best
+    GP-family config rises by only 1–2 points, to 15 %, 11 % and 12 %. E3's ranking is therefore not an artefact of
+    under-tuning the trees and networks. This is the symmetric counterpart of the GP-restart sensitivity run.
+  - **E13 (gradients at matched cost).**
+    - *Same points:* gradients cut error for every method; the geometric-mean ratio is 0.11 (GE-PCE) to 0.58
+      (Sobolev MLP).
+    - *At adjoint cost:* with the same method given 2n value-only points, GEK wins 72 % of cells (median ratio
+      0.61), Hermite RBF 58 % and Sobolev MLP 70 %; GE-PCE is a wash (52 %).
+    - *At finite-difference cost ((d+1)n points):* the gradient version loses for GE-PCE, GEK and Hermite RBF
+      (wins in 15–37 % of cells). Sobolev MLP is a wash.
+    - *Across learners at 2× cost:* the best gradient learner beats the best value-only one in 56 % of cells. The
+      gain is largest noise-free with larger designs (geometric-mean ratio 0.05–0.07, dominated by exactly
+      recovered polynomial problems), and small with 1–10 % noise (0.67–0.82).
+    - *Where gradients hurt:* rugged problems (Ackley, Levy, Rastrigin, Griewank).
+    - *Conclusion:* gradients are worth having when they are adjoint-cheap and the response is smooth. Finite-
+      difference gradients are better spent as extra samples.
