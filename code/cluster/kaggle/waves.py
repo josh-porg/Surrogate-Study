@@ -69,8 +69,30 @@ def shard_status(name):
     return "unknown"
 
 
+def existing_kernels(slug):
+    """Names of this account's kernels matching slug, or None if the listing failed (network/API). Since 2026-11 the
+    CLI prints nothing for a never-pushed kernel instead of a 404, so 'missing' is decided here: a kernel absent from a
+    successful listing was never pushed (E6 shard 5 read as 'unknown' and would have blocked the track forever)."""
+    try:
+        r = subprocess.run([KAGGLE, "kernels", "list", "--mine", "--search", slug, "--page-size", "100"],
+                           capture_output=True, text=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        return None
+    if r.returncode != 0 or "ref" not in r.stdout:
+        return None
+    return {ln.split()[0] for ln in r.stdout.splitlines() if ln.strip() and "/" in ln.split()[0]}
+
+
 def statuses(slug, user, k):
-    return [shard_status(f"{user}/{slug}-shard-{i}of{k}") for i in range(1, k + 1)]
+    names = [f"{user}/{slug}-shard-{i}of{k}" for i in range(1, k + 1)]
+    have = existing_kernels(slug)
+    out = []
+    for n in names:
+        s = shard_status(n)
+        if s == "unknown" and have is not None and n not in have:
+            s = "missing"
+        out.append(s)
+    return out
 
 
 def wait_all(slug, user, k, poll=300):

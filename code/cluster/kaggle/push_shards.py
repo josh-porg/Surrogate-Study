@@ -123,6 +123,8 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="tasks per shard (smoke tests)")
     ap.add_argument("--tag", default="", help="slug suffix, so a second track (e.g. smt) never touches the main shards")
     ap.add_argument("--gpu", action="store_true", help="GPU session (Kaggle weekly GPU quota); nets train on cuda")
+    ap.add_argument("--only-shard", type=int, default=0, help="push just this shard (one that failed to push), leaving "
+                                                              "the running ones untouched; the dataset is still updated")
     a = ap.parse_args()
     if a.exp.startswith("E11") or "fea" in a.exp.lower() or "rair" in a.exp.lower():
         sys.exit("refusing: real-data experiments stay on this machine (STUDY_PLAN §4b data rule)")
@@ -157,6 +159,8 @@ def main():
             time.sleep(10)
         print("dataset status:", st.stdout.strip())
         for i in range(1, a.shards + 1):
+            if a.only_shard and i != a.only_shard:
+                continue
             kd = Path(td) / f"k{i}"; kd.mkdir()
             name = f"{slug}-shard-{i}of{a.shards}"
             (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards,
