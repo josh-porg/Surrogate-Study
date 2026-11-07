@@ -796,6 +796,14 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
+def _frozen_done(folder: Path):
+    """Keys in the shipped resume lists (done_keys*.txt) only: fixed for the whole wave."""
+    keys = set()
+    for f in folder.glob("done_keys*.txt"):
+        keys |= set(f.read_text(encoding="utf8").split())
+    return keys
+
+
 def _done_keys(folder: Path):
     keys = set()
     for f in folder.glob("done_keys*.txt"):                              # compact resume list shipped to remote shards
@@ -851,8 +859,16 @@ def main(argv=None):
     if a.skip_learners:
         drop = set(a.skip_learners.split(",")); tasks = [t for t in tasks if t["cfg"].get("learner") not in drop]
     i, k = map(int, a.shard.split("/"))
-    tasks = [t for t in tasks if int(t["key"], 16) % k == i - 1]
     folder = RAW / a.exp; folder.mkdir(parents=True, exist_ok=True)
+    frozen = _frozen_done(folder)
+    if frozen:
+        # a later wave: split only what the shipped resume list leaves, by position, so the k shards get equal
+        # shares. Splitting all tasks by hash put a whole missing shard's work on one kernel (E6 wave 2, 2026-11-07).
+        # The frozen list is identical on every shard and never changes during a wave, so the split is stable.
+        rest = sorted((t for t in tasks if t["key"] not in frozen), key=lambda t: t["key"])
+        tasks = rest[i - 1::k]
+    else:
+        tasks = [t for t in tasks if int(t["key"], 16) % k == i - 1]
     done = _done_keys(folder)
     todo = [t for t in tasks if t["key"] not in done]
     print(f"{a.exp}: {len(tasks)} tasks in shard {a.shard}, {len(done & {t['key'] for t in tasks})} done, "
