@@ -92,8 +92,15 @@ if rc:                                         # make Kaggle report ERROR instea
 
 
 def sh(*args):
+    """Run a command and fail loudly. The Kaggle CLI exits 0 even when a push is refused (e.g. "Kernel push error:
+    Maximum batch CPU session count of 5 reached", E6 shard 5 on 2026-11-07), so its output is checked as well."""
     print("+", " ".join(args[1:] if args[0] == KAGGLE else args), flush=True)
-    subprocess.run(args, check=True)
+    r = subprocess.run(args, capture_output=True, text=True)
+    out = "\n".join(ln for ln in (r.stdout + r.stderr).splitlines() if "outdated" not in ln)
+    if out.strip():
+        print(out, flush=True)
+    if r.returncode != 0 or ("error" in out.lower() and args[0] == KAGGLE):
+        raise SystemExit(f"command failed: {' '.join(args[1:3])}: {out.strip()[-300:]}")
 
 
 def build_archive(exp: str, path: Path):
@@ -163,6 +170,11 @@ def main():
                 continue
             kd = Path(td) / f"k{i}"; kd.mkdir()
             name = f"{slug}-shard-{i}of{a.shards}"
+            # a retry after a partial push must not restart shards that are already running (that loses their work)
+            st = subprocess.run([KAGGLE, "kernels", "status", f"{a.user}/{name}"], capture_output=True, text=True)
+            if "RUNNING" in st.stdout or "QUEUED" in st.stdout:
+                print(f"  {name} is already running; not re-pushed", flush=True)
+                continue
             (kd / "run.py").write_text(KERNEL.format(pip=PIP, exp=a.exp, i=i, k=a.shards,
                                                      extra=extra, needs_smt=needs_smt, n_expected=n_expected,
                                                      timeout=TIMEOUTS.get(a.exp, 900)))
