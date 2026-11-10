@@ -34,7 +34,9 @@ OWN = {"gp": "gp", "rf": "rf", "mlp_ens": "mlp_ens[lbfgs]"}   # scouts whose own
 
 def load():
     rows, seen = [], {}
-    for f in sorted((ROOT / "results" / "raw" / "E5_sampling").glob("*.jsonl")):
+    files = sorted((ROOT / "results" / "raw" / "E5_sampling").glob("*.jsonl")) + \
+        sorted((ROOT / "results" / "raw" / "E5x_sampling").glob("*.jsonl"))   # E5x: believer batches, new scouts
+    for f in files:
         for line in f.read_text(encoding="utf8").splitlines():
             try:
                 r = json.loads(line)
@@ -45,6 +47,8 @@ def load():
     for r in seen.values():
         c = r["cfg"]
         scout = c["rule"] if c["scout"] == "none" else f'{c["scout"]}:{c["rule"]}'
+        if c.get("batch") == "kb" and c["scout"] != "none":
+            scout += " [kb]"                                   # kriging-believer batch (E5x)
         for k, v in r["fits"].items():
             deliv, size = k.split("@")
             rows.append(dict(problem=c["problem"], level=c["level"], seed=c["seed"], scout=scout,
@@ -85,6 +89,13 @@ def main():
                        other_deliverables=np.exp(g[g.deliv != own].lr.mean()))
     out += ["## 3. Does the deliverable need to match the scout? (variance-rule scouts; ratio to Sobol')\n",
             md(pd.DataFrame(rows).T, ".3g"), ""]
+    K = J[J.seed < 5]
+    kb = sorted(x for x in K.scout.unique() if x.endswith(" [kb]") and x[:-5] in set(K.scout))
+    if kb:
+        R = {x[:-5]: dict(E5_batch=np.exp(K[K.scout == x[:-5]].lr.mean()),
+                          believer_batch=np.exp(K[K.scout == x].lr.mean())) for x in kb}
+        out += ["## 3b. The same scout with E5's batch vs the kriging-believer batch (seeds 0-4, ratio to Sobol')\n",
+                md(pd.DataFrame(R).T, ".3g"), ""]
     S = J.groupby(["scout", "size"]).lr.mean().apply(np.exp).unstack("size")
     out += ["## 4. By budget (ratio to Sobol')\n", md(S.loc[T.index], ".3g"), ""]
     N = J.groupby(["scout", "level"]).lr.mean().apply(np.exp).unstack("level")

@@ -32,7 +32,7 @@ NEEDS_COMPASS = ("E1",)
 PIP = ("pebble scikit-learn==1.9.1 smt==2.15.0 cma==4.5.0 gpytorch==1.15.2 mf2==2022.6.0 pygam==0.12.0 ngboost==0.5.11 "
        "casadi==3.8.1")      # casadi (IPOPT, E9): not in the wheels dataset; installed online by the fallback below
 WHEELS_DS = "surrpaper-wheels-cp313"
-TIMEOUTS = {"Efstar_refine": 3600, "E9_optim": 3600, "E9b_managed": 5400, "E5_sampling": 3600, "E8_upscale": 7200, "E15_coupling": 3600, "E9x_optim": 3600}       # per-task wall cap [s]; a 10-D IPOP-CMA refinement can exceed 15 min
+TIMEOUTS = {"Efstar_refine": 3600, "E9_optim": 3600, "E9b_managed": 5400, "E5_sampling": 3600, "E8_upscale": 7200, "E15_coupling": 3600, "E9x_optim": 3600, "E5x_sampling": 10800, "E6x_mf": 3600}       # per-task wall cap [s]; a 10-D IPOP-CMA refinement can exceed 15 min
 
 KERNEL = r'''
 import glob, json, os, platform, subprocess, sys, tarfile

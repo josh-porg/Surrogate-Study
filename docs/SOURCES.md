@@ -482,3 +482,21 @@ the tabular-ML vs engineering disagreement. That is the paper.
 | 2026-10-03 | breadth pass 2: reservoir proxies, ClimateBench, finance, ABM calibration, history matching, nuclear, crash, turbomachinery, AM; GP-vs-GBT small-data; YAHPO; kriging origins; DACE; DKL pitfalls; Gramacy/Kleijnen books | 12 searches |
 | 2026-10-03 | verification: 254 refs via Crossref/arXiv + audit; 17 open-access full texts read (DEPTH_NOTES.md) | done |
 | later (optional) | geostatistics history; petroleum proxy models; finance/option-pricing surrogates; pharmacometrics/systems biology emulators; agent-based-model calibration; nuclear engineering; climate emulators (e.g. ClimateBench); automotive crash; turbomachinery; additive manufacturing; Russian/Soviet approximation literature; information-geometric / optimal-recovery views | breadth pass 2 |
+
+### Literature pass for E5/E6 (2026-11-10, STUDY D-21)
+
+| Source | Used for | Status |
+|---|---|---|
+| Fuhg, Fau, Nackenhorst 2021, *Arch. Comput. Methods Eng.* 28:2689–2747 | which adaptive schemes to add (EIGF, MIPT reliable; MEPE, SFCVT, MASA, SSA, TEAD, AME similar; LOLA, CVVor slow) | ✔ https://doi.org/10.1007/s11831-020-09474-6 (abstract and guide; full tables not yet read) |
+| Mo, Lu, Shi, Zhang, Ye, Wu 2017, *Water Resour. Res.* 53(12):10802–10823, TEAD | `acquisitions.tead`, formula from the authors' `TEAD/New.m` | ✔ https://doi.org/10.1002/2017WR021622; https://github.com/njujinchun/Codes-of-TEAD |
+| Crombecq, Laermans, Dhaene 2011, *EJOR* 214(3):683–696, MIPT | `acquisitions.mipt` | ✔ (abstract) |
+| Aute, Saleh, Abdelaziz, Azarm, Radermacher 2013, *SMO* 48:581–605, SFCVT | `acquisitions.sfcvt` (space-filling threshold is our reading) | ○ from memory |
+| Eason & Cremaschi 2014, *Comput. Chem. Eng.* 68:220–232, MASA | `acquisitions.masa` | ○ from memory |
+| Ginsbourger, Le Riche, Carraro 2010, kriging believer (in *Computational Intelligence in Expensive Optimization Problems*) | E5x batch fill | ○ from memory |
+| Sauer, Gramacy, Higdon 2023, *Technometrics* 65(1), active learning for deep GPs | why stationary-GP designs are space-filling (B-02) | ✔ arXiv 2012.08015 |
+| BoTorch `qNegIntegratedPosteriorVariance`; Emukit `IntegratedVarianceReduction`, `ModelVariance` | what toolboxes ship; BoTorch docs state a GP variance does not depend on y | ✔ botorch.readthedocs.io; emukit.readthedocs.io |
+| Le Gratiet & Garnier 2014, *Int. J. Uncertain. Quantif.* 4(5):365–386, recursive co-kriging | `ar1_cokriging`, `ar1_rhox` | ○ from memory |
+| Brevault, Balesdent, Hebbal 2020, overview of GP multi-fidelity techniques | NARGP beat MF-DGP in an independent comparison | ✔ arXiv 2006.16728 |
+| Cutajar, Pullin, Damianou, Lawrence, González 2019, MF-DGP | not implemented (no GPy/Emukit offline) | ✔ arXiv 1903.07320 |
+| Toal 2015, *SMO* 51:1223–1245, considerations for multi-fidelity kriging | pilot-r² budget rule (E6 §5); the r² > 0.9 threshold is from secondary sources | ○ to check in the paper |
+| Fernández-Godino 2023, *Adv. Comput. Sci. Eng.* 1(4):351–400, review of multi-fidelity models | background | ✔ arXiv 1609.07196 |

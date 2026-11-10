@@ -613,6 +613,9 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     - *Budget:* the gains of the good scouts grow with budget (LOLA 0.83× at 50d).
     - *Thesis bugs:* this answers B-02 (a GP variance scout is no better than a space-filling design; here it is
       worse) and B-03 (scouts tested beyond the GP deliverable).
+    - *Caveat (2026-11-10, BUGS N-28):* E5 scored each batch of d points with one unrefitted scout, so the
+      model-based scouts' batches bunched. Their E5 numbers are biased against them; E5x re-runs them with a
+      kriging-believer batch. The model-free results (LOLA, maximin, MIPT, random, Sobol') stand.
   - **E14 (self-designing surrogates, 5 040 fits).**
     - *Smolyak sparse grid:* dominant on smooth, low-dimensional, noise-free problems (Branin, Goldstein–Price,
       Rosenbrock, additive_d2: errors of 1e-4 to 1e-5). It loses badly with 1 % noise (3.6–7× the best baseline)
@@ -623,3 +626,46 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
       catboost 2, rbf_tps 1.
     - *Selection-guide reading:* both are structure-specific tools. Use them when the structure is known and the
       data are noise-free.
+- **D-21 · 2026-11-10 · Literature pass for E5/E6, and the E5x/E6x extensions** (author's request).
+  - **What the literature recommends for adaptive global-accuracy sampling.**
+    - Fuhg, Fau & Nackenhorst (2021, *Arch. Comput. Methods Eng.* 28, review and benchmark): EIGF and the
+      model-free MIPT are reliable and need little tuning. MEPE, SFCVT, MASA, SSA, TEAD and AME reach similar,
+      promising results. LOLA and CV-Voronoi converge slowly.
+    - Mo et al. (2017, *Water Resour. Res.* 53, TEAD): implemented from the authors' MATLAB.
+    - Crombecq et al. (2011, *EJOR* 214, MIPT): sequential space-filling designs as good as the best one-shot
+      designs.
+    - Toolboxes: BoTorch (`qNegIntegratedPosteriorVariance`) and Emukit (`IntegratedVarianceReduction`,
+      `ModelVariance`) ship integrated variance. BoTorch's docs state that a standard GP's posterior variance does not
+      depend on y, which is the mechanism behind B-02.
+    - Sauer, Gramacy & Higdon (2023, *Technometrics*): with a stationary GP, sequential design can only be
+      space-filling; adaptivity needs a nonstationary model (deep GP).
+  - **What the literature recommends for multi-fidelity.**
+    - Recursive co-kriging (Le Gratiet & Garnier 2014) and NARGP (Perdikaris et al. 2017) are the practical
+      defaults. In an independent comparison (Brevault et al. 2020, arXiv 2006.16728), NARGP was more accurate than
+      MF-DGP, which has many more hyperparameters. Cutajar et al. (2019) report MF-DGP gains mainly when HF data are
+      very scarce.
+    - Toal (2015, *SMO* 51): co-kriging needs strongly correlated fidelities; r² > 0.9 is the commonly cited
+      threshold, not yet checked in the paper itself.
+    - Engineering practice: SMT's MFK; transfer learning of networks.
+  - **E5x (2 860 tasks, seeds 0–4):**
+    - every model-based E5 scout re-run with the kriging-believer batch (N-28);
+    - four methods rated well by Fuhg et al. that E5 lacked: MIPT, TEAD (GP), SFCVT (GP, closed-form LOO), MASA
+      (MLP-ensemble committee).
+    - The Sobol' control comes from E5's records.
+  - **E6x (6 480 tasks, E6's cells):**
+    - ar1_rhox (ρ(x) linear, Le Gratiet & Garnier 2014);
+    - smt_mfk (SMT's MFK as shipped);
+    - mf_transfer_nn (pre-train on LF, fine-tune on HF);
+    - cv_select (K-fold CV on the HF points among hf_only, AR1, NARGP, bridge_add, hierarchical kriging).
+  - **Toal-style budget rule (from existing records, no new runs):** use co-kriging if the pilot r² ≥ t, else spend
+    the LF budget on HF points. Against matched HF-only:
+    - t = 0.99: 0.83×, more than 10 % worse in only 4 % of cells;
+    - t = 0.9: 0.89×;
+    - always co-kriging: 0.91×, but more than 10 % worse in 43 % of cells;
+    - the oracle: 0.69×.
+    - So a pilot correlation check gives most of the safe gain (`e6_analysis.py` §5).
+  - **Not implemented:**
+    - deep-GP active learning (Sauer et al. 2023) and MF-DGP (Cutajar et al. 2019): they need the deepgp (R) and
+      Emukit/GPy stacks, which are not in the offline Kaggle wheels;
+    - hetGP replication designs (Binois et al. 2019): a noisy-sampling question outside E5's design.
+  - **Queue:** E9b → E6 feature_aug re-run → E6x → E5x → E8 → E15 → E9x.

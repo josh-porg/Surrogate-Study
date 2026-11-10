@@ -10,6 +10,12 @@ next point. Signature: rule(model, U, y, pool, rng, **kw) -> int, where `model` 
   qbc_committee committee spread (pass a committee learner)       Seung et al. 1992
   seq_maximin   argmax min-distance to the design (model-free)    —
   random        uniform pick (control)                            —
+  mipt          maximin among candidates whose projected distance  Crombecq et al. 2011 (mc-intersite-proj-th)
+                passes a threshold (model-free)
+  tead          D + w·R: distance plus first-order Taylor residual  Mo et al. 2017 (authors' code, New.m)
+  sfcvt         argmax of a GP fitted to the GP's LOO errors, with  Aute et al. 2013
+                a space-filling distance constraint
+  masa          committee spread + distance, both normalised       Eason & Cremaschi 2014
   ei            expected improvement (minimisation)               Jones et al. 1998
   lcb           lower confidence bound μ − κσ                     Srinivas et al. 2010
   u_function    argmin |μ − T| / σ (contour of level T)           Echard et al. 2011
@@ -122,6 +128,76 @@ def seq_maximin(model, U, y, pool, rng, **kw):
 @_reg
 def random(model, U, y, pool, rng, **kw):
     return int(rng.integers(len(pool)))
+
+
+@_reg
+def mipt(model, U, y, pool, rng, alpha=0.5, **kw):
+    """Crombecq et al. (2011), mc-intersite-proj-th: drop candidates whose projected (per-axis) distance to the design
+    is below d_min = 2α/n, then take the one farthest from the design. α is halved while no candidate passes."""
+    n = len(U)
+    proj = np.abs(pool[:, None, :] - U[None]).min(axis=(1, 2))
+    inter, _ = _mindist(pool, U)
+    a = alpha
+    while a > 1e-6:
+        ok = proj >= 2 * a / n
+        if ok.any():
+            return int(np.flatnonzero(ok)[np.argmax(inter[ok])])
+        a /= 2
+    return int(np.argmax(inter))
+
+
+@_reg
+def tead(model, U, y, pool, rng, **kw):
+    """Mo et al. (2017), as in the authors' MATLAB (TEAD/New.m): J = w·R + D with D = d/max d (d = distance to the
+    nearest design point), R = |μ(x) − [y_k + ∇μ(x_k)·(x − x_k)]| / max (first-order Taylor residual from the nearest
+    design point k) and w = 1 − d / L_max (L_max = the cube diagonal). Batches: the caller passes the design plus the
+    batch so far, so D and w are updated as in the original."""
+    d, k = _mindist(pool, U)
+    g = model.grad(U)
+    taylor = y[k] + ((pool - U[k]) * g[k]).sum(1)
+    r = np.abs(model.predict(pool) - taylor)
+    D = d / max(d.max(), 1e-12); R = r / max(r.max(), 1e-12)
+    w = 1 - d / np.sqrt(U.shape[1])
+    return int(np.argmax(w * R + D))
+
+
+def _gp_loo(model):
+    """Closed-form GP leave-one-out residuals (Dubrule 1983): e_i = [K⁻¹z]_i / [K⁻¹]_ii, on the model's scale."""
+    from scipy.linalg import cho_solve
+    gp = getattr(model, "_m", None)
+    if gp is None or not hasattr(gp, "L_"):
+        raise ValueError("sfcvt needs a scikit-learn GP scout")
+    Kinv = cho_solve((gp.L_, True), np.eye(len(gp.L_)))
+    return gp.alpha_.ravel() / np.diag(Kinv)
+
+
+@_reg
+def sfcvt(model, U, y, pool, rng, **kw):
+    """Aute et al. (2013): fit a GP to the scout's LOO errors and take the candidate with the largest predicted error
+    among those at least S = 0.5 · (largest nearest-neighbour distance in the design) from every design point (our
+    reading of their space-filling constraint; the threshold is halved while no candidate passes)."""
+    from .learners.kernels import _sk_gp
+    n = len(U)
+    m = min(n, len(model._m.L_))                       # a believer refit adds the batch, whose errors are unknown: 0
+    e = np.zeros(n); e[:m] = np.abs(_gp_loo(model))[:m]
+    err = _sk_gp(U.shape[1], 2.5, 0, 0).fit(U, (e - e.mean()) / (e.std() or 1)).predict(pool)
+    D = np.sqrt(((U[:, None] - U[None]) ** 2).sum(2)); np.fill_diagonal(D, np.inf)
+    S = 0.5 * D.min(1).max()
+    dist, _ = _mindist(pool, U)
+    while S > 1e-9:
+        ok = dist >= S
+        if ok.any():
+            return int(np.flatnonzero(ok)[np.argmax(err[ok])])
+        S /= 2
+    return int(np.argmax(err))
+
+
+@_reg
+def masa(model, U, y, pool, rng, **kw):
+    """Eason & Cremaschi (2014): committee fluctuation (the spread of the committee's predictions, here an ensemble
+    learner's predict_std) plus the distance to the nearest design point, each scaled to [0, 1] over the candidates."""
+    s = _sd(model, pool); d, _ = _mindist(pool, U)
+    return int(np.argmax(s / s.max() + d / max(d.max(), 1e-12)))
 
 
 @_reg

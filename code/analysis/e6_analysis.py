@@ -37,7 +37,9 @@ def family(name):
 def load():
     from surr.problems.mf import MF_REGISTRY
     best = {}
-    for f in sorted((ROOT / "results" / "raw" / "E6_mf").glob("*.jsonl")):
+    files = sorted((ROOT / "results" / "raw" / "E6_mf").glob("*.jsonl")) + \
+        sorted((ROOT / "results" / "raw" / "E6x_mf").glob("*.jsonl"))         # E6x: the literature-pass methods
+    for f in files:
         for line in f.read_text(encoding="utf8").splitlines():
             try:
                 r = json.loads(line)
@@ -54,7 +56,7 @@ def load():
         rows.append(dict(pair=c["mfproblem"], fam=family(c["mfproblem"]), d=p.d, r_lh=float(p.r) if p.r is not None
                          else np.nan, nH=c["nH"], m=c["nH"] // p.d, ratio=c["ratio"], seed=c["seed"],
                          method=c["method"] + ("@matched" if c.get("matched") else ""), nrmse=r["nrmse"],
-                         t_fit=r.get("t_fit", np.nan)))
+                         t_fit=r.get("t_fit", np.nan), choice=r.get("choice")))
     return pd.DataFrame(rows), bad
 
 
@@ -73,6 +75,46 @@ def versus(D, ref):
 def summ(J, by):
     return J.groupby(by).apply(lambda g: pd.Series(dict(
         cells=len(g), ratio=np.exp(g.lr.mean()), wins=(g.lr < 0).mean(), p=wil(g.lr, g.pair))), include_groups=False)
+
+
+def pilot_r2(D):
+    """r² between the two fidelities on the n_H nested pilot points of each cell, exactly as task_e6 draws them."""
+    from surr import samplers as S
+    from surr.problems.mf import MF_REGISTRY
+    out = {}
+    for (pair, nH, ratio, seed), _ in D.groupby(CELL):
+        p = MF_REGISTRY[pair]
+        U = S.sobol(max(ratio * nH, nH), p.d, seed=seed)[:nH]
+        out[(pair, nH, ratio, seed)] = float(np.corrcoef(p.low(U), p.high(U))[0, 1] ** 2)
+    return pd.Series(out, name="r2").rename_axis(CELL)
+
+
+def policy_section(D):
+    """Budget-split rules a user can apply before spending the LF budget, scored against matched HF-only: a Toal-style
+    r² threshold on the pilot points (co-kriging if r² ≥ t, else all budget to HF), and cv_select."""
+    W = D.pivot_table(index=CELL, columns="method", values="nrmse", aggfunc="first")
+    need = {"ar1_cokriging", "hf_only@matched"}
+    if not need <= set(W.columns):
+        return []
+    W = W.join(pilot_r2(D)).dropna(subset=list(need))
+    rows = {}
+    for t in (0.5, 0.8, 0.9, 0.95, 0.99):
+        pick = np.where(W.r2 >= t, W.ar1_cokriging, W["hf_only@matched"])
+        lr = np.log((pick + FL) / (W["hf_only@matched"] + FL))
+        rows[f"r² ≥ {t}: co-kriging, else HF-only"] = dict(
+            uses_MF=(W.r2 >= t).mean(), ratio=np.exp(lr.mean()), wins=(lr < 0).mean(),
+            worse_10pct=(lr > np.log(1.1)).mean())
+    for m in ("cv_select", "ar1_cokriging"):
+        if m in W:
+            lr = np.log((W[m] + FL) / (W["hf_only@matched"] + FL)).dropna()
+            rows[f"always {m}"] = dict(uses_MF=np.nan, ratio=np.exp(lr.mean()), wins=(lr < 0).mean(),
+                                       worse_10pct=(lr > np.log(1.1)).mean())
+    mf = [c for c in W.columns if c != "r2" and not c.startswith("hf_only")]
+    lo = np.log((W[mf].min(axis=1) + FL) / (W["hf_only@matched"] + FL))
+    rows["oracle best MF method"] = dict(uses_MF=1.0, ratio=np.exp(lo.mean()), wins=(lo < 0).mean(),
+                                         worse_10pct=(lo > np.log(1.1)).mean())
+    return ["## 5. Decision rules at matched cost (vs spending the whole budget on HF points)\n",
+            md(pd.DataFrame(rows).T, ".3g"), ""]
 
 
 def main():
@@ -109,6 +151,10 @@ def main():
             md(win.value_counts().to_frame("pairs won")), "",
             md(pd.DataFrame({"best": win, "r": rr.loc[W.index], "best/matched-HF": W.min(axis=1) /
                              W["hf_only@matched"]}), ".3g"), ""]
+    out += policy_section(D)
+    if "cv_select" in set(D.method):
+        ch = D[D.method == "cv_select"].groupby("fam").choice.value_counts(normalize=True).unstack().fillna(0)
+        out += ["### What cv_select chose, by pair family (share of cells)\n", md(ch, ".2f"), ""]
     (ROOT / "results" / "E6_report.md").write_text("\n".join(out), encoding="utf8")
     print("\n".join(out))
 

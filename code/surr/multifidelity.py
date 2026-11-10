@@ -12,6 +12,13 @@
   space_mapping         f_H(x) ≈ s·f̂_L(Ax + b) + c, then GP on the residual          Bandler et al. 1994
   mf_nn                 composite MF network: linear + L2-penalised nonlinear map of  Meng & Karniadakis 2020
                         (x, NN_L(x))
+  ar1_rhox              recursive co-kriging with ρ(x) = ρ0 + ρᵀx, by ML              Le Gratiet & Garnier 2014
+  smt_mfk               SMT's multi-fidelity kriging (MFK), options as shipped        Bouhlel et al. 2019 (SMT);
+                                                                                     Le Gratiet & Garnier 2014
+  mf_transfer_nn        network pre-trained on LF, fine-tuned on HF                   transfer learning (e.g. Chakraborty
+                                                                                     2021; De et al. 2020)
+  cv_select             picks hf_only / ar1 / nargp / bridge_add / hierarchical      selection layer (this study)
+                        kriging by K-fold CV on the HF points, then refits it
 """
 from __future__ import annotations
 
@@ -35,6 +42,8 @@ class MFMethod:
         self.base, self.lf_learner, self.seed = base, lf_learner, seed
 
     def _fit_low(self, UL, yL):
+        if getattr(self, "low_prefit", None) is not None:      # shared LF model (CVSelect fits it once)
+            self.low = self.low_prefit; return
         self.low = make(self.lf_learner, seed=self.seed).fit(UL, yL)
 
     def predict_std(self, U):
@@ -258,6 +267,116 @@ class MFNN(MFMethod):
                 A = torch.cat([X, low(X)], 1)
                 outs.append((lin(A) + nl(A)).squeeze(-1).numpy())
         return np.mean(outs, 0) * self._ys + self._ym
+
+
+@_reg
+class AR1RhoX(MFMethod):
+    """Recursive co-kriging with a scaling that varies in space, ρ(x) = ρ0 + Σ ρ_j x_j (Le Gratiet & Garnier 2014,
+    Int. J. Uncertain. Quantif. 4(5), regression form of ρ). (ρ0, ρ) maximise the log marginal likelihood of the
+    discrepancy GP, started from the constant-ρ fit (Powell, ≤ 40·(d+1) evaluations)."""
+    name = "ar1_rhox"
+
+    def fit(self, UL, yL, UH, yH):
+        from scipy.optimize import minimize, minimize_scalar
+        self._fit_low(UL, yL)
+        mL = self.low.predict(UH); sc = yH.std() or 1.0; d = UH.shape[1]
+        def nll(th):
+            rho = th[0] + UH @ th[1:]
+            g = _sk_gp(d, 2.5, 0, self.seed).fit(UH, (yH - rho * mL) / sc)
+            return -g.log_marginal_likelihood_value_
+        r0 = minimize_scalar(lambda r: nll(np.r_[r, np.zeros(d)]), bounds=(-3, 3), method="bounded",
+                             options=dict(xatol=1e-3)).x
+        res = minimize(nll, np.r_[r0, np.zeros(d)], method="Powell", options=dict(maxfev=40 * (d + 1), xtol=1e-3))
+        self.th, self._sc = res.x, sc
+        self.delta = _sk_gp(d, 2.5, 2, self.seed).fit(UH, (yH - (self.th[0] + UH @ self.th[1:]) * mL) / sc)
+        return self
+
+    def predict(self, U):
+        return (self.th[0] + U @ self.th[1:]) * self.low.predict(U) + self._sc * self.delta.predict(U)
+
+
+@_reg
+class SMTMFK(MFMethod):
+    """SMT's MFK (recursive multi-fidelity kriging, Le Gratiet's formulation), with SMT's default options: the
+    implementation most engineering users reach for. Learns its own LF model (low_prefit unused)."""
+    name = "smt_mfk"
+
+    def fit(self, UL, yL, UH, yH):
+        from smt.applications import MFK
+        self.m = MFK(theta0=[1e-2] * UH.shape[1], print_global=False)
+        self.m.set_training_values(np.asarray(UL), np.asarray(yL).reshape(-1, 1), name=0)
+        self.m.set_training_values(np.asarray(UH), np.asarray(yH).reshape(-1, 1))
+        self.m.train(); return self
+
+    def predict(self, U):
+        return self.m.predict_values(np.asarray(U)).ravel()
+
+
+@_reg
+class MFTransferNN(MFMethod):
+    """Transfer learning: a tanh network (64-64, as mf_nn's low-fidelity net) trained on the LF data, then every weight
+    fine-tuned on the HF data (lower learning rate, fewer epochs). Responses z-scored per fidelity; 3 seeds averaged."""
+    name = "mf_transfer_nn"
+
+    def fit(self, UL, yL, UH, yH):
+        import torch
+        self._ym, self._ys = yH.mean(), yH.std() or 1.0
+        lm, ls = yL.mean(), yL.std() or 1.0
+        d = UH.shape[1]
+        T = lambda a: torch.tensor(np.asarray(a), dtype=torch.float64)
+        XL, ZL, XH, ZH = T(UL), T((yL - lm) / ls), T(UH), T((yH - self._ym) / self._ys)
+        self.nets = []
+        for k in range(3):
+            torch.manual_seed(self.seed * 10 + k)
+            net = torch.nn.Sequential(torch.nn.Linear(d, 64), torch.nn.Tanh(), torch.nn.Linear(64, 64), torch.nn.Tanh(),
+                                      torch.nn.Linear(64, 1)).double()
+            self._train(net, lambda: ((net(XL).squeeze(-1) - ZL) ** 2).mean(), 3000, 3e-3)
+            self._train(net, lambda: ((net(XH).squeeze(-1) - ZH) ** 2).mean(), 1000, 1e-3)
+            self.nets.append(net.eval())
+        return self
+
+    @staticmethod
+    def _train(net, loss_fn, epochs, lr):
+        import torch
+        opt = torch.optim.Adam(net.parameters(), lr=lr)
+        sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs)
+        for _ in range(epochs):
+            opt.zero_grad(); loss = loss_fn(); loss.backward(); opt.step(); sched.step()
+
+    def predict(self, U):
+        import torch
+        X = torch.tensor(np.asarray(U), dtype=torch.float64)
+        with torch.no_grad():
+            return np.mean([n(X).squeeze(-1).numpy() for n in self.nets], 0) * self._ys + self._ym
+
+
+@_reg
+class CVSelect(MFMethod):
+    """A selection layer: K-fold CV (K = min(5, n_H)) on the HF points over hf_only, ar1_cokriging, nargp, bridge_add
+    and hierarchical_kriging, all sharing one LF model fitted on all LF data; the winner is refitted on all HF points.
+    The choice is the same-data decision (whether to use the LF data already in hand), not the budget split."""
+    name = "cv_select"
+    CANDIDATES = ("hf_only", "ar1_cokriging", "nargp", "bridge_add", "hierarchical_kriging")
+
+    def fit(self, UL, yL, UH, yH):
+        from sklearn.model_selection import KFold
+        self._fit_low(UL, yL)
+        n = len(yH); err = {}
+        for c in self.CANDIDATES:
+            e = 0.0
+            for tr, te in KFold(min(5, n), shuffle=True, random_state=self.seed).split(UH):
+                m = make_mf(c, seed=self.seed); m.low_prefit = self.low
+                try:
+                    e += float(((m.fit(UL, yL, UH[tr], yH[tr]).predict(UH[te]) - yH[te]) ** 2).sum())
+                except Exception:
+                    e = np.inf; break
+            err[c] = e
+        self.choice = min(err, key=err.get); self.cv_err = err
+        self.m = make_mf(self.choice, seed=self.seed); self.m.low_prefit = self.low
+        self.m.fit(UL, yL, UH, yH); return self
+
+    def predict(self, U):
+        return self.m.predict(U)
 
 
 def make_mf(name, **kw):

@@ -584,7 +584,8 @@ def task_e6(cfg):
     t_fit = time.perf_counter() - t0
     err = m.predict(T) - yt
     return dict(status="ok", nrmse=float(np.sqrt(np.mean(err ** 2)) / scale), t_fit=t_fit, r=float(p.r),
-                cost=float(nH + (0 if cfg.get("matched") or cfg["method"] == "hf_only" else nL / p.cost_ratio)))
+                cost=float(nH + (0 if cfg.get("matched") or cfg["method"] == "hf_only" else nL / p.cost_ratio)),
+                **({"choice": m.choice} if hasattr(m, "choice") else {}))
 
 
 # ── E8: upscaling ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -667,6 +668,23 @@ E5_DELIVERABLES = [("gp", {}), ("catboost", {}), ("rf", {}), ("mlp_ens", {"opt":
                    ("pce_lars", {})]
 
 
+def _believer(model, scout, kw, seed, Ub, yb):
+    """Kriging believer (Ginsbourger, Le Riche & Carraro 2010): the scout refitted on the design plus the batch so far,
+    the batch's responses set to the scout's own predictions. A GP scout keeps its fitted kernel and response scaling,
+    which gives the exact posterior update (the variance does not depend on the responses); other scouts are refitted
+    from scratch."""
+    import copy
+    gp = getattr(model, "_m", None)
+    if gp is not None and hasattr(gp, "kernel_"):
+        from sklearn.gaussian_process import GaussianProcessRegressor
+        m2 = copy.copy(model)
+        m2._m = GaussianProcessRegressor(gp.kernel_, optimizer=None, normalize_y=False).fit(
+            Ub, (np.asarray(yb, float) - model._ym) / model._ys)
+        return m2
+    from surr.learners import make
+    return make(scout, seed=seed, **kw).fit(Ub, yb)
+
+
 def task_e5(cfg):
     """One sequential design: start from n0 = 2d + 2 Sobol' points, then repeatedly fit the scout learner and add a
     batch of d points chosen by the acquisition rule from a fixed 4000-point Sobol' candidate pool (batch members
@@ -695,13 +713,17 @@ def task_e5(cfg):
             y = noisy(U, 20_000 + seed)[: len(U)]
             model = None if scout == "none" else make(scout, seed=seed, **cfg.get("scout_kw", {})).fit(U, y)
             batch = []
+            kb = cfg.get("batch") == "kb" and model is not None
             for _ in range(min(d, nmax - len(U))):
                 if batch:
                     Ub = np.vstack([U, pool[batch]])
                     yb = np.r_[y, model.predict(pool[batch]) if model is not None else np.full(len(batch), y.mean())]
                 else:
                     Ub, yb = U, y
-                batch.append(A.acquire(rule, model, Ub, yb, pool, rng, exclude=np.array(used + batch, int)))
+                # E5 (batch unset) scored every batch member with the same scout, so model-based rules picked d
+                # neighbouring points around one peak. batch="kb" (E5x) refits the scout on the fantasised batch.
+                mb = _believer(model, scout, cfg.get("scout_kw", {}), seed, Ub, yb) if kb and batch else model
+                batch.append(A.acquire(rule, mb, Ub, yb, pool, rng, exclude=np.array(used + batch, int)))
             used += batch
             U = np.vstack([U, pool[batch]])
     t_design = time.perf_counter() - t0

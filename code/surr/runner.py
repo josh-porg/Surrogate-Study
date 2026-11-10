@@ -784,6 +784,42 @@ def exp_E5_sampling():
     return rows
 
 
+# E5x (2026-11-10): the literature pass (docs/STUDY D-21). The model-based E5 scouts re-run with a kriging-believer
+# batch (E5 scored all d batch members with one unrefitted scout, so they bunched), plus the methods the Fuhg et al.
+# (2021) review rates well and E5 lacked: MIPT, TEAD, SFCVT, MASA. Seeds 0-4; the Sobol' control comes from E5.
+E5X_SCOUTS = [s for s in E5_SCOUTS if s[0] != "none"] + [("none", "mipt"), ("gp", "tead"), ("gp", "sfcvt"),
+                                                        ("mlp_ens", "masa")]
+
+
+def exp_E5x_sampling():
+    rows = []
+    for pn in E5_PROBLEMS:
+        for scout, rule in E5X_SCOUTS:
+            for lvl in (0.0, 0.01):
+                for sd in range(5):
+                    rows.append(dict(kind="e5", exp="E5x_sampling", problem=pn, scout=scout, rule=rule,
+                                     scout_kw={"opt": "lbfgs"} if scout == "mlp_ens" else {}, level=lvl, seed=sd,
+                                     batch="kb"))
+    return rows
+
+
+# E6x (2026-11-10, D-21): multi-fidelity methods the literature recommends or practitioners use that E6 lacked:
+# ρ(x) co-kriging, SMT's MFK, transfer learning, and a CV selection layer. Same cells as E6.
+E6X_METHODS = ["ar1_rhox", "smt_mfk", "mf_transfer_nn", "cv_select"]
+
+
+def exp_E6x_mf():
+    from surr.problems.mf import MF_REGISTRY
+    rows = []
+    for pn, p in sorted(MF_REGISTRY.items()):
+        for mult in (3, 10, 30):
+            for ratio in (4, 16):
+                for sd in range(10):
+                    base = dict(kind="e6", exp="E6x_mf", mfproblem=pn, nH=mult * p.d, ratio=ratio, seed=sd)
+                    rows += [{**base, "method": m} for m in E6X_METHODS]
+    return rows
+
+
 EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learners": exp_E2a_learners,
                "E3_learners": exp_E3_learners, "E3s_gp_restarts": exp_E3s_gp_restarts, "E3s_tuning": exp_E3s_tuning,
                "E2b_learners": exp_E2b_learners, "E12_rational": exp_E12_rational, "E3x_learners": exp_E3x_learners,
@@ -792,7 +828,7 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
                "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
                "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt,
-               "E15_coupling": exp_E15_coupling}
+               "E15_coupling": exp_E15_coupling, "E5x_sampling": exp_E5x_sampling, "E6x_mf": exp_E6x_mf}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
