@@ -61,7 +61,7 @@ def main():
                 continue
             stamp = int(time.time())
             for f in got:                     # shard files are named part_<i>of<k>_<pid>.jsonl, unique per kernel run
-                if any(o.stat().st_size == f.stat().st_size for o in dest.glob(f"kaggle{a.tag}_{i}of{a.shards}_*_{f.name}")):
+                if any(o.stat().st_size == f.stat().st_size for o in dest.rglob(f"kaggle{a.tag}_{i}of{a.shards}_*_{f.name}")):
                     print(f"  {f.name} already pulled", flush=True); continue
                 _place(f, dest / f"kaggle{a.tag}_{i}of{a.shards}_{stamp}_{f.name}")
             for f in log:                                                    # kept for post-mortems

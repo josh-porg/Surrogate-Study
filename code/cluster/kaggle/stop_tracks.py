@@ -56,8 +56,14 @@ def stop():
     STOP.write_text("Delete this file (or run stop_tracks.py --resume) to let the Kaggle drivers run again.\n")
     procs = drivers()
     for p in procs:
-        p.terminate()
+        try:
+            p.terminate()
+        except psutil.NoSuchProcess:     # a launcher exits with its child; one crash here left duplicates (2026-11-09)
+            pass
     psutil.wait_procs(procs, timeout=10)
+    left = [p for p in drivers() if p.is_running()]
+    if left:
+        print(f"WARNING: {len(left)} driver process(es) still running: {[p.pid for p in left]}")
     print(f"stopped {len(procs)} driver process(es); {STOP} created - nothing restarts until it is removed")
 
 

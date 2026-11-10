@@ -41,7 +41,35 @@ PY = sys.executable
 KAGGLE = __import__("shutil").which("kaggle", path=str(Path(sys.executable).parent)) or "kaggle"
 
 
+def broken(exp):
+    """The marker a driver leaves when most of a wave's tasks errored (see check_errors)."""
+    f = ROOT / "results" / "raw" / exp / "BROKEN.txt"
+    return f.read_text(encoding="utf8").strip() if f.exists() else ""
+
+
+def check_errors(exp, limit=0.5, min_n=50):
+    """Error records count as done, so a broken setup finishes a whole experiment in seconds and lets the next track
+    start (E8, 2026-11-08: fstar_table.json not shipped, 7 840 of 7 840 errors). Stop the track instead: leave
+    BROKEN.txt, which also holds back every track that starts after this one."""
+    import json
+    best = {}
+    for f in (ROOT / "results" / "raw" / exp).glob("*.jsonl"):
+        for line in f.read_text(encoding="utf8").splitlines():
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            best[r["key"]] = best.get(r["key"]) == "ok" and "ok" or r.get("status")
+    n = len(best); bad = [k for k, v in best.items() if v == "error"]
+    if n >= min_n and len(bad) > limit * n:
+        msg = f"{len(bad)} of {n} {exp} records are errors — fix the cause, move the error records aside, delete this file"
+        (ROOT / "results" / "raw" / exp / "BROKEN.txt").write_text(msg, encoding="utf8")
+        sys.exit(msg)
+
+
 def remaining(exp, skip, only=""):
+    if broken(exp):
+        return 10 ** 9, f"{exp}: broken — {broken(exp)}"
     args = [PY, "-m", "surr.runner", exp, "--dry"] + (["--skip-learners", skip] if skip else []) +            (["--only-learners", only] if only else [])
     # "<exp>: N tasks in shard 1/1, D done, R to run ..."; retried, because a dry run can fail transiently (e.g. while
     # the code is being edited) and a crash here used to stop the driver (IndexError, 2026-10-13)
@@ -109,9 +137,21 @@ def until_ok(cmd, what, wait=600):
     """Run cmd until it exits 0, retrying every `wait` s (network drops, laptop asleep or travelling). Never gives up:
     pushing the next wave before the previous one is pulled would make its output an older kernel version."""
     k = 0
-    while subprocess.run(cmd).returncode != 0:
+    while True:
+        # output captured and echoed: inheriting the log handle left 70+ silent failures (E5/E14, 2026-11-09)
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf8", errors="replace",
+                               stdin=subprocess.DEVNULL)
+            rc, out = r.returncode, (r.stdout or "") + (r.stderr or "")
+        except OSError as e:
+            rc, out = -1, repr(e)
+        lines = [s for s in out.splitlines() if "outdated" not in s]
+        if rc == 0:
+            print("\n".join(lines[-3:]), flush=True)
+            return
         k += 1
-        print(f"  {what} failed (attempt {k}); retrying in {wait // 60} min", flush=True)
+        print(f"  {what} failed (attempt {k}, rc={rc}); retrying in {wait // 60} min\n    "
+              + "\n    ".join(lines[-6:]), flush=True)
         nap(wait)
 
 
@@ -159,6 +199,9 @@ def main():
         print(f"[resume] {k}-shard statuses: {st}", flush=True)
         if any(x == "done" for x in st):
             collect(pull(k))
+    if broken(a.exp):
+        sys.exit(f"{a.exp}: {broken(a.exp)}")
+    check_errors(a.exp)
     prev = None
     for w in range(1, a.max_waves + 1):
         left, msg = remaining(a.exp, a.skip_learners, a.only_learners)
@@ -181,6 +224,7 @@ def main():
         st = wait_all(slug, a.user, k)
         print(f"[wave {w}] {k}-shard statuses: {st}", flush=True)
         collect(pull(k))
+        check_errors(a.exp)
     print("max waves reached", flush=True)
 
 

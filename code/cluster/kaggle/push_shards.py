@@ -108,7 +108,8 @@ def build_archive(exp: str, path: Path):
         skip = lambda ti: None if ("__pycache__" in ti.name or ti.name.endswith(".pyc") or "/cluster" in ti.name) else ti
         tf.add(ROOT / "code", arcname="proj/code", filter=skip)
         for f in [*(ROOT / "results").glob("*_shortlist.json"),         # inputs later experiments read (E3 ← E2a,
-                  *((ROOT / "results").glob("fstar_table.json") if exp.startswith(("Efstar", "E9")) else []),  # ← f*
+                  # f* table for every experiment: E8 and E15 read it too, and E8's whole first run failed without it
+                  *(ROOT / "results").glob("fstar_table.json"),
                   *((ROOT / "results").glob("E9_ipopt_keys.json") if exp == "E9_ipopt" else [])]:  # frozen list
             tf.add(f, arcname=f"proj/results/{f.name}")
         prev = ROOT / "results" / "raw" / exp
