@@ -577,7 +577,10 @@ def task_e6(cfg):
     UL = S.sobol(max(nL, nH), d, seed=seed); UH = UL[:nH]
     T = S.sobol(4096, d, seed=10_000 + seed); yt = p.high(T); scale = float(yt.std())
     t0 = time.perf_counter()
-    m = M.make_mf(cfg["method"], base=cfg.get("base", "gp"), seed=seed).fit(UL[:nL], p.low(UL[:nL]), UH, p.high(UH))
+    # base only when the config sets one: a blanket base="gp" overrode feature_aug's XGBoost and made it NARGP
+    # (E6 first run, 2026-11-09; BUGS N-27). Every other method's default base is gp, so their results are unchanged.
+    kw = {"base": cfg["base"]} if "base" in cfg else {}
+    m = M.make_mf(cfg["method"], seed=seed, **kw).fit(UL[:nL], p.low(UL[:nL]), UH, p.high(UH))
     t_fit = time.perf_counter() - t0
     err = m.predict(T) - yt
     return dict(status="ok", nrmse=float(np.sqrt(np.mean(err ** 2)) / scale), t_fit=t_fit, r=float(p.r),

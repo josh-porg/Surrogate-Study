@@ -586,3 +586,40 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     - *Where gradients hurt:* rugged problems (Ackley, Levy, Rastrigin, Griewank).
     - *Conclusion:* gradients are worth having when they are adjoint-cheap and the response is smooth. Finite-
       difference gradients are better spent as extra samples.
+- **R-E5/E6/E14 · 2026-11-09 · Results: E5, E6 and E14 are complete; E8 is re-queued** (`code/analysis/e5_analysis.py`,
+  `e6_analysis.py`, `e14_analysis.py`; reports `results/E5_report.md`, `E6_report.md`, `E14_report.md`).
+  - **E8 ran nothing:** all 7 840 tasks errored because the f\* table was not shipped (BUGS N-24). It is re-queued
+    after E9b and the E6 re-run.
+  - **E6 (multi-fidelity, 16 011 fits).**
+    - *Low-fidelity data for free:* with the same HF points, the best MF methods cut error to 0.34–0.37× (AR(1)
+      co-kriging, NARGP) and win 83–85 % of cells.
+    - *At matched cost:* against the low-fidelity budget spent on extra HF points, no single method wins
+      significantly. Co-kriging gives 0.91×, winning 52 %. The best MF method per cell (an oracle) gives 0.71×,
+      winning 63 %.
+    - *Which pairs pay:* MF wins on linear and shifted pairs (0.4–0.5× for the best method) and loses on every
+      nonlinear pair (2.4× or worse). Weak pairs (r = 0.5) are a wash. Matched HF-only is the best choice on 12 of
+      27 pairs.
+    - *Correlation and data:* a higher low/high correlation r predicts a larger gain, but only moderately
+      (Spearman −0.2 to −0.56). MF pays more with n_L / n_H = 4 than with 16 at κ = 10.
+    - *Not reliable:* bridge_mult, mf_nn and space_mapping are worse than HF-only at matched cost (3.8–8×).
+    - *Bug:* `feature_aug` ran as NARGP (BUGS N-27); its 1 620 tasks are re-queued as track e6fa.
+  - **E5 (adaptive sampling, 5 720 designs × 6 deliverables × 3 sizes).**
+    - *Only space-filling-like rules beat Sobol', and only slightly:* LOLA-Voronoi 0.91× (p = 0.04), GP IMSE
+      0.95×, MEPE 0.97×, sequential maximin 0.97×.
+    - *Pure variance scouts lose:* GP max-variance 1.08×, and the tree/boosting committees 1.56–1.73× (they cluster
+      points). Random sampling 1.17×.
+    - *Matching the deliverable to the scout:* it matters for non-GP scouts. An MLP-ensemble scout gives 0.93× for
+      an MLP deliverable but 1.20× for the others; an RF scout gives 1.25× vs 1.70×.
+    - *Budget:* the gains of the good scouts grow with budget (LOLA 0.83× at 50d).
+    - *Thesis bugs:* this answers B-02 (a GP variance scout is no better than a space-filling design; here it is
+      worse) and B-03 (scouts tested beyond the GP deliverable).
+  - **E14 (self-designing surrogates, 5 040 fits).**
+    - *Smolyak sparse grid:* dominant on smooth, low-dimensional, noise-free problems (Branin, Goldstein–Price,
+      Rosenbrock, additive_d2: errors of 1e-4 to 1e-5). It loses badly with 1 % noise (3.6–7× the best baseline)
+      and on steps and kinks.
+    - *TT-cross:* wins on low-rank products (0.01× the best baseline, 61 % of cells) and additive functions, and
+      fails elsewhere at small budgets.
+    - *Neither replaces a Sobol' design plus a learner:* best per problem is gp 8, smolyak 7, tt_cross 6, pce_lars 4,
+      catboost 2, rbf_tps 1.
+    - *Selection-guide reading:* both are structure-specific tools. Use them when the structure is known and the
+      data are noise-free.
