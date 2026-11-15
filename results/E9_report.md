@@ -193,4 +193,64 @@ Success at 10d / 50d / 500d evaluations (scored when the counter reaches the che
 | robbins_monro|model | 0.245 | 0.33 | 0.39 | 1 | 0 | 1.25 | 18 | 22 | 25 |
 | robbins_monro|fd | 0.155 | 0.221 | 0.324 | 1 | 1 | 0.177 | 23 | 26 | 26 |
 
-## 7. H7 cost crossover: no E9b records yet
+## 7. H7: success rate at matched true-evaluation cost (columns: true evaluations ÷ d)
+
+Fit-once rows use the best fixed optimizer per surrogate (chosen on all problems: optimistic).
+
+| approach | 10 | 20 | 50 |
+|---|---|---|---|
+| optimizer on f: cobyla|none | 0.60 | 0.68 | 0.72 |
+| managed: tr_model_mgmt | 0.53 | 0.65 | 0.71 |
+| managed: dycors | 0.58 | 0.62 | 0.67 |
+| managed: turbo | 0.39 | 0.56 | 0.63 |
+| managed: ego | 0.44 | 0.55 | 0.62 |
+| fit once: ens_press + lbfgsb|model | 0.44 | nan | 0.59 |
+| fit once: smt_krg + lbfgsb|model | nan | nan | 0.59 |
+| fit once: smt_kpls + lbfgsb|model | nan | nan | 0.56 |
+| fit once: mlp_ens[opt=lbfgs] + lbfgsb|model | nan | nan | 0.55 |
+| fit once: hetgp + pso|none | nan | nan | 0.55 |
+| fit once: gp + pso|none | nan | nan | 0.54 |
+| fit once: pce_lars + ipopt_multistart|model | nan | nan | 0.49 |
+| fit once: rsm2 + lbfgsb|model | nan | nan | 0.44 |
+| fit once: as_gp + slsqp|model | nan | nan | 0.43 |
+| fit once: rf + cobyla|none | nan | nan | 0.43 |
+| managed: ego_bootstrap | 0.29 | 0.36 | 0.42 |
+| fit once: rbf_tps + ipopt_multistart|model | 0.31 | nan | 0.42 |
+| fit once: krr + ipopt_multistart|model | nan | nan | 0.40 |
+| baseline: sobol | 0.17 | 0.22 | 0.28 |
+| baseline: random | 0.16 | 0.22 | 0.28 |
+| fit once: lgbm + pso|none | nan | nan | 0.24 |
+| fit once: catboost + pso|none | 0.16 | nan | 0.24 |
+| fit once: mars + cobyla|none | 0.17 | nan | 0.23 |
+| fit once: idw + cobyla|none | 0.13 | nan | 0.16 |
+| fit once: as_gp + ipopt_multistart|model | 0.30 | nan | nan |
+
+Geometric-mean regret:
+
+| approach | 10 | 20 | 50 |
+|---|---|---|---|
+| optimizer on f: cobyla|none | 0.000313 | 4.45e-05 | 9.85e-06 |
+| managed: tr_model_mgmt | 0.00147 | 0.000422 | 0.000146 |
+| managed: dycors | 0.00133 | 0.000447 | 0.000163 |
+| managed: turbo | 0.0185 | 0.00423 | 0.00137 |
+| managed: ego | 0.0057 | 0.00156 | 0.000524 |
+| fit once: ens_press + lbfgsb|model | 0.00739 | nan | 0.00194 |
+| fit once: smt_krg + lbfgsb|model | nan | nan | 0.000437 |
+| fit once: smt_kpls + lbfgsb|model | nan | nan | 0.001 |
+| fit once: mlp_ens[opt=lbfgs] + lbfgsb|model | nan | nan | 0.0018 |
+| fit once: hetgp + pso|none | nan | nan | 0.00165 |
+| fit once: gp + pso|none | nan | nan | 0.00204 |
+| fit once: pce_lars + ipopt_multistart|model | nan | nan | 0.00129 |
+| fit once: rsm2 + lbfgsb|model | nan | nan | 0.00256 |
+| fit once: as_gp + slsqp|model | nan | nan | 0.00642 |
+| fit once: rf + cobyla|none | nan | nan | 0.0224 |
+| managed: ego_bootstrap | 0.0638 | 0.0346 | 0.0189 |
+| fit once: rbf_tps + ipopt_multistart|model | 0.0119 | nan | 0.00551 |
+| fit once: krr + ipopt_multistart|model | nan | nan | 0.00919 |
+| baseline: sobol | 0.177 | 0.131 | 0.0886 |
+| baseline: random | 0.183 | 0.132 | 0.089 |
+| fit once: lgbm + pso|none | nan | nan | 0.0277 |
+| fit once: catboost + pso|none | 0.137 | nan | 0.0557 |
+| fit once: mars + cobyla|none | 0.0913 | nan | 0.0303 |
+| fit once: idw + cobyla|none | 0.235 | nan | 0.172 |
+| fit once: as_gp + ipopt_multistart|model | 0.0294 | nan | nan |

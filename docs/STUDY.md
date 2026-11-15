@@ -700,3 +700,33 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     - The pilot-r² ≥ 0.99 rule stays the safest: 0.83, more than 10 % worse in only 4 % of cells.
   - **E8:** the first full wave finished only 252 tasks, the slowest (MLP ensemble at d = 5, ~50 min each, run
     first). Estimate 8–10 waves; max-waves raised to 20.
+- **R-analyses · 2026-11-15 · New analysis scripts.** `e9b_analysis.py`, `e3s_gp_restarts.py`, `e2b_learners.py`
+  and `e8_analysis.py` (interim-safe); `e9_analysis.py` §7 now takes the truth row from optimizers without free true
+  gradients.
+  - **E9b (managed loops, 38 problems).**
+    - Success at 50d: trust-region model management 0.71, DYCORS 0.67, TuRBO 0.64, EGO 0.62; Sobol'/random 0.28.
+      Every loop beats Sobol' (p < 1e-6).
+    - At 10d, DYCORS leads (0.58).
+    - TR-MM is significantly better than EGO and TuRBO; it ties DYCORS (p = 0.32).
+    - Best per problem: TR-MM 17, DYCORS 12, EGO 5, TuRBO 4.
+    - DYCORS's loop is 10× cheaper than EGO's (59 s vs 618 s at d = 10).
+    - Cost crossover (E9 §7): the best managed loop matches COBYLA run directly on the true function (0.71 vs
+      0.72 at 50d), and beats every fit-once surrogate + optimizer (best 0.59). A loop that queries f pays off
+      against fitting once; against direct optimization it pays only when evaluations are dear.
+    - ego_bootstrap is confounded (N-29).
+  - **E3s_gp_restarts (45 000 paired cells).**
+    - 5 ML-II restarts give error ratios of 0.89 (gp_se), 0.95 (gp, as_gp) and 0.98 (hetgp) for ~3× the fit time.
+    - Fits rescued by more than 2×: 2–6 %.
+    - The GP family's lead over the best tree ensemble widens slightly: beats-tree share +1 to +5 points; ratio
+      0.50 → 0.47 (gp).
+    - So E3's GP-vs-tree margins are conservative, and the 1-restart setting does not change the ranking. This is the
+      symmetric counterpart of E3s_tuning (trees tuned: small gains, ranking unchanged).
+  - **E2b (screening):** no survey-extension learner beats E2a's per-cell best on the screening grid. Warped GP
+    comes closest (best or tied in 16 of 72 cells), then deep GP (10). The P-AAA rational (paaa) is unusable
+    (752×). Screening only.
+  - **E8 (interim, 252 of 7 840 tasks, MLP ensemble only):**
+    - tensor spline m = 12 adds little error (NRMSE ×1.07) and lowers optimizer regret (paired ratio 0.59,
+      p = 0.02);
+    - P-spline direct and the subsample ensemble hurt;
+    - m = 24 tensor and smoothing splines are infeasible at d = 5.
+    - The tree learners (the H5 question) have not run yet.

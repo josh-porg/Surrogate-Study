@@ -115,7 +115,9 @@ def crossover(df, T):
     for (m, k), g in B.groupby(["method", "true_evals"]):
         rows.append(dict(approach=f"managed: {m}" if m not in ("random", "sobol") else f"baseline: {m}", cost=k,
                          success=(g.regret < OK).mean(), geo_regret=np.exp(np.log(g.regret).mean())))
-    tr = df[(df.surr == "truth") & df.cp.isin([10, 20, 50])]
+    # on the true function an exact gradient would be free ("|model"); real problems rarely offer one, so the
+    # truth row uses the best derivative-free or finite-difference optimizer (2026-11-15)
+    tr = df[(df.surr == "truth") & df.cp.isin([10, 20, 50]) & ~df.opt.str.endswith("|model")]
     if len(tr):
         best = tr.assign(lr=np.log(tr.regret)).groupby("opt").lr.mean().idxmin()
         for k, g in tr[tr.opt == best].groupby("cp"):

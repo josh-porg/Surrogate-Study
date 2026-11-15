@@ -30,10 +30,10 @@ CELL = ["problem", "n", "noise", "level", "seed"]
 EXTRA = {"tune", "K"}                         # the keys the tuning run adds to the E3 config
 
 
-def load_tuned():
+def load_tuned(exp="E3s_tuning", extra=EXTRA):
     from surr.problems import REGISTRY
     rows, seen = [], set()
-    for f in sorted((ROOT / "results" / "raw" / "E3s_tuning").glob("*.jsonl")):
+    for f in sorted((ROOT / "results" / "raw" / exp).glob("*.jsonl")):
         for line in f.read_text(encoding="utf8").splitlines():
             try:
                 r = json.loads(line)
@@ -42,7 +42,7 @@ def load_tuned():
             if r["key"] in seen or r.get("status") != "ok":
                 seen.add(r["key"]); continue
             seen.add(r["key"]); c = r["cfg"]
-            base = {**c, "kw": {k: v for k, v in (c.get("kw") or {}).items() if k not in EXTRA}}
+            base = {**c, "kw": {k: v for k, v in (c.get("kw") or {}).items() if k not in extra}}
             rows.append(dict(problem=c["problem"], n=c["n"], noise=c["noise"], level=c["level"], seed=c["seed"],
                              cat=REGISTRY[c["problem"]].category, base=cfg_name(base), tuned=cfg_name(c),
                              nrmse_t=r["nrmse"], t_fit_t=r.get("t_fit", np.nan)))
