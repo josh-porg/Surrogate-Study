@@ -817,6 +817,10 @@ def exp_E6x_mf():
                 for sd in range(10):
                     base = dict(kind="e6", exp="E6x_mf", mfproblem=pn, nH=mult * p.d, ratio=ratio, seed=sd)
                     rows += [{**base, "method": m} for m in E6X_METHODS]
+                    # control for smt_mfk (2026-11-15): SMT's own single-fidelity kriging on the HF points, so the
+                    # MFK gain is split into "SMT kriging vs our GP" and "using the LF data"
+                    rows += [{**base, "method": "hf_only", "base": "smt_krg"},
+                             {**base, "method": "hf_only", "base": "smt_krg", "matched": True}]
     return rows
 
 

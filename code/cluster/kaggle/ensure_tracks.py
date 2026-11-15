@@ -32,17 +32,13 @@ TRACKS = {
     # One track at a time on Kaggle (the author's call, 2026-10-25): splitting the 5 sessions adds no capacity.
     # IPOPT follow-up for the E9 tasks that ran before casadi was in the offline wheels (2026-10-30)
     # coded 2026-10-25, still one at a time: gradient-enhanced (E13) -> multi-fidelity (E6) -> upscaling (E8) -> sampling (E5)
-    "e9b": ["E9b_managed", "--shards", "5", "--max-waves", "10", "--start-after", "E14_selfdesign:"],
     # finished and removed (a finished track still re-pulls its old kernels at every start; four of them looping on
-    # Kaggle's 429 rate limit held E5/E14 results back for 12 h, 2026-11-09): e12, e9, e9ipopt, tuning, e13, e6, e5, e14
+    # Kaggle's 429 rate limit held E5/E14 results back for 12 h, 2026-11-09): e12, e9, e9ipopt, tuning, e13, e6, e5, e14, e9b, e6fa, e6x, e5x (2026-11-15)
     # E8 re-run (2026-11-09): the first run (after E6) failed every task — fstar_table.json was not shipped. Its error
     # records are kept in results/raw/E8_upscale/failed_run_1/; the re-run goes after E9b, then E15.
     # E6 feature_aug re-run (N-27, 2026-11-09): the first run's feature_aug was NARGP under another name; 1 620 tasks
-    "e6fa": ["E6_mf", "--shards", "5", "--max-waves", "3", "--start-after", "E9b_managed:"],
     # literature-pass extensions (D-21, 2026-11-10), asked for by the author: ahead of E8
-    "e6x": ["E6x_mf", "--shards", "5", "--max-waves", "8", "--start-after", "E6_mf:"],
-    "e5x": ["E5x_sampling", "--shards", "5", "--max-waves", "8", "--start-after", "E6x_mf:"],
-    "e8": ["E8_upscale", "--shards", "5", "--max-waves", "10", "--start-after", "E5x_sampling:"],
+    "e8": ["E8_upscale", "--shards", "5", "--max-waves", "20", "--start-after", "E5x_sampling:"],  # E5x finished 2026-11-15
     "e15": ["E15_coupling", "--shards", "5", "--max-waves", "6", "--start-after", "E8_upscale:"],
     # E9x (D-19): the 133 E3/E3x problems E9 left out, reduced design (~24 600 tasks); the full design is not queued
     "e9x": ["E9x_optim", "--shards", "5", "--max-waves", "12", "--start-after", "E15_coupling:"],

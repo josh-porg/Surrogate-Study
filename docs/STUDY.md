@@ -669,3 +669,34 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
       Emukit/GPy stacks, which are not in the offline Kaggle wheels;
     - hetGP replication designs (Binois et al. 2019): a noisy-sampling question outside E5's design.
   - **Queue:** E9b → E6 feature_aug re-run → E6x → E5x → E8 → E15 → E9x.
+- **R-E5x/E6x · 2026-11-15 · Results: E5x, E6x and E9b are complete** (`e5_analysis.py`, `e6_analysis.py`; E9b
+  analysis pending).
+  - **E5x, the batch fix (seeds 0–4, ratio to Sobol').**
+
+    | Scout | E5 batch | Believer batch |
+    |---|---|---|
+    | GP max-variance | 1.09 | 0.98 (p = 1.0) |
+    | GP IMSE | 0.955 | 0.93 (p = 0.03) |
+    | MLP max-variance | 1.15 | 1.07 |
+    | Tree/boosting committees | 1.57–1.73 | 1.45–1.67 |
+
+    - GP max-variance becomes a tie with Sobol', as the theory says (B-02: no better than space-filling).
+    - The committees stay bad, so their loss is intrinsic, not a batching artefact.
+  - **E5x, the new scouts (ratio to Sobol').**
+    - TEAD 0.93 and MASA 0.945 sit with the leaders but are not significant. MASA costs ~30 min of design time per
+      run.
+    - MIPT 0.99; SFCVT 1.04.
+    - LOLA-Voronoi (0.91) and believer IMSE (0.93) remain the only significant gains.
+    - Matching the deliverable to the scout still matters: an MLP scout gives 0.86 with an MLP deliverable, 1.12
+      with the others.
+  - **E6x (matched cost).**
+    - smt_mfk 0.18× HF-only (wins 67 %, best on 14 of 27 pairs). This needs a control before it is read as an MF
+      effect: SMT's kriging (squared exponential + trend) may simply beat our Matérn GP on these smooth pairs. SMT
+      KRG HF-only (same points and matched) was added to E6x and runs on the laptop. 114 smt_mfk tasks timed out,
+      at the largest n_L.
+    - cv_select 0.82 (wins 57 %, but more than 10 % worse in 39 % of cells); ar1_rhox 0.95 (no gain over constant
+      ρ, 0.91).
+    - mf_transfer_nn 2.65; feature_aug with XGBoost (the corrected N-27 run) 13.5.
+    - The pilot-r² ≥ 0.99 rule stays the safest: 0.83, more than 10 % worse in only 4 % of cells.
+  - **E8:** the first full wave finished only 252 tasks, the slowest (MLP ensemble at d = 5, ~50 min each, run
+    first). Estimate 8–10 waves; max-waves raised to 20.
