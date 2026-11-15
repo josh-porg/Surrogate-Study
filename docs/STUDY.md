@@ -730,3 +730,13 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     - P-spline direct and the subsample ensemble hurt;
     - m = 24 tensor and smoothing splines are infeasible at d = 5.
     - The tree learners (the H5 question) have not run yet.
+- **D-22 · 2026-11-15 · E9x full design queued** (author's request; the full design in D-19).
+  - **What:** `E9xf_optim` is the complement of the reduced E9x: instances 5–9 at both noise levels plus instances 0–4
+    with 1 % noise, 72 455 tasks. Together with E9x (24 595) this is exactly E9's design on the 133 new problems:
+    97 050 tasks, no overlap (checked).
+  - **Analysis views:** `e9_analysis.py E9xfull` covers the 133 new problems on the full design; `allfull` covers
+    all 171 problems on E9's full design.
+  - **Queue:** track `e9xf` starts after E9x.
+  - **Cost:** E9 completed ~1 200 tasks per Kaggle wave (≈ 20 waves, 11 days), so E9x needs ≈ 20 waves (max-waves
+    raised from 12, which would have stopped it partway, to 25) and E9xf ≈ 60 waves (max-waves 70), about a month
+    of Kaggle after E8, E15 and E9x.

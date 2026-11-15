@@ -41,7 +41,9 @@ TRACKS = {
     "e8": ["E8_upscale", "--shards", "5", "--max-waves", "20", "--start-after", "E5x_sampling:"],  # E5x finished 2026-11-15
     "e15": ["E15_coupling", "--shards", "5", "--max-waves", "6", "--start-after", "E8_upscale:"],
     # E9x (D-19): the 133 E3/E3x problems E9 left out, reduced design (~24 600 tasks); the full design is not queued
-    "e9x": ["E9x_optim", "--shards", "5", "--max-waves", "12", "--start-after", "E15_coupling:"],
+    "e9x": ["E9x_optim", "--shards", "5", "--max-waves", "25", "--start-after", "E15_coupling:"],
+    # E9x full design (D-19), queued 2026-11-15 at the author's request: the complement of E9x's reduced design
+    "e9xf": ["E9xf_optim", "--shards", "5", "--max-waves", "70", "--start-after", "E9x_optim:"],
     # gputest (2026-10-12): done — API GPU pushes run on CPU, no extra capacity
 }
 

@@ -49,6 +49,9 @@ VIEWS = {  # name -> (record folders, report file, filter on the task table)
     "E9x": (("E9x_optim",), "E9x_report.md", None),
     # all 171 problems on E9x's reduced design: E9 restricted to instances 0-4, noise-free
     "all": (("E9_optim", "E9_ipopt", "E9x_optim"), "E9all_report.md", lambda t: (t.inst < 5) & (t.noise == 0)),
+    # the full design on the 133 new problems (E9x + its complement E9xf), and all 171 problems on E9's full design
+    "E9xfull": (("E9x_optim", "E9xf_optim"), "E9xfull_report.md", None),
+    "allfull": (("E9_optim", "E9_ipopt", "E9x_optim", "E9xf_optim"), "E9allfull_report.md", None),
 }
 
 

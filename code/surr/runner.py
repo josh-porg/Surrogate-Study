@@ -560,6 +560,30 @@ def exp_E9x_optim():
     return rows
 
 
+def exp_E9xf_optim():
+    """E9x full design (STUDY D-19, queued 2026-11-15 at the author's request): the rest of E9's design on the 133
+    E9x problems, i.e. instances 5-9 at both noise levels plus instances 0-4 with 1 % noise. E9x_optim (instances 0-4,
+    noise-free) and this experiment together are exactly E9's design (instances 0-9 × n ∈ {10d, 50d} × noise {none,
+    1 %}) with no task run twice: a new experiment name changes every task key, so the complement keeps E9x's keys."""
+    from surr.problems import get
+    rows = []
+    for pn in e9x_problems():
+        d = get(pn).d
+        for s in range(10):
+            if s >= 5:                                   # truth rows for instances 0-4 are in E9x_optim
+                rows.append(dict(kind="e9", exp="E9xf_optim", problem=pn, shift_seed=s, learner="truth", seed=s))
+            for mult in (10, 50):
+                for noise, lvl in (("none", 0.0), ("additive", 0.01)):
+                    if s < 5 and lvl == 0.0:              # the reduced design (E9x_optim)
+                        continue
+                    for L, kw in E9X_LEARNERS:
+                        if L == "smt_krg" and mult * d > 500:
+                            continue
+                        rows.append(dict(kind="e9", exp="E9xf_optim", problem=pn, shift_seed=s, learner=L, kw=kw,
+                                         n=mult * d, noise=noise, level=lvl, seed=s))
+    return rows
+
+
 def exp_E11_fea():
     """E11 (RQ8) on R-FEA, local only (real data): every E3 learner config × use of the free scalar model {direct,
     tmf, aug} × training size {60, 140 (the thesis' canonical n), all ≈ 498} × 30 random 80/20 splits."""
@@ -832,7 +856,8 @@ EXPERIMENTS = {"E0_timing": exp_E0_timing, "E1_canon": exp_E1_canon, "E2a_learne
                "E8_upscale": exp_E8_upscale, "E5_sampling": exp_E5_sampling, "E11_fea": exp_E11_fea,
                "E11_al": exp_E11_al, "E14_selfdesign": exp_E14_selfdesign,
                "E9b_managed": exp_E9b_managed, "E9_ipopt": exp_E9_ipopt,
-               "E15_coupling": exp_E15_coupling, "E5x_sampling": exp_E5x_sampling, "E6x_mf": exp_E6x_mf}
+               "E15_coupling": exp_E15_coupling, "E5x_sampling": exp_E5x_sampling, "E6x_mf": exp_E6x_mf,
+               "E9xf_optim": exp_E9xf_optim}
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────────────────────────
