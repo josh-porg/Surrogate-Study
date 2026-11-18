@@ -1,4 +1,4 @@
-# E6 — multi-fidelity methods vs high-fidelity only (22371 fits, 27 pairs; 309 timeouts/errors dropped)
+# E6 — multi-fidelity methods vs high-fidelity only (25611 fits, 27 pairs; 309 timeouts/errors dropped)
 
 Ratio < 1: the MF method has lower test NRMSE. 'same HF' = HF-only on the same n_H points (the low-fidelity data is free); 'matched' = HF-only given the low-fidelity budget as extra HF points (n_H + n_L / κ).
 
@@ -63,8 +63,9 @@ Oracle (best MF method per cell) vs matched HF-only: ratio 0.145, wins 0.812.
 
 |  | pairs won |
 |---|---|
-| smt_mfk | 14 |
-| hf_only@matched | 6 |
+| smt_mfk | 13 |
+| hf_only[smt_krg]@matched | 4 |
+| hf_only@matched | 3 |
 | bridge_add | 2 |
 | nargp | 2 |
 | bridge_mult | 1 |
@@ -73,15 +74,15 @@ Oracle (best MF method per cell) vs matched HF-only: ratio 0.145, wins 0.812.
 
 | pair | best | r | best/matched-HF |
 |---|---|---|---|
-| mf2_bohachevsky | hf_only@matched | 0.851 | 1 |
-| mf2_booth | smt_mfk | 0.922 | 0.0529 |
+| mf2_bohachevsky | hf_only[smt_krg]@matched | 0.851 | 0.989 |
+| mf2_booth | hf_only[smt_krg]@matched | 0.922 | 0.0436 |
 | mf2_borehole | smt_mfk | 1 | 0.162 |
 | mf2_branin | smt_mfk | 0.179 | 0.175 |
 | mf2_currin | bridge_mult | 0.997 | 0.468 |
 | mf2_forrester | smt_mfk | 0.723 | 0.000141 |
 | mf2_hartmann6 | ar1_rhox | 0.913 | 0.71 |
 | mf2_himmelblau | smt_mfk | 0.757 | 0.0907 |
-| mf2_park91a | hf_only@matched | 0.993 | 1 |
+| mf2_park91a | hf_only[smt_krg]@matched | 0.993 | 0.758 |
 | mf2_park91b | smt_mfk | 1 | 0.00395 |
 | mf2_six_hump_camelback | smt_mfk | 0.729 | 0.0659 |
 | mf_linear__kink_floor_d2 | bridge_add | 0.95 | 0.375 |
@@ -91,7 +92,7 @@ Oracle (best MF method per cell) vs matched HF-only: ratio 0.145, wins 0.812.
 | mf_nonlinear__kink_floor_d2 | hf_only@matched | 0.968 | 1 |
 | mf_nonlinear__rotated_ridge_d5 | hf_only@matched | 0.986 | 1 |
 | mf_nonlinear__smooth_trig_d2 | smt_mfk | 0.954 | 0.201 |
-| mf_nonlinear__smooth_trig_d5 | hf_only@matched | 0.952 | 1 |
+| mf_nonlinear__smooth_trig_d5 | hf_only[smt_krg]@matched | 0.952 | 0.837 |
 | mf_shifted__kink_floor_d2 | nargp | 0.992 | 0.422 |
 | mf_shifted__rotated_ridge_d5 | nargp | 1 | 0.205 |
 | mf_shifted__smooth_trig_d2 | smt_mfk | 0.998 | 0.0355 |
@@ -100,6 +101,26 @@ Oracle (best MF method per cell) vs matched HF-only: ratio 0.145, wins 0.812.
 | mf_weak__rotated_ridge_d5 | hf_only@matched | 0.5 | 1 |
 | mf_weak__smooth_trig_d2 | smt_mfk | 0.5 | 0.0913 |
 | mf_weak__smooth_trig_d5 | smt_mfk | 0.5 | 0.0432 |
+
+## 1b. Control for smt_mfk: SMT's own single-fidelity kriging on the HF points
+
+|  | cells | ratio | wins | p |
+|---|---|---|---|---|
+| SMT kriging vs our GP, HF only, same points | 1.62e+03 | 0.826 | 0.46 | 0.548 |
+| SMT kriging vs our GP, HF only, matched | 1.62e+03 | 0.651 | 0.551 | 0.0408 |
+| MFK vs SMT kriging on the same HF points (LF data free) | 1.51e+03 | 0.0845 | 0.908 | 1.49e-08 |
+| MFK vs SMT kriging at matched cost (the MF effect) | 1.51e+03 | 0.281 | 0.691 | 0.000744 |
+| our co-kriging vs our GP at matched cost (for scale) | 1.59e+03 | 0.913 | 0.524 | 0.562 |
+
+### MFK vs SMT kriging at matched cost, by pair family
+
+| fam | ratio | wins |
+|---|---|---|
+| linear | 0.161 | 0.882 |
+| mf2 | 0.203 | 0.73 |
+| nonlinear | 1.19 | 0.327 |
+| shifted | 0.277 | 0.768 |
+| weak | 0.3 | 0.677 |
 
 ## 5. Decision rules at matched cost (vs spending the whole budget on HF points)
 

@@ -740,3 +740,12 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   - **Cost:** E9 completed ~1 200 tasks per Kaggle wave (≈ 20 waves, 11 days), so E9x needs ≈ 20 waves (max-waves
     raised from 12, which would have stopped it partway, to 25) and E9xf ≈ 60 waves (max-waves 70), about a month
     of Kaggle after E8, E15 and E9x.
+- **R-E6 control · 2026-11-17 · The smt_mfk gain is mostly a genuine multi-fidelity effect** (E6 report §1b;
+  control = SMT KRG on HF points only, 3 240 laptop fits).
+  - *SMT kriging vs our GP, HF only:* 0.83× at the same points (p = 0.55) and 0.65× at matched cost (p = 0.04).
+  - *MFK vs SMT kriging at matched cost:* 0.28×, winning 69 % of cells (p = 7e-4). By family: linear 0.16, mf2 0.20,
+    shifted 0.28, weak 0.30, nonlinear 1.19 (loses, as every MF method does).
+  - *Decomposition:* 0.65 × 0.28 ≈ 0.18, the headline smt_mfk ratio.
+  - *Open:* our own AR(1), the same model, gives only 0.91× (BUGS N-30), so the implementation matters as much as
+    the method.
+  - *Best per pair:* smt_mfk 13 of 27; SMT kriging HF-only 4; our GP HF-only 3.

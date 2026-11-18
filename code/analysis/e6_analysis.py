@@ -55,7 +55,8 @@ def load():
         p = MF_REGISTRY[c["mfproblem"]]
         rows.append(dict(pair=c["mfproblem"], fam=family(c["mfproblem"]), d=p.d, r_lh=float(p.r) if p.r is not None
                          else np.nan, nH=c["nH"], m=c["nH"] // p.d, ratio=c["ratio"], seed=c["seed"],
-                         method=c["method"] + ("@matched" if c.get("matched") else ""), nrmse=r["nrmse"],
+                         method=c["method"] + (f"[{c['base']}]" if "base" in c else "")
+                         + ("@matched" if c.get("matched") else ""), nrmse=r["nrmse"],
                          t_fit=r.get("t_fit", np.nan), choice=r.get("choice")))
     return pd.DataFrame(rows), bad
 
@@ -87,6 +88,31 @@ def pilot_r2(D):
         U = S.sobol(max(ratio * nH, nH), p.d, seed=seed)[:nH]
         out[(pair, nH, ratio, seed)] = float(np.corrcoef(p.low(U), p.high(U))[0, 1] ** 2)
     return pd.Series(out, name="r2").rename_axis(CELL)
+
+
+def smt_control_section(D):
+    """Split smt_mfk's gain into 'SMT kriging vs our GP' (HF-only, both) and 'using the LF data' (smt_mfk vs SMT
+    kriging on HF only), at the same HF points and at matched cost."""
+    W = D.pivot_table(index=CELL, columns="method", values="nrmse", aggfunc="first")
+    need = {"smt_mfk", "hf_only", "hf_only@matched", "hf_only[smt_krg]", "hf_only[smt_krg]@matched"}
+    if not need <= set(W.columns):
+        return []
+    rows = {}
+    for a, b, what in (("hf_only[smt_krg]", "hf_only", "SMT kriging vs our GP, HF only, same points"),
+                       ("hf_only[smt_krg]@matched", "hf_only@matched", "SMT kriging vs our GP, HF only, matched"),
+                       ("smt_mfk", "hf_only[smt_krg]", "MFK vs SMT kriging on the same HF points (LF data free)"),
+                       ("smt_mfk", "hf_only[smt_krg]@matched", "MFK vs SMT kriging at matched cost (the MF effect)"),
+                       ("ar1_cokriging", "hf_only@matched", "our co-kriging vs our GP at matched cost (for scale)")):
+        X = W[[a, b]].dropna()
+        lr = np.log((X[a] + FL) / (X[b] + FL))
+        rows[what] = dict(cells=len(X), ratio=np.exp(lr.mean()), wins=(lr < 0).mean(),
+                          p=wil(lr, X.index.get_level_values("pair")))
+    X = W[["smt_mfk", "hf_only[smt_krg]@matched"]].dropna().reset_index()
+    X["lr"] = np.log((X.smt_mfk + FL) / (X["hf_only[smt_krg]@matched"] + FL)); X["fam"] = X.pair.map(family)
+    F = X.groupby("fam").lr.agg(ratio=lambda x: np.exp(x.mean()), wins=lambda x: (x < 0).mean())
+    return ["## 1b. Control for smt_mfk: SMT's own single-fidelity kriging on the HF points\n",
+            md(pd.DataFrame(rows).T, ".3g"), "",
+            "### MFK vs SMT kriging at matched cost, by pair family\n", md(F, ".3g"), ""]
 
 
 def policy_section(D):
@@ -151,6 +177,7 @@ def main():
             md(win.value_counts().to_frame("pairs won")), "",
             md(pd.DataFrame({"best": win, "r": rr.loc[W.index], "best/matched-HF": W.min(axis=1) /
                              W["hf_only@matched"]}), ".3g"), ""]
+    out += smt_control_section(D)
     out += policy_section(D)
     if "cv_select" in set(D.method):
         ch = D[D.method == "cv_select"].groupby("fam").choice.value_counts(normalize=True).unstack().fillna(0)
