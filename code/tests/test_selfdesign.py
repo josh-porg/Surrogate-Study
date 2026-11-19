@@ -75,3 +75,28 @@ if __name__ == "__main__":
     print("smolyak per-call cache bit-identical to the uncached predictor:", test_smolyak_cache_bit_identical(), "cases")
     print("smolyak exact on a degree-2 polynomial; errors at budgets 30/100/400:", test_smolyak())
     print("tt_cross (evaluations, NRMSE):", test_tt())
+    print("batched self-designed gradient vs per-axis loop, largest difference:",
+          test_selfdesigned_batched_grad_within_rounding())
+
+
+def test_selfdesigned_batched_grad_within_rounding():
+    """The batched central-difference gradient of the self-designed upscalers (STUDY D-23) agrees with _Grid.grad's
+    per-axis loop to rounding: the predictions differ at ~1e-14 relative (batch-size-dependent rounding in numpy's
+    contractions), so the gradients (divided by 2h = 2e-5) may differ by ~1e-9. Returns the largest difference."""
+    from surr import upscalers as UP
+
+    class M:
+        def predict(self, U):
+            U = np.atleast_2d(U); return np.sin(3 * U).sum(1) + U.prod(1) + np.exp(-((U - 0.3) ** 2).sum(1))
+
+    rng = np.random.default_rng(0)
+    worst = 0.0
+    for name in ("smolyak_grid", "tt_grid"):
+        for d in (2, 5):
+            s = UP.build(name, M(), d, max_points=3000, **({"seed": 0} if name == "tt_grid" else {}))
+            for n in (1, 7, 50):
+                U = rng.random((n, d))
+                a, b = s.grad(U), UP._Grid.grad(s, U)
+                worst = max(worst, float(np.abs(a - b).max()))
+                assert np.allclose(a, b, rtol=0, atol=1e-8), (name, d, n, np.abs(a - b).max())
+    return worst

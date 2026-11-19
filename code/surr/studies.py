@@ -617,7 +617,8 @@ def task_e8(cfg):
     y = N.apply(cfg.get("noise", "none"), cfg.get("level", 0.0), p.f_unit(U), U, scale, seed=20_000 + seed)
     t0 = time.perf_counter()
     m = make(cfg["learner"], seed=seed, **cfg.get("kw", {})).fit(U, y)
-    out = dict(status="ok", t_fit=time.perf_counter() - t0, scale=scale, fstar_confirmed=bool(ref.get("confirmed")))
+    out = dict(status="ok", t_fit=time.perf_counter() - t0, scale=scale, fstar_confirmed=bool(ref.get("confirmed")),
+               grad_batched=True)          # Smolyak/TT finite-difference gradient batched (STUDY D-23, 2026-11-19)
     pm = m.predict(T)
     Gt = _unit_grad(p, T[:256])
     cps = (20 * d, 50 * d, 200 * d)

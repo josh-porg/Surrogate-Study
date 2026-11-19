@@ -107,7 +107,18 @@ class _SelfDesigned:
     def predict(self, U):
         return self.sd.predict(np.clip(np.atleast_2d(U), 0, 1))
 
-    grad = _Grid.grad
+    def grad(self, U, h=1e-5):
+        """_Grid.grad's central differences with all 2d shifted copies in ONE predict call. Smolyak's predict has a
+        fixed ~11 ms cost (a Python loop over its ~800 terms) whatever the batch, and the per-axis loop paid it 2d
+        times: 77 % of E8's task time (2026-11-19). NOT bit-identical: numpy's contractions round differently with
+        batch size, so values differ at ~1e-14 relative and these gradients by ~1e-10 absolute. The unbatched code
+        already varies by that much with batch size. Accepted by the author 2026-11-19 (STUDY D-23); E8 records
+        made with this code carry grad_batched=True."""
+        U = np.atleast_2d(U); n, d = U.shape
+        E = np.eye(d) * h
+        P = np.concatenate([U + E[j] for j in range(d)] + [U - E[j] for j in range(d)])
+        v = self.predict(P)
+        return np.stack([(v[j * n:(j + 1) * n] - v[(d + j) * n:(d + j + 1) * n]) / (2 * h) for j in range(d)], 1)
 
 
 @_reg

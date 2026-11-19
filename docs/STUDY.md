@@ -749,3 +749,17 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   - *Open:* our own AR(1), the same model, gives only 0.91× (BUGS N-30), so the implementation matters as much as
     the method.
   - *Best per pair:* smt_mfk 13 of 27; SMT kriging HF-only 4; our GP HF-only 3.
+- **D-23 · 2026-11-19 · Rounding-noise change in E8: batched finite-difference gradient on the self-designed
+  upscalers** (author's decision; an exception to the bit-identical rule for speed-ups).
+  - **Change:** `upscalers._SelfDesigned.grad` (Smolyak grid, TT grid) evaluates all 2d central-difference points in
+    one `predict` call instead of 2d calls. Smolyak's predict has a fixed ~11 ms cost per call (a Python loop over
+    ~800 combination terms), so the gradient goes from 116 ms to 12.6 ms per point. Optimizing on the Smolyak
+    upscaler was 77 % of E8's task time; E8's remaining time should fall from ~11 days to ~4–5.
+  - **Rounding noise, not a method change:** numpy's contractions round differently with batch size. Predictions
+    differ at ~1e-14 relative and the gradients by ≤ 1.2e-9 absolute (test
+    `test_selfdesigned_batched_grad_within_rounding`). The unbatched predict already varied by ~1.4e-14 with batch
+    size. The mathematics (central differences, h = 1e-5) is unchanged.
+  - **Traceability:** E8 records made with the new code carry `grad_batched=True`. The 2 283 earlier E8 tasks keep
+    the old rounding. A regret can differ between the two only where an optimizer's path is sensitive to 1e-9
+    gradient perturbations (chaotic first-order paths), which is noise of the same kind as seed-to-seed spread.
+    Other upscalers and learners are unaffected.
