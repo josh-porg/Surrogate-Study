@@ -38,7 +38,7 @@ TRACKS = {
     # records are kept in results/raw/E8_upscale/failed_run_1/; the re-run goes after E9b, then E15.
     # E6 feature_aug re-run (N-27, 2026-11-09): the first run's feature_aug was NARGP under another name; 1 620 tasks
     # literature-pass extensions (D-21, 2026-11-10), asked for by the author: ahead of E8
-    "e8": ["E8_upscale", "--shards", "5", "--max-waves", "20", "--start-after", "E5x_sampling:"],  # E5x finished 2026-11-15
+    "e8": ["E8_upscale", "--shards", "5", "--max-waves", "40", "--start-after", "E5x_sampling:"],  # E5x finished 2026-11-15
     "e15": ["E15_coupling", "--shards", "5", "--max-waves", "6", "--start-after", "E8_upscale:"],
     # E9x (D-19): the 133 E3/E3x problems E9 left out, reduced design (~24 600 tasks); the full design is not queued
     "e9x": ["E9x_optim", "--shards", "5", "--max-waves", "25", "--start-after", "E15_coupling:"],
