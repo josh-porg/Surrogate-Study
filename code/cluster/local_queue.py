@@ -28,7 +28,10 @@ PY = sys.executable
 STEPS = [
     # runner steps stop after 1 h and are restarted at once (loop below): the runner sizes its worker pool from the
     # RAM free at start, so hourly restarts let it grow when the author frees memory (2.3 GB free on 2026-10-25 -> 1)
-    ("E4_rair", [PY, "-u", "-m", "surr.runner", "E4_rair", "--workers", "8", "--timeout", "900", "--max-hours", "1"],
+    # pce_lars timed out on all 172 R-AIR fits it ran, and a timed-out worker stalls the pool on Windows (N-16): the
+    # last 8 cost ~2 days for 10 records (2026-11-17..19), so they are skipped (BUGS N-31; bound by cost)
+    ("E4_rair", [PY, "-u", "-m", "surr.runner", "E4_rair", "--workers", "8", "--timeout", "900", "--max-hours", "1",
+                 "--skip-learners", "pce_lars"],
      ROOT / "code"),
     # E11 on the thesis FEA cache (read in place, read-only; real data, never leaves this machine)
     ("E11_fea", [PY, "-u", "-m", "surr.runner", "E11_fea", "--workers", "8", "--timeout", "900", "--max-hours", "1"],
