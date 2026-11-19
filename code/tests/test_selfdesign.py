@@ -70,15 +70,6 @@ def test_smolyak_cache_bit_identical():
     return n
 
 
-if __name__ == "__main__":
-    test_bary(); print("barycentric partition of unity: ok")
-    print("smolyak per-call cache bit-identical to the uncached predictor:", test_smolyak_cache_bit_identical(), "cases")
-    print("smolyak exact on a degree-2 polynomial; errors at budgets 30/100/400:", test_smolyak())
-    print("tt_cross (evaluations, NRMSE):", test_tt())
-    print("batched self-designed gradient vs per-axis loop, largest difference:",
-          test_selfdesigned_batched_grad_within_rounding())
-
-
 def test_selfdesigned_batched_grad_within_rounding():
     """The batched central-difference gradient of the self-designed upscalers (STUDY D-23) agrees with _Grid.grad's
     per-axis loop to rounding: the predictions differ at ~1e-14 relative (batch-size-dependent rounding in numpy's
@@ -100,3 +91,12 @@ def test_selfdesigned_batched_grad_within_rounding():
                 worst = max(worst, float(np.abs(a - b).max()))
                 assert np.allclose(a, b, rtol=0, atol=1e-8), (name, d, n, np.abs(a - b).max())
     return worst
+
+
+if __name__ == "__main__":
+    test_bary(); print("barycentric partition of unity: ok")
+    print("smolyak per-call cache bit-identical to the uncached predictor:", test_smolyak_cache_bit_identical(), "cases")
+    print("smolyak exact on a degree-2 polynomial; errors at budgets 30/100/400:", test_smolyak())
+    print("tt_cross (evaluations, NRMSE):", test_tt())
+    print("batched self-designed gradient vs per-axis loop, largest difference:",
+          test_selfdesigned_batched_grad_within_rounding())
