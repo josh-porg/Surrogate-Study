@@ -60,17 +60,59 @@ Compressed sensing (OMP), basis $N$ & $O(snN)$ & $O(nN)$ & $O(s)$ \\
 
 \begin{table}[ht]
 \centering\small
-\caption{Costs of optimizer-ready representations; $m$ nodes per axis, spline order $k$ ($k=4$ cubic), level $\lambda$, rank $r$.}
+\caption{Costs of optimizer-ready representations. $m$ nodes per axis, spline order $k$ ($k=4$ cubic), Smolyak level
+$\lambda$ with $N_\lambda=O(2^\lambda\lambda^{d-1})$ nodes, rank $r$, $K$ local models fitted to $n_{\mathrm{fit}}$
+model predictions, $c_M$ the cost of one call to the intermediate model ($O(nd)$ for a GP mean, $O(n^2)$ with its
+variance). Gradients of the interpolants are analytic; by finite differences they cost $2d$ evaluations.}
 \label{tab:complexity_upscale}
-\begin{tabular}{@{}llll@{}}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}lllll@{}}
 \toprule
-Representation & Build & Storage & Evaluate \\
+Representation & Build & Storage & Evaluate & Gradient \\
 \midrule
-Tensor B-spline on dense grid & $m^d$ model calls $+\,O(dm^d)$ & $O(m^d)$ & $O(k^d)$ \\
-Multilevel B-spline (MBA) & $O(h(n+m_h^d))$ & $O(m_h^d)$ & $O(k^d)$ \\
-Smolyak sparse grid & $O(2^\lambda\lambda^{d-1})$ model calls & same & $O(2^\lambda\lambda^{d-1})$ \\
-Additive P-spline / GAM & $O(ndK)$ & $O(dK)$ & $O(dk)$ \\
-Tensor-train compressed grid & $O(dmr^3)$ & $O(dmr^2)$ & $O(dr^2)$ \\
+Intermediate model itself (no upscaling) & --- & model's & $c_M$ & $O(c_M)$ analytic; $2d\,c_M$ by differences \\
+Tensor B-spline on dense grid & $m^d c_M + O(dm^d)$ & $O(m^d)$ & $O(k^d)$ & $O(dk^d)$ \\
+Multilevel B-spline (MBA) & $O(h(n+m_h^d))$ & $O(m_h^d)$ & $O(k^d)$ & $O(dk^d)$ \\
+Smolyak sparse grid, global (barycentric) basis & $N_\lambda c_M$ & $O(N_\lambda)$ & $O(N_\lambda)$ & $O(dN_\lambda)$ \\
+Additive P-spline / GAM & $O(ndK)$ & $O(dK)$ & $O(dk)$ & $O(dk)$ \\
+Tensor-train grid, local / global axis basis & $O(dmr^2)\,c_M + O(dmr^3)$ & $O(dmr^2)$ & $O(dr^2)$ / $O(dmr^2)$
+  & $O(d^2r^2)$ / $O(d^2mr^2)$ \\
+Partition of unity of $K$ local quadratics & $n_{\mathrm{fit}}c_M + O(Kn_{\mathrm{fit}}d^4)$ & $O(Kd^2)$ & $O(Kd^2)$
+  & $O(Kd^2)$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
+
+\paragraph{When does upscaling pay for itself?}
+Upscaling never reduces the cost of \emph{training} the intermediate model (an exact GP stays $O(n^3)$); it trades a
+one-off build for cheaper evaluations. Let a representation need $M$ calls to the intermediate model
+(Table~\ref{tab:complexity_upscale}: $M=m^d$, $N_\lambda$, $O(dmr^2)$ or $n_{\mathrm{fit}}$) plus fitting work
+$C_{\mathrm{fit}}$, and let one evaluation cost $c_U$ after upscaling and $c_M$ before. Over $N$ optimizer evaluations
+the build is repaid when
+\begin{equation}
+  N\,(c_M-c_U) \;>\; M\,c_M + C_{\mathrm{fit}}
+  \quad\Longleftrightarrow\quad
+  N \;>\; \frac{M\,c_M + C_{\mathrm{fit}}}{c_M-c_U} \;\approx\; M
+  \qquad (c_U \ll c_M,\ C_{\mathrm{fit}} \ll M c_M).
+  \label{eq:upscale_breakeven}
+\end{equation}
+Three consequences follow. (i) Because the build consists of model calls, the break-even budget is almost independent
+of $n$: a larger GP makes the build dearer by the same factor by which it makes each saved evaluation dearer, while the
+per-evaluation speed-up $c_M/c_U$ grows as $n$ for the GP mean and as $n^2$ when the variance is needed (expected
+improvement and other uncertainty-driven searches). (ii) The dimension decides admissibility through $M$: a tensor grid
+with $m=12$ has $M=144$ nodes at $d=2$ but $2.5\times10^5$ at $d=5$, so a typical optimizer budget repays it only in low
+dimension; tensor-train and local-quadratic representations keep $M$ polynomial in $d$, the former only when the
+function is low-rank. (iii) A representation whose evaluation scales with its own size, such as a Smolyak grid evaluated
+through a global basis ($c_U=O(N_\lambda)$), is faster than the intermediate model only when $N_\lambda<n$---never for
+a GP trained on fewer points than the grid has nodes.
+
+The E8 timings (GP intermediate, $n\le500$) follow these orders. GP evaluation grew linearly in $n$ (1.8, 2.8, 9.1 and
+13.5\,\textmu s per point at $n=40$, 60, 200 and 300 in two dimensions). Tensor-spline evaluation did not depend on $n$
+(0.5\,\textmu s) and rose with $d$ (18\,\textmu s at $d=5$: a 36-fold rise against the $4^d$ ratio of 64). The $d=5$,
+$m=12$ build decomposed into $Mc_M$ plus an $n$-independent fit (11.8\,s $\approx$ 1.1\,s $+$ 10.7\,s at $n=100$;
+19.2\,s $\approx$ 7.5\,s $+$ 11.7\,s at $n=500$). With $N\sim10^4$ optimizer evaluations per task the spline paid at
+once in two dimensions ($M=144$--$576$; optimizer time 5.5\,s $\to$ 1.6\,s with no loss of accuracy) but not in five
+($M\approx2.5\times10^5$). The Smolyak grid ($N_\lambda\le2\times10^4$) was slower than every GP it upscaled
+(180--500\,\textmu s per point). For the small GPs of E8 the savings are seconds. The regime in which GP upscaling
+matters---$n$ of $10^4$--$10^5$, where $c_M$ reaches milliseconds and $c_M/c_U$ exceeds $10^3$---lies beyond the study's
+design.

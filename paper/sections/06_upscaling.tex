@@ -23,3 +23,6 @@ the intermediate model is smooth. For a piecewise-constant intermediate such as 
 reproduces the staircase more faithfully---which may help accuracy and hurt a gradient-based optimizer at the same time,
 whereas a \emph{smoothing} upscaler acts as a regulariser. Whether upscaling can turn the most accurate but
 non-differentiable learner into the best optimizer-facing surrogate is, to our knowledge, untested.
+Its computational case is separate from its accuracy case: upscaling replaces a model call by a cheap evaluation after
+a build of $M$ model calls, so it pays only when the optimizer needs more than about $M$ evaluations
+(Section~\ref{sec:complexity}, Eq.~\eqref{eq:upscale_breakeven}).
