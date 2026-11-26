@@ -776,3 +776,31 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
   - *Reading:* on real tabular engineering data with mixed engine types, trees beat the GP family, as the thesis
     found. This is the real-data counterpart of E3's "no universal winner, but predictable": E3's trees win on
     discontinuities and regime changes, which engine-type mixtures are.
+- **R-E8 · 2026-11-26 · Results: E8 is complete** (7 760 ok, 80 timeouts; `e8_analysis.py`, `results/E8_report.md`).
+  - **H5, smoothing a tree for optimization: yes, a lot, but not to GP level.** True upscalers of the tree
+    predictions cut optimizer regret (paired, same optimizer and task, all p < 0.03):
+    - pou_quadratics: 0.05–0.07×;
+    - smoothing spline (d = 2): 0.18–0.26×;
+    - tensor spline m = 12: 0.34–0.36×;
+    - TT and Smolyak grids: 0.45–0.81×.
+    - The tree's gradient error falls from 1.3–6.1 to 0.6–0.9 (NRMSE), at an accuracy cost of +0–47 %.
+  - **Success at 200d (best optimizer):**
+
+    | Learner | Raw | Best true upscaler |
+    |---|---|---|
+    | CatBoost | 0.27 | 0.41 |
+    | XGBoost | 0.23 | 0.38 |
+    | Random forest | 0.30 | 0.47 |
+    | GP (no upscaler) | 0.54 | — |
+    | MLP ensemble (no upscaler) | 0.55 | — |
+
+    A smoothed tree is a usable optimizer-facing surrogate, but choosing a smooth learner in the first place is
+    still better.
+  - **Smooth learners gain nothing:** GP, PCE and RBF upscaled are 0.96–1.23× raw (n.s. or worse); the MLP gains
+    a little from grids (0.61–0.68×).
+  - **The model-ignoring baselines** (`pspline_direct`, `subsample_ensemble`) refit the data, so they score the same
+    for every learner (success 0.35 and 0.47–0.48). The subsample cubic-RBF ensemble beats every smoothed tree, which
+    says "replace the tree" rather than "smooth it".
+  - **PCE:** its large accuracy ratios under the splines (21–121×) come from near-exact PCE fits (errors ~1e-14) to
+    which any upscaler adds ~1e-4; they are not a failure of the splines.
+  - **Cost:** Smolyak build 58 s and 440 µs per evaluation; the others are under 11 s and under 30 µs.
