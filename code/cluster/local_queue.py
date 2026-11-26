@@ -107,7 +107,12 @@ def main():
             if not name.startswith(("E4", "E11")):
                 break
             # runner steps: a clean exit is also the hourly stop or the disk guard; done only when nothing is left
-            r = subprocess.run([PY, "-m", "surr.runner", name, "--dry"], cwd=ROOT / "code", capture_output=True, text=True)
+            # the step's own learner filters: without them the 8 skipped pce_lars tasks kept E4_rair "unfinished"
+            # forever and E11 never started (2026-11-19..26)
+            filt = [a for i, a in enumerate(cmd) if a in ("--skip-learners", "--only-learners")
+                    or (i and cmd[i - 1] in ("--skip-learners", "--only-learners"))]
+            r = subprocess.run([PY, "-m", "surr.runner", name, "--dry"] + filt, cwd=ROOT / "code", capture_output=True,
+                               text=True)
             if " 0 to run" in r.stdout:
                 break
             left = r.stdout.split(" done, ")[-1].split(" to run")[0]
