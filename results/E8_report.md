@@ -12,6 +12,8 @@
 | rf | 1080 | 1120 |
 | xgb | 1120 | 1120 |
 
+Note: `pspline_direct` and `subsample_ensemble` ignore the learner and refit the training data (they are replacements, not upscalers: identical results across learners). The upscalers proper, built on the learner's predictions, are the tensor and smoothing splines, Smolyak, TT and pou_quadratics. The m = 24 splines are infeasible at d = 5, so their rows cover d = 2 only.
+
 ## 2. Accuracy: NRMSE upscaled / intermediate (geometric mean), median added error and gradient NRMSE
 
 |  | nrmse_ratio | added | grad_nrmse | failed |

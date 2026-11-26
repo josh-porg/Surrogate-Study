@@ -83,8 +83,7 @@ def main():
            "Note: `pspline_direct` and `subsample_ensemble` ignore the learner and refit the training data (they are "
            "replacements, not upscalers: identical results across learners). The upscalers proper, built on the "
            "learner's predictions, are the tensor and smoothing splines, Smolyak, TT and pou_quadratics. The m = 24 "
-           "splines are infeasible at d = 5, so their rows cover d = 2 only.
-"]
+           "splines are infeasible at d = 5, so their rows cover d = 2 only." + chr(10)]
     F = A[~A.failed]
     acc = F.groupby(["learner", "up"]).apply(lambda g: pd.Series(dict(
         nrmse_ratio=np.exp(np.log(g.nrmse / g.inter).mean()), added=g.added.median(), grad_nrmse=g.grad.median())),
