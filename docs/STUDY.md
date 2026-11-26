@@ -763,3 +763,16 @@ Entries: `YYYY-MM-DD · experiment ID · finding · file`.
     the old rounding. A regret can differ between the two only where an optimizer's path is sensitive to 1e-9
     gradient perturbations (chaotic first-order paths), which is noise of the same kind as seed-to-seed spread.
     Other upscalers and learners are unaffected.
+- **R-E4 R-AIR · 2026-11-26 · Results: the R-AIR bias arm is complete** (6 399 fits, 20 paired splits; `pce_lars`
+  infeasible, N-31; `e4_analysis.py`).
+  - *Extra-trees win the two harder targets in every setting and metric:*
+    - Fuel weight fraction: NRMSE 0.31–0.40;
+    - Payload weight fraction: 0.40–0.54;
+    - CatBoost is 3–11 % behind; the GP is 4–43 % behind, worst under weighting.
+  - *Empty weight fraction:* the winner changes with the setting (ok_variogram, ens_press, extra-trees, SVR), all
+    within a few percent, and NRMSE is 0.73–0.91 (little signal).
+  - *Debiasing reshuffles the middle of the ranking but not the top:* Spearman correlation between settings
+    0.70–0.86.
+  - *Reading:* on real tabular engineering data with mixed engine types, trees beat the GP family, as the thesis
+    found. This is the real-data counterpart of E3's "no universal winner, but predictable": E3's trees win on
+    discontinuities and regime changes, which engine-type mixtures are.
